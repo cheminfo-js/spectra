@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "prepare": "lerna bootstrap",
     "test": "lerna run test"
   },
   "devDependencies": {
