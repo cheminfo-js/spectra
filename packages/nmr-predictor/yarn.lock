@@ -4021,7 +4021,7 @@ onetime@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
 
-openchemlib-extended-minimal@^2.0.0:
+openchemlib-extended-minimal@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/openchemlib-extended-minimal/-/openchemlib-extended-minimal-2.0.0.tgz#ab9428e8b73c821a2518757f72f7e00050ba3d4e"
   dependencies:
