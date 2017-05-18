@@ -1,0 +1,36 @@
+{
+  "name": "spectra-data-ranges",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./src/index.js",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "eslint": "eslint src test",
+    "eslint-fix": "npm run eslint -- --fix",
+    "test": "npm run test-mocha && npm run eslint",
+    "test-mocha": "mocha --require should --reporter mocha-better-spec-reporter",
+    "build": "cheminfo build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cheminfo-js/spectra.git"
+  },
+  "keywords": [],
+  "author": "jobo322 <jose.bolanos@correounivalle.edu.co>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cheminfo-js/spectra/issues"
+  },
+  "homepage": "https://github.com/cheminfo-js/spectra/packages/spectra-data-ranges#readme",
+  "devDependencies": {
+    "cheminfo-tools": "^1.11.0",
+    "eslint": "^3.12.2",
+    "eslint-config-cheminfo": "^1.6.0",
+    "eslint-plugin-no-only-tests": "^1.1.0",
+    "mocha": "^3.2.0",
+    "mocha-better-spec-reporter": "^3.1.0",
+    "should": "^11.1.2"
+  }
+}
