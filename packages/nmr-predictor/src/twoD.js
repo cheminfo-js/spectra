@@ -24,7 +24,7 @@ module.exports = function twoD(dim1, dim2, molecule, options) {
             inverseMap[diaID.atoms.join(',')] = diaID.oclID;
         });
     }
-    //console.log(paths);
+
     paths.forEach(path => {
         if (path.fromLabel === 'C') {
             path.fromDiaID = inverseMap[path.fromAtoms.join(',')];
