@@ -67,7 +67,6 @@ describe('HOSE assignment prediction', function () {
     });
 
     it('13C chemical shift prediction expanded', function () {
-        //console.log(db13C);
         const prediction = predictor.carbon(molfile, {db: db13C});
         prediction.length.should.eql(8);
         prediction[0].delta.should.greaterThan(0);

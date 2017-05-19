@@ -14,7 +14,12 @@ const normalizeOptions = require('./normalizeOptions');
  */
 module.exports = function spinus(molecule, options) {
     [molecule, options] = normalizeOptions(molecule, options);
-    return fromSpinus(molecule).then(prediction => group(prediction, options));
+    return fromSpinus(molecule).then(prediction => {
+        if (options.group) {
+            prediction = group(prediction, molecule.getConnectivityMatrix({pathLength: true}));
+        }
+        return prediction;
+    });
 };
 
 function fromSpinus(molecule) {
@@ -29,9 +34,7 @@ function fromSpinus(molecule) {
         const cs = data.chemicalShifts;
         const multiplicity = data.multiplicity;
         const integrals = data.integrals;
-
         const nspins = cs.length;
-
         const diaIDs = molecule.getGroupedDiastereotopicAtomIDs({atomLabel: 'H'});
         var result = new Array(nspins);
         var atoms = {};
@@ -52,7 +55,6 @@ function fromSpinus(molecule) {
             }
         }
 
-        //Average the entries for the equivalent protons
         var idsKeys = Object.keys(ids);
         for (i = 0; i < nspins; i++) {
             tmpCS = csByOclID[atoms[idsKeys[i]]].cs / csByOclID[atoms[idsKeys[i]]].nc;
@@ -66,8 +68,7 @@ function fromSpinus(molecule) {
             };
 
             for (j = 0; j < nspins; j++) {
-                //Do not consider coupling constant between diasterotopic atoms
-                if (atoms[idsKeys[j]] !== result[i].diaIDs[0] && jc[i][j] !== 0) {
+                if (jc[i][j] !== 0) {
                     result[i].j.push({
                         assignment: idsKeys[j],
                         diaID: atoms[idsKeys[j]],
@@ -80,7 +81,6 @@ function fromSpinus(molecule) {
             if (result[i].j.length === 0) {
                 result[i].multiplicity = 's';
             }
-
         }
 
         return result;
