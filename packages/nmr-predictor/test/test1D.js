@@ -38,7 +38,6 @@ describe('Spinus prediction', function () {
     it('1H chemical shift prediction grouped', async function () {
         this.timeout(10000);
         const prediction = await predictor.spinus(molfile, {group: true});
-        //console.log(JSON.stringify(prediction));
         prediction.length.should.equal(5);
     });
     it('1H chemical shift prediction expanded from SMILES', async function () {

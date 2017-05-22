@@ -2,7 +2,6 @@
 
 const newArray = require('new-array');
 const superagent = require('superagent');
-
 const group = require('./group');
 const normalizeOptions = require('./normalizeOptions');
 
@@ -16,7 +15,7 @@ module.exports = function spinus(molecule, options) {
     [molecule, options] = normalizeOptions(molecule, options);
     return fromSpinus(molecule).then(prediction => {
         if (options.group) {
-            prediction = group(prediction, molecule.getConnectivityMatrix({pathLength: true}));
+            prediction = group(prediction);
         }
         return prediction;
     });
@@ -36,6 +35,7 @@ function fromSpinus(molecule) {
         const integrals = data.integrals;
         const nspins = cs.length;
         const diaIDs = molecule.getGroupedDiastereotopicAtomIDs({atomLabel: 'H'});
+        const distanceMatrix = molecule.getConnectivityMatrix({pathLength: true});
         var result = new Array(nspins);
         var atoms = {};
         var atomNumbers = [];
@@ -59,9 +59,9 @@ function fromSpinus(molecule) {
         for (i = 0; i < nspins; i++) {
             tmpCS = csByOclID[atoms[idsKeys[i]]].cs / csByOclID[atoms[idsKeys[i]]].nc;
             result[i] = {
-                atomIDs: [idsKeys[i]],
+                atomIDs: [idsKeys[i]], //It's not in eln format
                 diaIDs: [atoms[idsKeys[i]]],
-                integral: integrals[i],
+                nbAtoms: integrals[i],
                 delta: tmpCS,
                 atomLabel: 'H',
                 j: []
@@ -70,10 +70,11 @@ function fromSpinus(molecule) {
             for (j = 0; j < nspins; j++) {
                 if (jc[i][j] !== 0) {
                     result[i].j.push({
-                        assignment: idsKeys[j],
+                        assignment: [idsKeys[j]],
                         diaID: atoms[idsKeys[j]],
                         coupling: jc[i][j],
-                        multiplicity: multiplicityToString(multiplicity[j])
+                        multiplicity: multiplicity[j],
+                        distance: distanceMatrix[idsKeys[i]][idsKeys[j]]
                     });
                 }
             }
@@ -125,19 +126,6 @@ function spinusParser(result) {
         chemicalShifts: cs,
         integrals,
         couplingConstants: jc,
-        multiplicity: newArray(nspins, 2)
+        multiplicity: newArray(nspins, 'd')
     };
-}
-
-function multiplicityToString(mul) {
-    switch (mul) {
-        case 2:
-            return 'd';
-        case 3:
-            return 't';
-        case 4:
-            return 'q';
-        default:
-            return '';
-    }
 }
