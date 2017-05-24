@@ -118,13 +118,13 @@ module.exports.group = function group(signals, options = {}) {
         for (k = 0; k < j.length; k++) {
             j[k].multiplicity = patterns[j[k].assignment.length];
         }
-        signals[i].multiplicity = compilePattern(signals[i], options.tolerance);
+        signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
     }
     return signals;
 };
 
 
-function compilePattern(signal, tolerance = 0.05) {
+module.exports.compilePattern = function compilePattern(signal, tolerance = 0.05) {
     var jc = signal.j;
     var pattern = '';
     if (jc && jc.length > 0) {
