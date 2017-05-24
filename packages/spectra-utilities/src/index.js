@@ -16,14 +16,14 @@ module.exports.nmrJ = function nmrJ(Js, options = {}) {
     return jString;
 }
 
-module.exports.Coupling = function joinCoupling(signal, tolerance = 0.05) {
+module.exports.joinCoupling = function joinCoupling(signal, tolerance = 0.05) {
     var jc = signal.j;
-    var cont = jc[0].assignment.length;
-    var pattern = '';
-    var newNmrJs = [];
-    var diaIDs = [];
-    var atoms = [];
     if (jc && jc.length > 0) {
+        var cont = jc[0].assignment ? jc[0].assignment.length : 1;
+        var pattern = '';
+        var newNmrJs = [];
+        var diaIDs = [];
+        var atoms = [];
         jc.sort(function (a, b) {
             return b.coupling - a.coupling;
         });
@@ -35,7 +35,7 @@ module.exports.Coupling = function joinCoupling(signal, tolerance = 0.05) {
         }
         for (var i = 0; i < jc.length - 1; i++) {
             if (Math.abs(jc[i].coupling - jc[i + 1].coupling) < tolerance) {
-                cont += jc[i + 1].assignment.length;
+                cont += jc[i + 1].assignment ? jc[i + 1].assignment.length : 1;
                 diaIDs.push(jc[i].diaID);
                 atoms = atoms.concat(jc[i + 1].assignment);
             } else {
@@ -57,7 +57,7 @@ module.exports.Coupling = function joinCoupling(signal, tolerance = 0.05) {
                     atoms = jc[i].assignment;
                 }
                 pattern += patterns[cont];
-                cont = jc[i + 1].assignment.length;
+                cont = jc[i + 1].assignment ? jc[i + 1].assignment.length : 1;
             }
         }
         let jTemp = {
@@ -88,7 +88,6 @@ module.exports.group = function group(signals, options = {}) {
     for (i = 0; i < signals.length; i++) {
         var j = signals[i].j;
         if (j && j.length > 0) {
-            //It is supposed that multiplicity is always `d`
             for (k = j.length - 2; k >= 0; k--) {
                 for (var m = j.length - 1; m > k; m--) {
                     if (j[k].diaID === j[m].diaID &&
@@ -114,7 +113,6 @@ module.exports.group = function group(signals, options = {}) {
             signals.splice(i + 1, 1);
         }
     }
-
     for (i = 0; i < signals.length; i++) {
         j = signals[i].j;
         for (k = 0; k < j.length; k++) {
@@ -128,23 +126,25 @@ module.exports.group = function group(signals, options = {}) {
 
 function compilePattern(signal, tolerance = 0.05) {
     var jc = signal.j;
-    var cont = jc[0].assignment.length;
     var pattern = '';
-    if (jc && jc.length > 1) {
+    if (jc && jc.length > 0) {
+        var cont = jc[0].assignment ? jc[0].assignment.length : 0;
         jc.sort(function (a, b) {
             return b.coupling - a.coupling;
         });
         for (var i = 0; i < jc.length - 1; i++) {
             if (Math.abs(jc[i].coupling - jc[i + 1].coupling) < tolerance) {
-                cont += jc[i + 1].assignment.length;
+                cont += jc[i + 1].assignment ? jc[i + 1].assignment.length : 1;
             } else {
                 pattern += patterns[cont];
-                cont = jc[i + 1].assignment.length;
+                cont = jc[i + 1].assignment ? jc[i + 1].assignment.length : 1;
             }
         }
         pattern += patterns[cont];
+    } else if (signal.delta) {
+        pattern = 's';
     } else {
-        pattern = patterns[cont];
+        pattern = 'm';
     }
     return pattern;
 }
