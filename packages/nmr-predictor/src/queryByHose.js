@@ -1,7 +1,6 @@
 'use strict';
 
 const OCLE = require('openchemlib-extended');
-const group = require('./group');
 
 module.exports = function queryByHose(molecule, db, options) {
     var {
@@ -14,6 +13,7 @@ module.exports = function queryByHose(molecule, db, options) {
     levels.sort(function (a, b) {
         return b - a;
     });
+
     var diaIDs = molecule.getGroupedDiastereotopicAtomIDs({atomLabel});
     var infoCOSY = [];
 
@@ -117,5 +117,5 @@ module.exports = function queryByHose(molecule, db, options) {
             }
         }
     }
-    return options.group ? group(toReturn, molecule.getConnectivityMatrix()) : toReturn;
+    return toReturn;
 };

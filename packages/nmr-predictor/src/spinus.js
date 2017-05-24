@@ -2,7 +2,7 @@
 
 const newArray = require('new-array');
 const superagent = require('superagent');
-const group = require('./group');
+const group = require('spectra-utilities').group;
 const normalizeOptions = require('./normalizeOptions');
 
 /**
@@ -78,12 +78,7 @@ function fromSpinus(molecule) {
                     });
                 }
             }
-
-            if (result[i].j.length === 0) {
-                result[i].multiplicity = 's';
-            }
         }
-
         return result;
     });
 }
