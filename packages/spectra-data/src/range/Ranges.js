@@ -3,7 +3,7 @@
 const acs = require('./acs/acs');
 const peak2Vector = require('./peak2Vector');
 const GUI = require('./visualizer/index');
-const joinCoupling = require('./utils').joinCoupling;
+const utils = require('spectra-utilities');
 class Ranges extends Array {
 
     constructor(ranges) {
@@ -30,23 +30,15 @@ class Ranges extends Array {
     static fromSignals(signals, options) {
         options = Object.assign({}, {lineWidth: 1, frequency: 400, nucleus: '1H'}, options);
         //1. Collapse all the equivalent predictions
+
+        signals = utils.group(signals, options);
         const nSignals = signals.length;
-        const ids = new Array(nSignals);
-        var i, j, diaIDs, signal, width, center, jc;
+        var i, j, signal, width, center, jc;
+
+        const result = new Array(nSignals);
 
         for (i = 0; i < nSignals; i++) {
-            if (!ids[signals[i].diaIDs[0]]) {
-                ids[signals[i].diaIDs[0]] = [i];
-            } else {
-                ids[signals[i].diaIDs[0]].push(i);
-            }
-        }
-        const idsKeys = Object.keys(ids);
-        const result = new Array(idsKeys.length);
-
-        for (i = 0; i < idsKeys.length; i++) {
-            diaIDs = ids[idsKeys[i]];
-            signal = signals[diaIDs[0]];
+            signal = signals[i];
             width = 0;
             jc = signal.j;
             if (jc) {
@@ -62,18 +54,9 @@ class Ranges extends Array {
             result[i] = {
                 from: signal.delta - width,
                 to: signal.delta + width,
-                integral: 0,
-                signal: new Array(diaIDs.length)
+                integral: signal.nbAtoms,
+                signal: [signal]
             };
-            result[i].multiplicity = '';
-
-            for (var k = 0; k < diaIDs.length; k++) {
-                result[i].signal[k] = signals[diaIDs[k]];
-                for (var kk = 0; kk < signals[diaIDs[k]].j.length; kk++) {
-                    result[i].multiplicity += signals[diaIDs[k]].j[kk].multiplicity;
-                }
-                result[i].integral += signals[diaIDs[k]].nbAtoms;
-            }
         }
 
         //2. Merge the overlaping ranges
@@ -85,10 +68,9 @@ class Ranges extends Array {
                 //Does it overlap?
                 if (Math.abs(center - (result[j].from + result[j].to) / 2)
                     <= Math.abs(width + Math.abs(result[j].from - result[j].to)) / 2) {
-                    result[i].multiplicity = 'm';
                     result[i].from = Math.min(result[i].from, result[j].from);
                     result[i].to = Math.max(result[i].to, result[j].to);
-                    result[i].integral = result[i].integral + result[j].integral;
+                    result[i].integral += result[j].integral;
                     result[i]._highlight.push(result[j].signal[0].diaIDs[0]);
                     result[j].signal.forEach(a => {
                         result[i].signal.push(a);
@@ -109,10 +91,10 @@ class Ranges extends Array {
     /**
      * This function return Ranges instance from a SD instance
      * @param {SD} spectrum - SD instance
-     * @param {object} opt - options object to extractPeaks function
+     * @param {object} options - options object to extractPeaks function
      * @return {Ranges}
      */
-    static fromSpectrum(spectrum, opt) {
+    static fromSpectrum(spectrum, options) {
         this.options = Object.assign({}, {
             nH: 99,
             clean: 0.5,
@@ -123,7 +105,7 @@ class Ranges extends Array {
             optimize: true,
             idPrefix: '',
             frequencyCluster: 16,
-        }, opt);
+        }, options);
 
         return spectrum.getRanges(this.options);
     }
@@ -218,17 +200,24 @@ class Ranges extends Array {
      */
     toIndex(options = {}) {
         var index = [];
+        if (options.joinCouplings) {
+            this.joinCouplings(options);
+        }
         for (let range of this) {
             if (Array.isArray(range.signal) && range.signal.length > 0) {
-                for (let s of range.signal) {
-                    index.push({
-                        multiplicity: s.multiplicity || joinCoupling(s, options.tolerance),
-                        delta: s.delta
-                    });
+                let l = range.signal.length;
+                var tempIndex = new Array(l);
+                for (let i = 0; i < l; i++) {
+                    tempIndex[i] = {
+                        multiplicity: range.signal[i].multiplicity ||
+                            utils.joinCoupling(range.signal[i], options.tolerance),
+                        delta: range.signal[i].delta
+                    };
                 }
+                index = index.concat(tempIndex);
             } else {
                 index.push({
-                    delta: (range.to + range.from) / 2,
+                    delta: (range.to + range.from) * 0.05,
                     multiplicity: 'm'
                 });
             }
@@ -245,7 +234,7 @@ class Ranges extends Array {
     joinCouplings(options = {}) {
         this.forEach(range => {
             range.signal.forEach(signal => {
-                signal.multiplicity = joinCoupling(signal, options.tolerance);
+                signal.multiplicity = utils.joinCoupling(signal, options.tolerance);
             });
         });
     }
