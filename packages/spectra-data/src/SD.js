@@ -1,6 +1,6 @@
 'use strict';
 // small note on the best way to define array
-// http://jsperf.com/lp-array-and-loops/2
+    // http://jsperf.com/lp-array-and-loops/2
 
 const StatArray = require('ml-stat').array;
 const ArrayUtils = require('ml-array-utils');
@@ -394,10 +394,19 @@ class SD {
 
     /**
      * Get the noise threshold level of the current spectrum. It uses median instead of the mean
+     * @param {object} options
+     * @param {number} options.from - lower limit in ppm to compute noise level
+     * @param {number} options.to - upper limit in ppm to compute noise level
      * @return {number}
      */
-    getNoiseLevel() {
-        var median = StatArray.median(this.getYData());
+    getNoiseLevel(options = {}) {
+        let data;
+        if (options.from && options.to) {
+            data = this.getVector(options.from, options.to);
+        } else {
+            data = this.getYData();
+        }
+        var median = StatArray.median(data);
         return median * this.getNMRPeakThreshold(this.getNucleus(1));
     }
 
@@ -790,10 +799,11 @@ class SD {
      * This will convert the data in equally spaces X.
      * @param {number} from - one limit in spectrum units
      * @param {number} to - one limit in spectrum units
-     * @param {number} nbPoints - number of points to return(!!!sometimes it is not possible to return exactly the required nbPoints)
+     * @param {object} options
+     * @param {number} options.nbPoints - number of points to return(!!!sometimes it is not possible to return exactly the required nbPoints)
      * @return {this}
      */
-    reduceData(from, to, nbPoints) {
+    reduceData(from, to, options = {}) {
         if (!this.isDataClassXY()) {
             throw Error('reduceData can only apply on equidistant data');
         }
@@ -801,7 +811,7 @@ class SD {
         for (let i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
             if (this.getXUnits().toLowerCase() !== 'hz') {
-                if (typeof nbPoints !== 'undefined') {
+                if (options.nbPoints) {
                     let x = this.getSpectraDataX();
                     let y = this.getSpectraDataY();
 
@@ -814,7 +824,7 @@ class SD {
                         to = from - to;
                         from = from - to;
                     }
-                    y = ArrayUtils.getEquallySpacedData(x, y, {from: from, to: to, numberOfPoints: nbPoints});
+                    y = ArrayUtils.getEquallySpacedData(x, y, {from: from, to: to, numberOfPoints: options.nbPoints});
 
                     let step = (to - from) / (y.length - 1);
                     x = new Array(y.length).fill(from);
@@ -846,10 +856,11 @@ class SD {
      * Not tested, you have to know what you are doing
      * @param {number} from - index of a limit of the desired window.
      * @param {number} to - index of a limit of the desired window
-     * @param {number} nPoints - number of points in the desired window.
-     * @return {Array} XYarray data of the desired window.
+     * @param {object} options
+     * @param {boolean} options.withoutX
+     * @return {Array} XYarray/Yarray data of the desired window.
      */
-    getPointsInWindow(from, to) {
+    getPointsInWindow(from, to, options = {}) {
         if (!this.isDataClassXY()) {
             throw Error('getPointsInWindow can only apply on equidistant data');
         }
@@ -863,9 +874,12 @@ class SD {
             indexOfFrom = indexOfFrom - indexOfTo;
         }
         if (indexOfFrom >= 0 && indexOfTo <= this.getNbPoints() - 2) {
-            var y = this.getSpectraDataY().slice(indexOfFrom, indexOfTo + 1);
-            var x = this.getSpectraDataX().slice(indexOfFrom, indexOfTo + 1);
-            return [x, y];
+            var data = this.getSpectraDataY().slice(indexOfFrom, indexOfTo + 1);
+            if (!options.withoutX) {
+                var x = this.getSpectraDataX().slice(indexOfFrom, indexOfTo + 1);
+                data = [x, data];
+            }
+            return data;
         } else {
             throw Error('values outside this in range');
         }
