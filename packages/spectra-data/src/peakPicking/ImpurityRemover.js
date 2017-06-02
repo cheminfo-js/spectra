@@ -14,7 +14,6 @@ function checkImpurity(peakList, impurity, options) {
                 diference = Math.abs(impurity[i].shift - Math.abs(peakList[j].from + peakList[j].to) / 2);
                 if (diference < tolerance) { // && (impurity[i].multiplicity === '' || (impurity[i].multiplicity.indexOf(peakList[j].multiplicity)) { // some impurities has multiplicities like 'bs' but at presents it is unsupported
                     peakList.splice(j, 1);
-                    break;
                 }
             }
         }

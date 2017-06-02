@@ -4,6 +4,7 @@ const acs = require('./acs/acs');
 const peak2Vector = require('./peak2Vector');
 const GUI = require('./visualizer/index');
 const utils = require('spectra-utilities');
+const arrayUtils = require('ml-stat').array;
 class Ranges extends Array {
 
     constructor(ranges) {
@@ -130,7 +131,7 @@ class Ranges extends Array {
         return this;
     }
 
-    /** //TODO
+    /**
      * This function normalize or scale the integral data
      * @param {object} options - object with the options
      * @param {boolean} [options.sum] - anything factor to normalize the integrals, Similar to the number of proton in the molecule for a nmr spectrum
@@ -154,13 +155,17 @@ class Ranges extends Array {
         return this;
     }
 
-    /** //TODO this function is useless when the ranges is from signals
+    /**
      * This function return the peak list as a object with x and y arrays
      * @param {bject} options - See the options parameter in {@link #peak2vector} function documentation
      * @return {object} - {x: Array, y: Array}
      */
     getVector(options) {
-        return peak2Vector(this.getPeakList(), options);
+        if (this[0].signal[0].peak) {
+            return peak2Vector(this.getPeakList(), options);
+        } else {
+            throw Error('This method is only for signals with peaks');
+        }
     }
 
     /**
@@ -168,16 +173,18 @@ class Ranges extends Array {
      * @return {Array}
      */
     getPeakList() {
-        var peaks = [];
-        var i,
-            j;
-        for (i = 0; i < this.length; i++) {
-            var range = this[i];
-            for (j = 0; j < range.signal.length; j++) {
-                peaks = peaks.concat(range.signal[j].peak);
+        if (this[0].signal[0].peak) {
+            var peaks = [];
+            for (var i = 0; i < this.length; i++) {
+                var range = this[i];
+                for (var j = 0; j < range.signal.length; j++) {
+                    peaks = peaks.concat(range.signal[j].peak);
+                }
             }
+            return peaks;
+        } else {
+            throw Error('This method is only for signals with peaks');
         }
-        return peaks;
     }
 
     /**
@@ -193,11 +200,7 @@ class Ranges extends Array {
         return GUI.annotations1D(this, options);
     }
 
-    /** //TODO
-     * Return an array of deltas and multiplicity for an index database
-     * @param {object} options - options object for toIndex function
-     * @return {Array} [{delta, multiplicity},...]
-     */
+
     toIndex(options = {}) {
         var index = [];
         if (options.joinCouplings) {
@@ -206,15 +209,16 @@ class Ranges extends Array {
         for (let range of this) {
             if (Array.isArray(range.signal) && range.signal.length > 0) {
                 let l = range.signal.length;
-                var tempIndex = new Array(l);
+                var delta = new Array(l);
                 for (let i = 0; i < l; i++) {
-                    tempIndex[i] = {
-                        multiplicity: range.signal[i].multiplicity ||
-                            utils.joinCoupling(range.signal[i], options.tolerance),
-                        delta: range.signal[i].delta
-                    };
+                    delta[i] = range.signal[i].delta;
                 }
-                index = index.concat(tempIndex);
+                index.push({
+                    multiplicity: (l > 1) ? 'm' : (range.signal[0].multiplicity ||
+                    utils.joinCoupling(range.signal[0], options.tolerance)),
+                    delta: arrayUtils.arithmeticMean(delta) || (range.to + range.from) * 0.05,
+                    integral: range.integral
+                });
             } else {
                 index.push({
                     delta: (range.to + range.from) * 0.05,

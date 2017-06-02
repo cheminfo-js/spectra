@@ -16,7 +16,7 @@ function peak2Vector(peaks, options = {}) {
     var {
         from = null,
         to = null,
-        nbPoints = 16384,
+        nbPoints = 1024,
         functionName = '',
         nWidth = 4
     } = options;

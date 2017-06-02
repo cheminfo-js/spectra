@@ -244,7 +244,7 @@ describe('Range tests: formating and parsing', function () {
         fn.x[0].should.approximately(1.1657135299531254, 0.005);
         fn.x[fn.x.length - 1].should.approximately(7.318545497368789, 0.005);
         fn.y[0].should.greaterThan(0);
-        fn.y.length.should.equal(16384);
+        fn.y.length.should.equal(1024);
         fn = ranges.getVector({from: 10, to: 0, functionName: 'Lorentzian', nbPoints: 101});
         fn.x[0].should.equal(10);
         fn.x[fn.x.length - 1].should.equal(0);
