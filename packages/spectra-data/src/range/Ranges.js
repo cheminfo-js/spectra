@@ -95,41 +95,10 @@ class Ranges extends Array {
      * @param {object} options - options object to extractPeaks function
      * @return {Ranges}
      */
-    static fromSpectrum(spectrum, options) {
-        this.options = Object.assign({}, {
-            nH: 99,
-            clean: 0.5,
-            realTop: false,
-            thresholdFactor: 1,
-            compile: true,
-            integralType: 'sum',
-            optimize: true,
-            idPrefix: '',
-            frequencyCluster: 16,
-        }, options);
-
-        return spectrum.getRanges(this.options);
+    static fromSpectrum(spectrum, options = {}) {
+        return spectrum.getRanges(options);
     }
 
-    /** //TODO
-     * This function put signal.multiplicity with respect to
-     * @return {Ranges}
-     */
-    updateMultiplicity() {
-        for (let i = 0; i < this.length; i++) {
-            var range = this[i];
-            for (let j = 0; j < range.signal.length; j++) {
-                var signal = range.signal[j];
-                if (Array.isArray(signal.j) && !signal.multiplicity) {
-                    signal.multiplicity = '';
-                    for (let k = 0; k < signal.j.length; k++) {
-                        signal.multiplicity += signal.j[k].multiplicity;
-                    }
-                }
-            }
-        }
-        return this;
-    }
 
     /**
      * This function normalize or scale the integral data
@@ -216,12 +185,12 @@ class Ranges extends Array {
                 index.push({
                     multiplicity: (l > 1) ? 'm' : (range.signal[0].multiplicity ||
                     utils.joinCoupling(range.signal[0], options.tolerance)),
-                    delta: arrayUtils.arithmeticMean(delta) || (range.to + range.from) * 0.05,
+                    delta: arrayUtils.arithmeticMean(delta) || (range.to + range.from) * 0.5,
                     integral: range.integral
                 });
             } else {
                 index.push({
-                    delta: (range.to + range.from) * 0.05,
+                    delta: (range.to + range.from) * 0.5,
                     multiplicity: 'm'
                 });
             }

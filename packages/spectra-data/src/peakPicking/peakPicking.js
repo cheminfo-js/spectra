@@ -28,6 +28,7 @@ const defaultOptions = {
     broadRatio: 0.00025,
     smoothY: true,
     widthFactor: 4,
+    realTop: true,
     functionName: 'gaussian',
     broadWidth: 0.25,
     sgOptions: {windowSize: 9, polynomial: 3}

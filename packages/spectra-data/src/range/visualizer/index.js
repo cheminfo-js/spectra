@@ -1,9 +1,5 @@
 'use strict';
 
-/**
- * Created by acastillo on 5/25/16.
- */
-
 var options1D = {type: 'rect', line: 0, lineLabel: 1, labelColor: 'red', strokeColor: 'red', strokeWidth: '1px', fillColor: 'green', width: 0.05, height: 10, toFixed: 1};
 var options2D = {type: 'rect', labelColor: 'red', strokeColor: 'red', strokeWidth: '1px', fillColor: 'green', width: '6px', height: '6px'};
 
@@ -11,6 +7,7 @@ function annotations1D(ranges, optionsG) {
     var options = Object.assign({}, options1D, optionsG);
     var height = options.height;
     var annotations = [];
+
     for (var i = 0; i < ranges.length; i++) {
         var prediction = ranges[i];
         var annotation = {};
@@ -18,7 +15,10 @@ function annotations1D(ranges, optionsG) {
         annotations.push(annotation);
         annotation.line = options.line;
         annotation._highlight = prediction._highlight;
-        if (!annotation._highlight || annotation._highlight.length === 0) {
+
+        if (options.fromToc) {
+            annotation._highlight = [options.line];
+        } else if (!annotation._highlight || annotation._highlight.length === 0) {
             annotation._highlight = [prediction.signalID];
             prediction.signal.forEach(function (signal) {
                 for (let j = 0; j < signal.diaID.length; j++) {
@@ -31,7 +31,10 @@ function annotations1D(ranges, optionsG) {
 
         annotation.type = options.type;
 
-        if (!prediction.to || !prediction.from || prediction.to === prediction.from) {
+        if (options.fromToc) {
+            annotation.position = [{x: prediction.delta - options.width, y: (options.line * height) + 'px'},
+                {x: prediction.delta + options.width, y: (options.line * height + 3) + 'px'}];
+        } else if (!prediction.to || !prediction.from || prediction.to === prediction.from) {
             annotation.position = [{x: prediction.signal[0].delta - options.width, y: (options.line * height) + 'px'},
                 {x: prediction.signal[0].delta + options.width, y: (options.line * height + 3) + 'px'}];
         } else {

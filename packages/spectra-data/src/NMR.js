@@ -379,12 +379,11 @@ class NMR extends SD {
      * @option stdev: Number of standard deviation of the noise for the threshold calculation if a threshold is not specified.
      * @return {*}
      */
-    getRanges(options) {
+    getRanges(options = {}) {
         if (this.ranges) {
             return this.ranges;
         } else {
             var peaks = this.getPeaks(options);
-            options = Object.assign({}, {nH: this.totalIntegral}, options);
             var ranges = peaks2Ranges(this, peaks, options);
             return ranges;
         }

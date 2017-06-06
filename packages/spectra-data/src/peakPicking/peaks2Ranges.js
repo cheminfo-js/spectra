@@ -7,7 +7,14 @@ const impurityRemover = require('./ImpurityRemover');
 const defaultOptions = {
     nH: 100,
     idPrefix: '',
+    clean: 0.5,
+    thresholdFactor: 1,
+    compile: true,
+    integralType: 'sum',
+    optimize: true,
+    frequencyCluster: 16,
 };
+
 /**
  * This function clustering peaks and calculate the integral value for each range from the peak list returned from extractPeaks function.
  * @param {SD} spectrum - SD instance
@@ -26,6 +33,7 @@ function createRanges(spectrum, peakList, options) {
     options = Object.assign({}, defaultOptions, options);
     var i, j;
     var nH = options.nH;
+    peakList = impurityRemover(peakList, options.removeImpurity);
     var signals = detectSignals(spectrum, peakList, options);
 
     if (options.clean) {
@@ -112,7 +120,6 @@ function createRanges(spectrum, peakList, options) {
         signals[i]._highlight = [signals[i].signalID];
     }
 
-
     let ranges = new Array(signals.length);
     for (i = 0; i < signals.length; i++) {
         var signal = signals[i];
@@ -139,7 +146,7 @@ function createRanges(spectrum, peakList, options) {
             ranges[i].signal[0].delta = signal.delta1;
         }
     }
-    ranges = impurityRemover(ranges, options.removeImpurity);
+
     return new Ranges(ranges);
 }
 

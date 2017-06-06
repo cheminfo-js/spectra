@@ -1,9 +1,8 @@
 'use strict';
 
-const defaultOptions = {};
 
-function spectraDataRanges(options) {
-    options = Object.assign({}, defaultOptions, options);
+function spectraDataRanges(options = {}) {
+
 }
 
 module.exports = spectraDataRanges;

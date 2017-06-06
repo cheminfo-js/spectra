@@ -552,11 +552,11 @@ class SD {
      * @param {number} value - value with which to fill
      */
     fill(from, to, value) {
-        var tmp, start, end, x, y;
+        var start, end, x, y;
         if (from > to) {
-            tmp = from;
-            from = to;
-            to = tmp;
+            from = from + to;
+            to = from - to;
+            from = from - to;
         }
 
         for (var i = 0; i < this.getNbSubSpectra(); i++) {
@@ -566,9 +566,9 @@ class SD {
             start = this.unitsToArrayPoint(from);
             end = this.unitsToArrayPoint(to);
             if (start > end) {
-                tmp = start;
-                start = end;
-                end = tmp;
+                start = start + end;
+                end = start - end;
+                start = start - end;
             }
             if (start < 0) {
                 start = 0;
@@ -941,7 +941,7 @@ class SD {
      * @param {object} options - parameters to calculation of peakPicking
      * @return {*}
      */
-    createPeaks(options) {
+    createPeaks(options = {}) {
         this.peaks = peakPicking(this, options);
         return this.peaks;
     }
@@ -951,7 +951,7 @@ class SD {
      * @param {object} options - parameters to calculation of peakPicking
      * @return {*}
      */
-    getPeaks(options) {
+    getPeaks(options = {}) {
         let peaks;
         if (this.peaks) {
             peaks = this.peaks;
