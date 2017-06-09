@@ -17,18 +17,14 @@ module.exports = {
      * @private
      */
     compilePattern: function (signal) {
-        //if (DEBUG) console.log('Debugin...');
-
-        signal.multiplicity = 'm';//By default the multiplicity is massive
+        signal.multiplicity = 'm';
         // 1.1 symmetrize
         // It will add a set of peaks(signal.peaksComp) to the signal that will be used during
         // the compilation process. The unit of those peaks will be in Hz
         signal.symRank = symmetrizeChoiseBest(signal, maxErrorIter1, 1);
         signal.asymmetric = true;
-       // console.log(signal.delta1+" "+signal.symRank);
         //Is the signal symmetric?
         if (signal.symRank >= 0.95 && signal.peaksComp.length < 32) {
-            //if (DEBUG)console.log(signal.delta1 + ' nbPeaks ' + signal.peaksComp.length);
             signal.asymmetric = false;
             var i, j, n, P1, n2, maxFlagged;
             var k = 1;
@@ -36,7 +32,6 @@ module.exports = {
 
             //Loop over the possible number of coupling contributing to the multiplet
             for (n = 0; n < 9; n++) {
-                //if (DEBUG)console.log('Trying ' + n + ' couplings');
                 //1.2 Normalize. It makes a deep copy of the peaks before to modify them.
                 var peaks = normalize(signal, n);
                 //signal.peaksCompX = peaks;
@@ -53,21 +48,12 @@ module.exports = {
                 var ranges = getRanges(peaks);
                 n2 = Math.pow(2, n);
 
-                /*if (DEBUG) {
-                    console.log('ranges: ' + JSON.stringify(ranges));
-                    console.log('Target sum: ' + n2);
-                }*/
-
                 // 1.4 Find a combination of integer heights Hi, one from each Si, that sums to 2^n.
                 var heights = null;
-                while (!validPattern && (heights = getNextCombination(ranges, n2)) !== null) {
-
-                    /*if (DEBUG) {
-                        console.log('Possible pattern found with ' + n + ' couplings!!!');
-                        console.log(heights);
-                    }*/
+                var counter = 1;
+                while (!validPattern && (heights = getNextCombination(ranges, n2)) !== null && counter < 400) {
                     // 2.1 Number the components of the multiplet consecutively from 1 to 2n,
-                    //starting at peak 1
+                    // starting at peak 1
                     var numbering = new Array(heights.length);
                     k = 1;
                     for (i = 0; i < heights.length; i++) {
@@ -76,8 +62,6 @@ module.exports = {
                             numbering[i][j] = k++;
                         }
                     }
-
-                    //if (DEBUG) console.log('Numbering: ' + JSON.stringify(numbering));
 
                     Jc = []; //The array to store the detected j-coupling
                     // 2.2 Set j = 1; J1 = P2 - P1. Flag components 1 and 2 as accounted for.
@@ -90,10 +74,7 @@ module.exports = {
                     var nFlagged = 2;
                     maxFlagged = Math.pow(2, n) - 1;
                     while (Jc.length < n && nFlagged < maxFlagged && k < peaks.length) {
-                        /*if (DEBUG) {
-                            console.log('New Jc' + JSON.stringify(Jc));
-                            console.log('Aval. numbering ' + JSON.stringify(numbering));
-                        }*/
+                        counter += 1;
                         // 4.1. Increment j. Set k to the number of the first unflagged component.
                         j++;
                         while (k < peaks.length && numbering[k].length === 0) {
@@ -133,13 +114,6 @@ module.exports = {
                             validPattern = false;
                         }
                     }
-                    //More verbosity of the process
-                    /*if (DEBUG) {
-                        console.log('Jc ' + JSON.stringify(Jc));
-                        console.log('Heights ' + JSON.stringify(heights));
-                        console.log('pattern ' + JSON.stringify(pattern));
-                        console.log('Valid? ' + validPattern);
-                    }*/
                 }
                 //If we found a valid pattern we should inform about the pattern.
                 if (validPattern) {
@@ -147,7 +121,6 @@ module.exports = {
                 }
             }
         }
-
         //Before to return, change the units of peaksComp from Hz to PPM again
         for (i = 0; i < signal.peaksComp.length; i++) {
             signal.peaksComp[i].x /= signal.observe;

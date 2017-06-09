@@ -436,7 +436,7 @@ class SD {
             var upperLimit = this.getNbPoints() - 1;
             var lowerLimit = 0;
             var midPoint;
-            //If inverted scale
+
             if (this.getFirstX() > this.getLastX()) {
                 upperLimit = 0;
                 lowerLimit = this.getNbPoints() - 1;
@@ -458,7 +458,6 @@ class SD {
 
             while (Math.abs(upperLimit - lowerLimit) > 1) {
                 midPoint = Math.round(Math.floor((upperLimit + lowerLimit) / 2));
-                //x=this.getX(midPoint);
                 if (this.getX(midPoint) === inValue) {
                     return midPoint;
                 }
@@ -553,28 +552,18 @@ class SD {
      */
     fill(from, to, value) {
         var start, end, x, y;
-        if (from > to) {
-            from = from + to;
-            to = from - to;
-            from = from - to;
-        }
 
         for (var i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
+
             x = this.getXData();
             y = this.getYData();
+
             start = this.unitsToArrayPoint(from);
             end = this.unitsToArrayPoint(to);
+
             if (start > end) {
-                start = start + end;
-                end = start - end;
-                start = start - end;
-            }
-            if (start < 0) {
-                start = 0;
-            }
-            if (end >= this.getNbPoints) {
-                end = this.getNbPoints - 1;
+                [start, end] = [end, start];
             }
 
             if (typeof value !== 'number') {
@@ -597,6 +586,12 @@ class SD {
     suppressZone(from, to) {
         this.fill(from, to);
         this.setDataClass(DATACLASS_PEAK);
+    }
+
+    suppressZones(zones = []) {
+        for (var i = 0; i < zones.length; i++) {
+            this.suppressZone(zones[i].from, zones[i].to);
+        }
     }
 
 
@@ -746,13 +741,11 @@ class SD {
         var i0 = this.unitsToArrayPoint(from);
         var ie = this.unitsToArrayPoint(to);
         var area = 0;
+
         if (i0 > ie) {
-            i0 = i0 + ie;
-            ie = i0 - ie;
-            i0 = i0 - ie;
+            [i0, ie] = [ie, i0];
         }
-        i0 = i0 < 0 ? 0 : i0;
-        ie = ie >= this.getNbPoints() ? this.getNbPoints() - 1 : ie;
+
         for (var i = i0; i < ie; i++) {
             area += this.getY(i);
         }
@@ -816,13 +809,9 @@ class SD {
                     let y = this.getSpectraDataY();
 
                     if (x[0] > x[1] && from < to) {
-                        from = from + to;
-                        to = from - to;
-                        from = from - to;
+                        [from, to] = [to, from];
                     } else if (from > to) {
-                        from = from + to;
-                        to = from - to;
-                        from = from - to;
+                        [from, to] = [to, from];
                     }
                     y = ArrayUtils.getEquallySpacedData(x, y, {from: from, to: to, numberOfPoints: options.nbPoints});
 
@@ -869,9 +858,7 @@ class SD {
         var indexOfTo = this.unitsToArrayPoint(to);
 
         if (indexOfFrom > indexOfTo) {
-            indexOfFrom = indexOfFrom + indexOfTo;
-            indexOfTo = indexOfFrom - indexOfTo;
-            indexOfFrom = indexOfFrom - indexOfTo;
+            [indexOfFrom, indexOfTo] = [indexOfTo, indexOfFrom];
         }
         if (indexOfFrom >= 0 && indexOfTo <= this.getNbPoints() - 2) {
             var data = this.getSpectraDataY().slice(indexOfFrom, indexOfTo + 1);

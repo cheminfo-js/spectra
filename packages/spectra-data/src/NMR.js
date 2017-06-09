@@ -80,10 +80,8 @@ class NMR extends SD {
         options = Object.assign({}, {xy: true, keepSpectra: true, keepRecordsRegExp: /^.+$/}, options);
         var brukerSpectra = null;
         if (Array.isArray(brukerFile)) {
-            //It is a folder
             brukerSpectra = Brukerconverter.converFolder(brukerFile, options);
         } else {
-            //It is a zip
             brukerSpectra = Brukerconverter.convertZip(brukerFile, options);
         }
         if (brukerSpectra) {
