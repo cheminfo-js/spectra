@@ -1,6 +1,6 @@
 {
   "name": "nmr-predictor",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "NMR chemical shift predictor",
   "keywords": [],
   "files": [
@@ -33,7 +33,7 @@
   "dependencies": {
     "new-array": "^1.0.0",
     "openchemlib-extended-minimal": "2.0.0",
-    "superagent": "^3.5.0",
-    "spectra-nmr-utilities": "0.0.1"
+    "spectra-nmr-utilities": "^0.0.2",
+    "superagent": "^3.5.0"
   }
 }
