@@ -3,7 +3,7 @@
 const acs = require('./acs/acs');
 const peak2Vector = require('./peak2Vector');
 const GUI = require('./visualizer/index');
-const utils = require('spectra-utilities');
+const utils = require('spectra-nmr-utilities');
 const arrayUtils = require('ml-stat').array;
 class Ranges extends Array {
 

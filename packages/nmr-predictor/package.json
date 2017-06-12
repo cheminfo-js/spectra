@@ -34,6 +34,6 @@
     "new-array": "^1.0.0",
     "openchemlib-extended-minimal": "2.0.0",
     "superagent": "^3.5.0",
-    "spectra-utilities": "0.0.1"
+    "spectra-nmr-utilities": "0.0.1"
   }
 }
