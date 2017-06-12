@@ -17,15 +17,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cheminfo-js/spectra/packages/spectra-utilities.git"
+    "url": "https://github.com/cheminfo-js/spectra/packages/spectra-nmr-utilities.git"
   },
   "keywords": [],
   "author": "jobo322 <jose.bolanos@correounivalle.edu.co>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cheminfo-js/spectra/packages/spectra-utilities/issues"
+    "url": "https://github.com/cheminfo-js/spectra/packages/spectra-nmr-utilities/issues"
   },
-  "homepage": "https://github.com/cheminfo-js/spectra/packages/spectra-utilities#readme",
+  "homepage": "https://github.com/cheminfo-js/spectra/packages/spectra-nmr-utilities#readme",
   "devDependencies": {
     "cheminfo-tools": "^1.11.0",
     "eslint": "^3.12.2",

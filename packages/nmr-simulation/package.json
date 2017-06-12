@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cheminfo-js/nmr-simulation.git"
+    "url": "git+https://github.com/cheminfo-js/spectra.git"
   },
   "keywords": [
     "nmr",
@@ -28,9 +28,9 @@
   "author": "Michaël Zasso",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cheminfo-js/nmr-simulation/issues"
+    "url": "https://github.com/cheminfo-js/spectra/issues"
   },
-  "homepage": "https://github.com/cheminfo-js/nmr-simulation#readme",
+  "homepage": "https://github.com/cheminfo-js/spectra/packages/nmr-simulation#readme",
   "dependencies": {
     "binary-search": "^1.3.2",
     "ml-hclust": "^1.3.0",

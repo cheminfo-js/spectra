@@ -9,9 +9,9 @@
   "author": "andcastillo",
   "repository": "cheminfo-js/nmr-predictor",
   "bugs": {
-    "url": "https://github.com/cheminfo-js/nmr-predictor/issues"
+    "url": "https://github.com/cheminfo-js/spectra/issues"
   },
-  "homepage": "https://github.com/cheminfo-js/nmr-predictor",
+  "homepage": "https://github.com/cheminfo-js/spectra/packages/nmr-predictor",
   "license": "MIT",
   "main": "./src/index.js",
   "scripts": {
