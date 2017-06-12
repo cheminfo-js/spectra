@@ -47,7 +47,9 @@ class SpinSystem {
     }
 
     static fromPrediction(input) {
+        // console.log(JSON.stringify(input))
         let predictions = SpinSystem.ungroupAtoms(input);
+        // console.log(JSON.stringify(predictions));
         const nSpins = predictions.length;
         const cs = new Array(nSpins);
         const jc = Matrix.zeros(nSpins, nSpins);
@@ -62,7 +64,6 @@ class SpinSystem {
             cs[i] = predictions[i].delta;
             j = predictions[i].j;
             for (k = 0; k < j.length; k++) {
-                //console.log(ids[result[i].atomIDs[0]],ids[j[k].assignment]);
                 jc[ids[predictions[i].atomIDs[0]]][ids[j[k].assignment]] = j[k].coupling;
                 jc[ids[j[k].assignment]][ids[predictions[i].atomIDs[0]]] = j[k].coupling;
             }
@@ -79,8 +80,19 @@ class SpinSystem {
             let atomIDs = pred.atomIDs;
             for (let i = 0; i < atomIDs.length; i++) {
                 let tempPred = JSON.parse(JSON.stringify(pred));
+                let nmrJ = [];
                 tempPred.atomIDs = [atomIDs[i]];
                 tempPred.integral = 1;
+                for (let j = 0; j < tempPred.j.length; j++) {
+                    let assignment = tempPred.j[j].assignment;
+                    for (let k = 0; k < assignment.length; k++) {
+                        let tempJ = JSON.parse(JSON.stringify(tempPred.j[j]));
+                        tempJ.assignment = assignment[k];
+                        nmrJ.push(tempJ);
+                    }
+                }
+                tempPred.j = nmrJ;
+                delete tempPred.nbAtoms;
                 result.push(tempPred);
             }
         });
@@ -152,8 +164,10 @@ class SpinSystem {
 
     /**
      * Recursively split the clusters until the maxClusterSize criteria has been ensured.
-     * @param cluster
-     * @param clusterList
+     * @param {Array} cluster
+     * @param {Array} clusterList
+     * @param {number} maxClusterSize
+     * @param  {boolean} force
      */
     _splitCluster(cluster, clusterList, maxClusterSize, force) {
         if (!force && cluster.index.length <= maxClusterSize) {
