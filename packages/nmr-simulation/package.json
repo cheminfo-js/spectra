@@ -1,6 +1,6 @@
 {
   "name": "nmr-simulation",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Simulate NMR spectra from spin systems",
   "main": "src/index.js",
   "scripts": {
@@ -47,7 +47,7 @@
     "eslint-plugin-no-only-tests": "^1.1.0",
     "mocha": "^3.1.2",
     "mocha-better-spec-reporter": "^3.0.1",
-    "nmr-predictor": "^1.0.5",
+    "nmr-predictor": "^1.0.6",
     "should": "^11.1.1"
   }
 }
