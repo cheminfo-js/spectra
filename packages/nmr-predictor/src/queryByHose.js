@@ -2,18 +2,18 @@
 
 const OCLE = require('openchemlib-extended');
 
-const group = require('./group');
-
 module.exports = function queryByHose(molecule, db, options) {
-    //molecule.addImplicitHydrogens();
-    const atomLabel = options.atomLabel || 'H';
-    const use = options.use;
-    var algorithm = options.algorithm || 0;
-    var levels = options.hoseLevels || [6, 5, 4, 3, 2];
+    var {
+        atomLabel = 'H',
+        use = null,
+        algorithm = 0,
+        levels = [6, 5, 4, 3, 2]
+    } = options;
 
     levels.sort(function (a, b) {
         return b - a;
     });
+
     var diaIDs = molecule.getGroupedDiastereotopicAtomIDs({atomLabel});
     var infoCOSY = [];
 
@@ -117,5 +117,5 @@ module.exports = function queryByHose(molecule, db, options) {
             }
         }
     }
-    return group(toReturn, options);
+    return toReturn;
 };

@@ -1,6 +1,6 @@
 'use strict';
 // small note on the best way to define array
-// http://jsperf.com/lp-array-and-loops/2
+    // http://jsperf.com/lp-array-and-loops/2
 
 const StatArray = require('ml-stat').array;
 const ArrayUtils = require('ml-array-utils');
@@ -44,7 +44,7 @@ class SD {
      * @param {object} options - Optional parameters
      * @return {SD} SD instance from x and y data
      */
-    static fromXY(x, y, options) {
+    static fromXY(x, y, options = {}) {
         const result = {};
         result.profiling = [];
         result.logs = [];
@@ -140,8 +140,7 @@ class SD {
      * @param {i} i of sub-spectrum
      * @return {number | *}
      */
-    getFirstX(i) {
-        if (i === undefined) i = this.activeElement;
+    getFirstX(i = this.activeElement) {
         return this.sd.spectra[i].firstX;
     }
 
@@ -150,8 +149,7 @@ class SD {
      * @param {number} x - The value for firstX
      * @param {number} i sub-spectrum Default:activeSpectrum
      */
-    setFirstX(x, i) {
-        if (i === undefined) i = this.activeElement;
+    setFirstX(x, i = this.activeElement) {
         this.sd.spectra[i].firstX = x;
     }
 
@@ -160,8 +158,7 @@ class SD {
      * @param {number} i - sub-spectrum Default:activeSpectrum
      * @return {number}
      */
-    getLastX(i) {
-        if (i === undefined) i = this.activeElement;
+    getLastX(i = this.activeElement) {
         return this.sd.spectra[i].lastX;
     }
 
@@ -171,8 +168,7 @@ class SD {
      * @param {number} x - The value for lastX
      * @param {number} i - sub-spectrum Default:activeSpectrum
      */
-    setLastX(x, i) {
-        if (i === undefined) i = this.activeElement;
+    setLastX(x, i = this.activeElement) {
         this.sd.spectra[i].lastX = x;
     }
 
@@ -183,8 +179,7 @@ class SD {
      * @param {number} i - sub-spectrum Default:activeSpectrum
      * @return {number}
      */
-    getFirstY(i) {
-        if (i === undefined) i = this.activeElement;
+    getFirstY(i = this.activeElement) {
         return this.sd.spectra[i].firstY;
     }
 
@@ -193,8 +188,7 @@ class SD {
      * @param {number} y - the value of firstY
      * @param {number} i - sub-spectrum Default: activeSpectrum
      */
-    setFirstY(y, i) {
-        if (i === undefined) i = this.activeElement;
+    setFirstY(y, i = this.activeElement) {
         this.sd.spectra[i].firstY = y;
     }
 
@@ -203,8 +197,7 @@ class SD {
      * @param {number} i - sub-spectrum Default: activeSpectrum
      * @return {number}
      */
-    getLastY(i) {
-        if (i === undefined) i = this.activeElement;
+    getLastY(i = this.activeElement) {
         return this.sd.spectra[i].lastY;
     }
 
@@ -213,8 +206,7 @@ class SD {
      * @param {number} y - the value of firstY
      * @param {number} i - sub-spectrum Default:activeSpectrum
      */
-    setLastY(y, i) {
-        if (i === undefined) i = this.activeElement;
+    setLastY(y, i = this.activeElement) {
         this.sd.spectra[i].lastY = y;
     }
 
@@ -278,8 +270,7 @@ class SD {
      * @param {number} i - sub-spectrum Default:activeSpectrum
      * @return {object}
      */
-    getSpectrumData(i) {
-        if (i === undefined) i = this.activeElement;
+    getSpectrumData(i = this.activeElement) {
         return this.sd.spectra[i].data[0];
     }
 
@@ -288,8 +279,7 @@ class SD {
      * @param {number} i - sub-spectrum Default:activeSpectrum
      * @return {object}
      */
-    getSpectrum(i) {
-        if (i === undefined) i = this.activeElement;
+    getSpectrum(i = this.activeElement) {
         return this.sd.spectra[i];
     }
 
@@ -394,10 +384,19 @@ class SD {
 
     /**
      * Get the noise threshold level of the current spectrum. It uses median instead of the mean
+     * @param {object} options
+     * @param {number} options.from - lower limit in ppm to compute noise level
+     * @param {number} options.to - upper limit in ppm to compute noise level
      * @return {number}
      */
-    getNoiseLevel() {
-        var median = StatArray.median(this.getYData());
+    getNoiseLevel(options = {}) {
+        let data;
+        if (options.from && options.to) {
+            data = this.getVector(options.from, options.to);
+        } else {
+            data = this.getYData();
+        }
+        var median = StatArray.median(data);
         return median * this.getNMRPeakThreshold(this.getNucleus(1));
     }
 
@@ -427,7 +426,7 @@ class SD {
             var upperLimit = this.getNbPoints() - 1;
             var lowerLimit = 0;
             var midPoint;
-            //If inverted scale
+
             if (this.getFirstX() > this.getLastX()) {
                 upperLimit = 0;
                 lowerLimit = this.getNbPoints() - 1;
@@ -449,7 +448,6 @@ class SD {
 
             while (Math.abs(upperLimit - lowerLimit) > 1) {
                 midPoint = Math.round(Math.floor((upperLimit + lowerLimit) / 2));
-                //x=this.getX(midPoint);
                 if (this.getX(midPoint) === inValue) {
                     return midPoint;
                 }
@@ -543,29 +541,19 @@ class SD {
      * @param {number} value - value with which to fill
      */
     fill(from, to, value) {
-        var tmp, start, end, x, y;
-        if (from > to) {
-            tmp = from;
-            from = to;
-            to = tmp;
-        }
+        var start, end, x, y;
 
         for (var i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
+
             x = this.getXData();
             y = this.getYData();
+
             start = this.unitsToArrayPoint(from);
             end = this.unitsToArrayPoint(to);
+
             if (start > end) {
-                tmp = start;
-                start = end;
-                end = tmp;
-            }
-            if (start < 0) {
-                start = 0;
-            }
-            if (end >= this.getNbPoints) {
-                end = this.getNbPoints - 1;
+                [start, end] = [end, start];
             }
 
             if (typeof value !== 'number') {
@@ -588,6 +576,12 @@ class SD {
     suppressZone(from, to) {
         this.fill(from, to);
         this.setDataClass(DATACLASS_PEAK);
+    }
+
+    suppressZones(zones = []) {
+        for (var i = 0; i < zones.length; i++) {
+            this.suppressZone(zones[i].from, zones[i].to);
+        }
     }
 
 
@@ -737,13 +731,11 @@ class SD {
         var i0 = this.unitsToArrayPoint(from);
         var ie = this.unitsToArrayPoint(to);
         var area = 0;
+
         if (i0 > ie) {
-            i0 = i0 + ie;
-            ie = i0 - ie;
-            i0 = i0 - ie;
+            [i0, ie] = [ie, i0];
         }
-        i0 = i0 < 0 ? 0 : i0;
-        ie = ie >= this.getNbPoints() ? this.getNbPoints() - 1 : ie;
+
         for (var i = i0; i < ie; i++) {
             area += this.getY(i);
         }
@@ -790,10 +782,11 @@ class SD {
      * This will convert the data in equally spaces X.
      * @param {number} from - one limit in spectrum units
      * @param {number} to - one limit in spectrum units
-     * @param {number} nbPoints - number of points to return(!!!sometimes it is not possible to return exactly the required nbPoints)
+     * @param {object} options
+     * @param {number} options.nbPoints - number of points to return(!!!sometimes it is not possible to return exactly the required nbPoints)
      * @return {this}
      */
-    reduceData(from, to, nbPoints) {
+    reduceData(from, to, options = {}) {
         if (!this.isDataClassXY()) {
             throw Error('reduceData can only apply on equidistant data');
         }
@@ -801,20 +794,16 @@ class SD {
         for (let i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
             if (this.getXUnits().toLowerCase() !== 'hz') {
-                if (typeof nbPoints !== 'undefined') {
+                if (options.nbPoints) {
                     let x = this.getSpectraDataX();
                     let y = this.getSpectraDataY();
 
                     if (x[0] > x[1] && from < to) {
-                        from = from + to;
-                        to = from - to;
-                        from = from - to;
+                        [from, to] = [to, from];
                     } else if (from > to) {
-                        from = from + to;
-                        to = from - to;
-                        from = from - to;
+                        [from, to] = [to, from];
                     }
-                    y = ArrayUtils.getEquallySpacedData(x, y, {from: from, to: to, numberOfPoints: nbPoints});
+                    y = ArrayUtils.getEquallySpacedData(x, y, {from: from, to: to, numberOfPoints: options.nbPoints});
 
                     let step = (to - from) / (y.length - 1);
                     x = new Array(y.length).fill(from);
@@ -824,15 +813,13 @@ class SD {
 
                     this.sd.spectra[i].data[0].x = x;
                     this.sd.spectra[i].data[0].y = y;
-                    this.setFirstX(x[0]);
-                    this.setLastX(x[x.length - 1]);
+                    this.setFirstX(x[0]); this.setLastX(x[x.length - 1]);
                     this.sd.spectra[i].nbPoints = y.length;
                 } else {
                     var xyData = this.getPointsInWindow(from, to);
                     this.sd.spectra[i].data[0].x = xyData[0];
                     this.sd.spectra[i].data[0].y = xyData[1];
-                    this.setFirstX(xyData[0][0]);
-                    this.setLastX(xyData[0][xyData[0].length - 1]);
+                    this.setFirstX(xyData[0][0]); this.setLastX(xyData[0][xyData[0].length - 1]);
                     this.sd.spectra[i].nbPoints = xyData[1].length;
                 }
             }
@@ -846,10 +833,11 @@ class SD {
      * Not tested, you have to know what you are doing
      * @param {number} from - index of a limit of the desired window.
      * @param {number} to - index of a limit of the desired window
-     * @param {number} nPoints - number of points in the desired window.
-     * @return {Array} XYarray data of the desired window.
+     * @param {object} options
+     * @param {boolean} options.withoutX
+     * @return {Array} XYarray/Yarray data of the desired window.
      */
-    getPointsInWindow(from, to) {
+    getPointsInWindow(from, to, options = {}) {
         if (!this.isDataClassXY()) {
             throw Error('getPointsInWindow can only apply on equidistant data');
         }
@@ -858,14 +846,15 @@ class SD {
         var indexOfTo = this.unitsToArrayPoint(to);
 
         if (indexOfFrom > indexOfTo) {
-            indexOfFrom = indexOfFrom + indexOfTo;
-            indexOfTo = indexOfFrom - indexOfTo;
-            indexOfFrom = indexOfFrom - indexOfTo;
+            [indexOfFrom, indexOfTo] = [indexOfTo, indexOfFrom];
         }
         if (indexOfFrom >= 0 && indexOfTo <= this.getNbPoints() - 2) {
-            var y = this.getSpectraDataY().slice(indexOfFrom, indexOfTo + 1);
-            var x = this.getSpectraDataX().slice(indexOfFrom, indexOfTo + 1);
-            return [x, y];
+            var data = this.getSpectraDataY().slice(indexOfFrom, indexOfTo + 1);
+            if (!options.withoutX) {
+                var x = this.getSpectraDataX().slice(indexOfFrom, indexOfTo + 1);
+                data = [x, data];
+            }
+            return data;
         } else {
             throw Error('values outside this in range');
         }
@@ -927,7 +916,7 @@ class SD {
      * @param {object} options - parameters to calculation of peakPicking
      * @return {*}
      */
-    createPeaks(options) {
+    createPeaks(options = {}) {
         this.peaks = peakPicking(this, options);
         return this.peaks;
     }
@@ -937,7 +926,7 @@ class SD {
      * @param {object} options - parameters to calculation of peakPicking
      * @return {*}
      */
-    getPeaks(options) {
+    getPeaks(options = {}) {
         let peaks;
         if (this.peaks) {
             peaks = this.peaks;

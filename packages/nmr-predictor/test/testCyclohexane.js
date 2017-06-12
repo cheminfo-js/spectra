@@ -13,8 +13,7 @@ describe('Cyclohexane prediction', function () {
     it('Grouped', async function () {
         this.timeout(10000);
         const prediction = await predictor.spinus(smile, {group: true});
-        //console.log(prediction);
-        prediction[0].j.length.should.eql(0);
+        prediction[0].j.length.should.eql(3); //it has 3 grouped couplings
         prediction.length.should.equal(1);
     });
 });

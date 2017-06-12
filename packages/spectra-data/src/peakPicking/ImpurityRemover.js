@@ -10,11 +10,10 @@ function checkImpurity(peakList, impurity, options) {
         j = peakList.length;
         while (j--) {
             if (!peakList[j].asymmetric) {
-                tolerance = options.error + Math.abs(peakList[j].from - peakList[j].to) / 2;
-                diference = Math.abs(impurity[i].shift - Math.abs(peakList[j].from + peakList[j].to) / 2);
+                tolerance = options.error + peakList[j].width;
+                diference = Math.abs(impurity[i].shift - peakList[j].x);
                 if (diference < tolerance) { // && (impurity[i].multiplicity === '' || (impurity[i].multiplicity.indexOf(peakList[j].multiplicity)) { // some impurities has multiplicities like 'bs' but at presents it is unsupported
                     peakList.splice(j, 1);
-                    break;
                 }
             }
         }
@@ -24,8 +23,6 @@ function checkImpurity(peakList, impurity, options) {
 function removeImpurities(peakList, options = {}) {
     var {
         solvent = '',
-        nH = 99,
-        sumObserved = 0,
         error = 0.025
     } = options;
     solvent = solvent.toLowerCase();
@@ -35,17 +32,6 @@ function removeImpurities(peakList, options = {}) {
         for (let impurity of toCheck) {
             let impurityShifts = solventImpurities[impurity.toLowerCase()];
             checkImpurity(peakList, impurityShifts, {error: error});
-        }
-
-        for (var i = 0; i < peakList.length; i++) {
-            sumObserved += peakList[i].integral;
-        }
-
-        if (sumObserved !== nH) {
-            sumObserved = nH / sumObserved;
-            while (i--) {
-                peakList[i].integral *= sumObserved;
-            }
         }
     }
     return peakList;

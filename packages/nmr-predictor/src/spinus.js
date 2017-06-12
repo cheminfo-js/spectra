@@ -2,8 +2,7 @@
 
 const newArray = require('new-array');
 const superagent = require('superagent');
-
-const group = require('./group');
+const group = require('spectra-nmr-utilities').group;
 const normalizeOptions = require('./normalizeOptions');
 
 /**
@@ -14,7 +13,12 @@ const normalizeOptions = require('./normalizeOptions');
  */
 module.exports = function spinus(molecule, options) {
     [molecule, options] = normalizeOptions(molecule, options);
-    return fromSpinus(molecule).then(prediction => group(prediction, options));
+    return fromSpinus(molecule).then(prediction => {
+        if (options.group) {
+            prediction = group(prediction);
+        }
+        return prediction;
+    });
 };
 
 function fromSpinus(molecule) {
@@ -29,10 +33,9 @@ function fromSpinus(molecule) {
         const cs = data.chemicalShifts;
         const multiplicity = data.multiplicity;
         const integrals = data.integrals;
-
         const nspins = cs.length;
-
         const diaIDs = molecule.getGroupedDiastereotopicAtomIDs({atomLabel: 'H'});
+        const distanceMatrix = molecule.getConnectivityMatrix({pathLength: true});
         var result = new Array(nspins);
         var atoms = {};
         var atomNumbers = [];
@@ -52,37 +55,30 @@ function fromSpinus(molecule) {
             }
         }
 
-        //Average the entries for the equivalent protons
         var idsKeys = Object.keys(ids);
         for (i = 0; i < nspins; i++) {
             tmpCS = csByOclID[atoms[idsKeys[i]]].cs / csByOclID[atoms[idsKeys[i]]].nc;
             result[i] = {
-                atomIDs: [idsKeys[i]],
+                atomIDs: [idsKeys[i]], //It's not in eln format
                 diaIDs: [atoms[idsKeys[i]]],
-                integral: integrals[i],
+                nbAtoms: integrals[i],
                 delta: tmpCS,
                 atomLabel: 'H',
                 j: []
             };
 
             for (j = 0; j < nspins; j++) {
-                //Do not consider coupling constant between diasterotopic atoms
-                if (atoms[idsKeys[j]] !== result[i].diaIDs[0] && jc[i][j] !== 0) {
+                if (jc[i][j] !== 0) {
                     result[i].j.push({
-                        assignment: idsKeys[j],
+                        assignment: [idsKeys[j]],
                         diaID: atoms[idsKeys[j]],
                         coupling: jc[i][j],
-                        multiplicity: multiplicityToString(multiplicity[j])
+                        multiplicity: multiplicity[j],
+                        distance: distanceMatrix[idsKeys[i]][idsKeys[j]]
                     });
                 }
             }
-
-            if (result[i].j.length === 0) {
-                result[i].multiplicity = 's';
-            }
-
         }
-
         return result;
     });
 }
@@ -125,19 +121,6 @@ function spinusParser(result) {
         chemicalShifts: cs,
         integrals,
         couplingConstants: jc,
-        multiplicity: newArray(nspins, 2)
+        multiplicity: newArray(nspins, 'd')
     };
-}
-
-function multiplicityToString(mul) {
-    switch (mul) {
-        case 2:
-            return 'd';
-        case 3:
-            return 't';
-        case 4:
-            return 'q';
-        default:
-            return '';
-    }
 }

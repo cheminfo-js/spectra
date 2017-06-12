@@ -8,7 +8,7 @@
  * detailSeparator : ', '
  */
 
-const joinCoupling = require('../utils').joinCoupling;
+const joinCoupling = require('spectra-nmr-utilities').joinCoupling;
 var globalOptions = {
     h: {
         nucleus: '1H',
