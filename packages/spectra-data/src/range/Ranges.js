@@ -101,6 +101,7 @@ class Ranges extends Array {
 
 
     /**
+     * TODO it is the same code that updateIntegrals in Range class
      * This function normalize or scale the integral data
      * @param {object} options - object with the options
      * @param {boolean} [options.sum] - anything factor to normalize the integrals, Similar to the number of proton in the molecule for a nmr spectrum

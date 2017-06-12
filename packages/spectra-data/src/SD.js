@@ -44,7 +44,7 @@ class SD {
      * @param {object} options - Optional parameters
      * @return {SD} SD instance from x and y data
      */
-    static fromXY(x, y, options) {
+    static fromXY(x, y, options = {}) {
         const result = {};
         result.profiling = [];
         result.logs = [];
@@ -140,8 +140,7 @@ class SD {
      * @param {i} i of sub-spectrum
      * @return {number | *}
      */
-    getFirstX(i) {
-        if (i === undefined) i = this.activeElement;
+    getFirstX(i = this.activeElement) {
         return this.sd.spectra[i].firstX;
     }
 
@@ -150,8 +149,7 @@ class SD {
      * @param {number} x - The value for firstX
      * @param {number} i sub-spectrum Default:activeSpectrum
      */
-    setFirstX(x, i) {
-        if (i === undefined) i = this.activeElement;
+    setFirstX(x, i = this.activeElement) {
         this.sd.spectra[i].firstX = x;
     }
 
@@ -160,8 +158,7 @@ class SD {
      * @param {number} i - sub-spectrum Default:activeSpectrum
      * @return {number}
      */
-    getLastX(i) {
-        if (i === undefined) i = this.activeElement;
+    getLastX(i = this.activeElement) {
         return this.sd.spectra[i].lastX;
     }
 
@@ -171,8 +168,7 @@ class SD {
      * @param {number} x - The value for lastX
      * @param {number} i - sub-spectrum Default:activeSpectrum
      */
-    setLastX(x, i) {
-        if (i === undefined) i = this.activeElement;
+    setLastX(x, i = this.activeElement) {
         this.sd.spectra[i].lastX = x;
     }
 
@@ -183,8 +179,7 @@ class SD {
      * @param {number} i - sub-spectrum Default:activeSpectrum
      * @return {number}
      */
-    getFirstY(i) {
-        if (i === undefined) i = this.activeElement;
+    getFirstY(i = this.activeElement) {
         return this.sd.spectra[i].firstY;
     }
 
@@ -193,8 +188,7 @@ class SD {
      * @param {number} y - the value of firstY
      * @param {number} i - sub-spectrum Default: activeSpectrum
      */
-    setFirstY(y, i) {
-        if (i === undefined) i = this.activeElement;
+    setFirstY(y, i = this.activeElement) {
         this.sd.spectra[i].firstY = y;
     }
 
@@ -203,8 +197,7 @@ class SD {
      * @param {number} i - sub-spectrum Default: activeSpectrum
      * @return {number}
      */
-    getLastY(i) {
-        if (i === undefined) i = this.activeElement;
+    getLastY(i = this.activeElement) {
         return this.sd.spectra[i].lastY;
     }
 
@@ -213,8 +206,7 @@ class SD {
      * @param {number} y - the value of firstY
      * @param {number} i - sub-spectrum Default:activeSpectrum
      */
-    setLastY(y, i) {
-        if (i === undefined) i = this.activeElement;
+    setLastY(y, i = this.activeElement) {
         this.sd.spectra[i].lastY = y;
     }
 
@@ -278,8 +270,7 @@ class SD {
      * @param {number} i - sub-spectrum Default:activeSpectrum
      * @return {object}
      */
-    getSpectrumData(i) {
-        if (i === undefined) i = this.activeElement;
+    getSpectrumData(i = this.activeElement) {
         return this.sd.spectra[i].data[0];
     }
 
@@ -288,8 +279,7 @@ class SD {
      * @param {number} i - sub-spectrum Default:activeSpectrum
      * @return {object}
      */
-    getSpectrum(i) {
-        if (i === undefined) i = this.activeElement;
+    getSpectrum(i = this.activeElement) {
         return this.sd.spectra[i];
     }
 
@@ -823,15 +813,13 @@ class SD {
 
                     this.sd.spectra[i].data[0].x = x;
                     this.sd.spectra[i].data[0].y = y;
-                    this.setFirstX(x[0]);
-                    this.setLastX(x[x.length - 1]);
+                    this.setFirstX(x[0]); this.setLastX(x[x.length - 1]);
                     this.sd.spectra[i].nbPoints = y.length;
                 } else {
                     var xyData = this.getPointsInWindow(from, to);
                     this.sd.spectra[i].data[0].x = xyData[0];
                     this.sd.spectra[i].data[0].y = xyData[1];
-                    this.setFirstX(xyData[0][0]);
-                    this.setLastX(xyData[0][xyData[0].length - 1]);
+                    this.setFirstX(xyData[0][0]); this.setLastX(xyData[0][xyData[0].length - 1]);
                     this.sd.spectra[i].nbPoints = xyData[1].length;
                 }
             }
