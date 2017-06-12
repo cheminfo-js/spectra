@@ -1,8 +1,7 @@
 'use strict';
 
-
-function spectraDataRanges(options = {}) {
-
+function spectraDataRanges() {
+    // todo implement
 }
 
 module.exports = spectraDataRanges;
