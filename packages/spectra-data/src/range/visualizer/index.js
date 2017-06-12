@@ -1,6 +1,6 @@
 'use strict';
 
-var options1D = {type: 'rect', line: 0, lineLabel: 1, labelColor: 'red', strokeColor: 'red', strokeWidth: '1px', fillColor: 'green', width: 0.05, height: 10, toFixed: 1, maxLines: Number.MAX_VALUE, fromToc: false};
+var options1D = {type: 'rect', line: 0, lineLabel: 1, labelColor: 'red', strokeColor: 'red', strokeWidth: '1px', fillColor: 'green', width: 0.05, height: 10, toFixed: 1, maxLines: Number.MAX_VALUE, selectable: true, fromToc: false};
 var options2D = {type: 'rect', labelColor: 'red', strokeColor: 'red', strokeWidth: '1px', fillColor: 'green', width: '6px', height: '6px'};
 
 function annotations1D(ranges, optionsG) {
@@ -38,6 +38,7 @@ function annotations1D(ranges, optionsG) {
                     {x: index.from, y: (options.line * height + 3) + 'px'}];
             }
         }
+
         index._highlight = annotation._highlight;
 
         annotation.type = options.type;
@@ -53,6 +54,7 @@ function annotations1D(ranges, optionsG) {
             };
         }
 
+        annotations.selectable = options.selectable;
         annotation.strokeColor = options.strokeColor;
         annotation.strokeWidth = options.strokeWidth;
         annotation.fillColor = options.fillColor;
