@@ -14,7 +14,7 @@ module.exports.nmrJ = function nmrJ(Js, options = {}) {
         jString += j.multiplicity + ' ' + j.coupling.toFixed(options.nbDecimal);
     }
     return jString;
-}
+};
 
 module.exports.joinCoupling = function joinCoupling(signal, tolerance = 0.05) {
     var jc = signal.j;
@@ -81,7 +81,7 @@ module.exports.joinCoupling = function joinCoupling(signal, tolerance = 0.05) {
         pattern = 'm';
     }
     return pattern;
-}
+};
 
 module.exports.group = function group(signals, options = {}) {
     var i, k;
@@ -147,5 +147,5 @@ module.exports.compilePattern = function compilePattern(signal, tolerance = 0.05
         pattern = 'm';
     }
     return pattern;
-}
+};
 
