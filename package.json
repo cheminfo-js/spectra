@@ -1,7 +1,8 @@
 {
   "scripts": {
     "prepare": "lerna bootstrap",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "publish": "git pull --rebase && npm run test && lerna publish"
   },
   "devDependencies": {
     "lerna": "^2.0.0-rc.4"
