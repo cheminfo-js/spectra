@@ -54,7 +54,7 @@ function annotations1D(ranges, optionsG) {
             };
         }
 
-        annotations.selectable = options.selectable;
+        annotation.selectable = options.selectable;
         annotation.strokeColor = options.strokeColor;
         annotation.strokeWidth = options.strokeWidth;
         annotation.fillColor = options.fillColor;
