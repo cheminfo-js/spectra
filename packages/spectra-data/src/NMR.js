@@ -50,13 +50,13 @@ class NMR extends SD {
         options = Object.assign({}, options, {
             xUnit: 'PPM',
             yUnit: 'Intensity',
-            dataType: 'NMR'
+            dataType: 'NMR SPECTRUM'
         });
         var spectraData = SD.fromXY(x, y, options);
         var spectrum = spectraData.sd.spectra[0];
 
         spectrum.observeFrequency = options.frequency || 400;
-        spectraData.putParam('observeFrequency', spectrum.observeFrequency);
+        spectraData.putParam('observefrequency', spectrum.observeFrequency);
         spectraData.putParam('.SOLVENTNAME', options.solvent || 'none');
         // eslint-disable-next-line camelcase
         spectraData.putParam('.$SW_h', Math.abs(spectrum.lastX - spectrum.firstX) * spectrum.observeFrequency);

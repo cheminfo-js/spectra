@@ -1,7 +1,6 @@
 'use strict';
 
 const Encoder = require('./VectorEncoder');
-const Integer = {MAX_VALUE: Number.MAX_SAFE_INTEGER, MIN_VALUE: Number.MIN_SAFE_INTEGER};
 const CRLF = '\r\n';
 const version = 'Cheminfo tools ' + require('../../package.json').version;
 const defaultParameters = {encode: 'DIFDUP', yFactor: 1, type: 'SIMPLE', keep: []};
@@ -28,10 +27,10 @@ class JcampCreator {
      * @return {string}
      */
     convert(spectraData, options) {
-        // encodeFormat: ('FIX','SQZ','DIF','DIFDUP','CVS','PAC')
         options = Object.assign({}, defaultParameters, options);
         const encodeFormat = options.encode.toUpperCase().trim();
         const factorY = options.yFactor || 1;
+        const limitIntensity = Math.pow(2, 32);
         let type = options.type;
         const userDefinedParams = options.keep;
 
@@ -51,8 +50,8 @@ class JcampCreator {
             minMax = {min: spectraData.getMinZ(), max: spectraData.getMaxZ()};
         }
 
-        if (minMax.max * scale >= Integer.MAX_VALUE / 2) {
-            scale = Integer.MAX_VALUE / (minMax.max * 2);
+        if (minMax.max * scale >= limitIntensity) {
+            scale = limitIntensity / minMax.max;
         }
         if (Math.abs(minMax.max - minMax.min) * scale < 16) {
             scale = 16 / (Math.abs(minMax.max - minMax.min));
@@ -327,7 +326,6 @@ function simpleHead(spectraData, scale, scaleX, encodeFormat, userDefinedParams)
         outString += '##$SFO1= ' + spectraData.getParamDouble('$SFO1', 0) + CRLF;
         outString += '##$NUC1= <' + spectraData.getNucleus() + '>' + CRLF;
         outString += '##.SOLVENT NAME= ' + spectraData.getSolventName() + CRLF;
-
     }
     outString += '##XUNITS=\t' + spectraData.getXUnits() + CRLF;
     outString += '##YUNITS=\t' + spectraData.getYUnits() + CRLF;

@@ -953,7 +953,7 @@ class SD {
      * @example SD.toJcamp(spectraData,{encode:'DIFDUP',yfactor:0.01,type:"SIMPLE",keep:['#batchID','#url']});
      * @return {*} a string containing the jcamp-DX file
      */
-    toJcamp(options) {
+    toJcamp(options = {}) {
         var creator = new JcampCreator();
         return creator.convert(this, Object.assign({}, {yFactor: 1, encode: 'DIFDUP', type: 'SIMPLE'}, options));
     }
