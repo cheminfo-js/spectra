@@ -33,7 +33,7 @@ function simulate1d(spinSystem, options) {
     const b = lnPoints / 2;
     const c = lineWidthPoints * lineWidthPoints * 2;
     for (i = 0; i < gaussianLength; i++) {
-        gaussian[i] = 1e12 * Math.exp(-((i - b) * (i - b)) / c);
+        gaussian[i] = 1e9 * Math.exp(-((i - b) * (i - b)) / c);
     }
 
     const result = new newArray(nbPoints, 0);

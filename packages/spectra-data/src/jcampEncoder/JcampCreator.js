@@ -30,7 +30,7 @@ class JcampCreator {
         options = Object.assign({}, defaultParameters, options);
         const encodeFormat = options.encode.toUpperCase().trim();
         const factorY = options.yFactor || 1;
-        const limitIntensity = Math.pow(2, 32);
+        const limitIntensity = Math.pow(2, 31);
         let type = options.type;
         const userDefinedParams = options.keep;
 
@@ -52,9 +52,6 @@ class JcampCreator {
 
         if (minMax.max * scale >= limitIntensity) {
             scale = limitIntensity / minMax.max;
-        }
-        if (Math.abs(minMax.max - minMax.min) * scale < 16) {
-            scale = 16 / (Math.abs(minMax.max - minMax.min));
         }
 
         var scaleX = Math.abs(1.0 / spectraData.getDeltaX());

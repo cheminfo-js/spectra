@@ -18,9 +18,7 @@ var createdJcamp1 = spectrum.toJcamp({type: 'NTUPLES'});
 
 describe('toJcamp spectra-data examples', function () {
     var spectrum0 = Data.NMR.fromJcamp(createdJcamp0, {fastParse: false});
-   // console.log(createdJcamp0);
     var spectrum1 = Data.NMR.fromJcamp(createdJcamp1, {fastParse: false});
-    //console.log(spectrum.sd.spectra[0].data[0].y);
 
     it('getVector', function () {
         spectrum0.getVector(0.0, 10, 4 * 1024).length.should.equal(4 * 1024);
