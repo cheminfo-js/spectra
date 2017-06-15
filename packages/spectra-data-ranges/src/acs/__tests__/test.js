@@ -10,7 +10,7 @@
  */
 var FS = require('fs');
 var ACS = require('../acs');
-const Ranges = require('../../Ranges');
+const Ranges = require('../../range/Ranges');
 
 var ranges = JSON.parse(FS.readFileSync(__dirname + '/ranges.json'));
 //

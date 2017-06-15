@@ -1,10 +1,10 @@
 'use strict';
 
-var Data = require('../../index.js');
+var spectraData = require('../../../spectra-data/src/');
 var FS = require('fs');
 
 function createSpectraData(filename) {
-    var spectrum = Data.NMR.fromJcamp(
+    var spectrum = spectraData.NMR.fromJcamp(
         FS.readFileSync(__dirname + filename).toString()
     );
     return spectrum;

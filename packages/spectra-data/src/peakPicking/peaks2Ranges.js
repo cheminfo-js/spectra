@@ -1,7 +1,7 @@
 'use strict';
 
 const JAnalyzer = require('./jAnalyzer');
-const Ranges = require('../range/Ranges');
+const Ranges = require('spectra-data-ranges').Ranges;
 const impurityRemover = require('./ImpurityRemover');
 
 const defaultOptions = {
