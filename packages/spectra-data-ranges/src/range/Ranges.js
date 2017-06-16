@@ -1,10 +1,11 @@
 'use strict';
 
-const acs = require('./acs/acs');
+const acs = require('../acs/acs');
 const peak2Vector = require('./peak2Vector');
-const GUI = require('./visualizer/index');
+const GUI = require('../visualizer/annotations');
 const utils = require('spectra-nmr-utilities');
-const arrayUtils = require('ml-stat').array;
+const {arrayUtils} = require('ml-stat');
+
 class Ranges extends Array {
 
     constructor(ranges) {

@@ -1,7 +1,4 @@
 'use strict';
 
-function spectraDataRanges() {
-    // todo implement
-}
-
-module.exports = spectraDataRanges;
+module.exports.GUI = require('./visualizer/annotations');
+module.exports.Ranges = require('./range/Ranges');
