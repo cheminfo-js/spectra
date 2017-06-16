@@ -4,7 +4,7 @@ const acs = require('../acs/acs');
 const peak2Vector = require('./peak2Vector');
 const GUI = require('../visualizer/annotations');
 const utils = require('spectra-nmr-utilities');
-const {arrayUtils} = require('ml-stat');
+const arrayUtils = require('ml-stat').array;
 
 class Ranges extends Array {
 
