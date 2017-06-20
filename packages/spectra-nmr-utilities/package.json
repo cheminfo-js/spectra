@@ -12,8 +12,7 @@
     "test": "npm run test-mocha && npm run eslint",
     "test-cov": "istanbul cover node_modules/.bin/_mocha -- --require should --reporter dot --recursive",
     "test-travis": "istanbul cover node_modules/.bin/_mocha --report lcovonly -- --require should --reporter dot --recursive",
-    "test-mocha": "mocha --require should --reporter mocha-better-spec-reporter",
-    "build": "cheminfo build"
+    "test-mocha": "mocha --require should --reporter mocha-better-spec-reporter"
   },
   "repository": {
     "type": "git",
@@ -27,7 +26,6 @@
   },
   "homepage": "https://github.com/cheminfo-js/spectra/packages/spectra-nmr-utilities#readme",
   "devDependencies": {
-    "cheminfo-tools": "^1.11.0",
     "eslint": "^3.12.2",
     "eslint-config-cheminfo": "^1.6.0",
     "eslint-plugin-no-only-tests": "^1.1.0",

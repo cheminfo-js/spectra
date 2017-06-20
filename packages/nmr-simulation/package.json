@@ -7,8 +7,7 @@
     "eslint": "eslint src test --cache",
     "eslint-fix": "npm run eslint -- --fix",
     "test": "npm run test-mocha && npm run eslint",
-    "test-mocha": "mocha --require should --reporter mocha-better-spec-reporter --recursive",
-    "build": "cheminfo build"
+    "test-mocha": "mocha --require should --reporter mocha-better-spec-reporter --recursive"
   },
   "files": [
     "src"
@@ -41,7 +40,6 @@
     "num-sort": "^1.0.0"
   },
   "devDependencies": {
-    "cheminfo-tools": "^1.11.0",
     "eslint": "^3.9.1",
     "eslint-config-cheminfo": "^1.5.2",
     "eslint-plugin-no-only-tests": "^1.1.0",

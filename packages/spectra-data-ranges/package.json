@@ -10,8 +10,7 @@
     "eslint": "eslint src test",
     "eslint-fix": "npm run eslint -- --fix",
     "test": "npm run test-mocha && npm run eslint",
-    "test-mocha": "mocha --require should --reporter mocha-better-spec-reporter",
-    "build": "cheminfo build"
+    "test-mocha": "mocha --require should --reporter mocha-better-spec-reporter"
   },
   "repository": {
     "type": "git",
@@ -25,7 +24,6 @@
   },
   "homepage": "https://github.com/cheminfo-js/spectra/packages/spectra-data-ranges#readme",
   "devDependencies": {
-    "cheminfo-tools": "^1.11.0",
     "eslint": "^3.12.2",
     "eslint-config-cheminfo": "^1.6.0",
     "eslint-plugin-no-only-tests": "^1.1.0",
