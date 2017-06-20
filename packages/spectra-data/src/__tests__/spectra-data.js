@@ -1,5 +1,6 @@
 'use strict';
 
+require('should');
 const spectraData = require('..');
 
 describe('spectra-data examples library name', function () {

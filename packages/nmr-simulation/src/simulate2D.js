@@ -2,7 +2,10 @@
 
 const Matrix = require('ml-matrix');
 
-let defOptions = {'H': {frequency: 400, lineWidth: 10}, 'C': {frequency: 100, lineWidth: 10}};
+let defOptions = {
+    H: {frequency: 400, lineWidth: 10},
+    C: {frequency: 100, lineWidth: 10}
+};
 
 function simule2DNmrSpectrum(table, options) {
     var i;

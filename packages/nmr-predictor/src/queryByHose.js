@@ -76,10 +76,10 @@ module.exports = function queryByHose(molecule, db, options) {
         for (i = infoCOSY.length - 1; i >= 0; i--) {
             if (infoCOSY[i].atom1 - 1 === atomNumbers[j] && infoCOSY[i].coupling > 2) {
                 atom.j.push({
-                    'assignment': infoCOSY[i].atom2 - 1 + '', //Put the diaID instead
-                    'diaID': infoCOSY[i].diaID2,
-                    'coupling': infoCOSY[i].coupling,
-                    'multiplicity': 'd'
+                    assignment: infoCOSY[i].atom2 - 1 + '', //Put the diaID instead
+                    diaID: infoCOSY[i].diaID2,
+                    coupling: infoCOSY[i].coupling,
+                    multiplicity: 'd'
                 });
             }
         }

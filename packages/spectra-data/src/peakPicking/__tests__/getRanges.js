@@ -1,5 +1,6 @@
 'use strict';
 
+require('should');
 const NMR = require('../../NMR.js');
 
 var NbPoints = 101;

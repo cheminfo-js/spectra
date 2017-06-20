@@ -1,19 +1,21 @@
 'use strict';
 
 /**
-* class encodes a integer vector as a String in order to store it in a text file.
-* The algorithms used to encode the data are describe in:
-*            http://www.iupac.org/publications/pac/pdf/2001/pdf/7311x1765.pdf
-* Created by acastillo on 3/2/16.
-*/
+ * class encodes a integer vector as a String in order to store it in a text file.
+ * The algorithms used to encode the data are describe in:
+ *            http://www.iupac.org/publications/pac/pdf/2001/pdf/7311x1765.pdf
+ * Created by acastillo on 3/2/16.
+ */
 const newLine = '\r\n';
 
-const pseudoDigits = [['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-              ['@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
-              ['@', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'],
-              ['%', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'],
-              ['%', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r'],
-              [' ', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 's']];
+const pseudoDigits = [
+    ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    ['@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+    ['@', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'],
+    ['%', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'],
+    ['%', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r'],
+    [' ', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 's']
+];
 
 const SQZ_P = 1;
 const SQZ_N = 2;
@@ -95,6 +97,7 @@ function fixEncoding(data, firstX, intervalX, separator) {
     }
     return outputData;
 }
+
 /**
  * @private
  * No data compression used. The data is separated by the sign of the number.
@@ -133,6 +136,7 @@ function packedEncoding(data, firstX, intervalX) {
     }
     return outputData;
 }
+
 /**
  * @private
  * Data compression is possible using the squeezed form (SQZ) in which the delimiter, the leading digit,
@@ -310,6 +314,7 @@ function squeezedDigit(num) {
 
     return SQZdigit;
 }
+
 /**
  * @private
  * Convert number to the DIF format, using pseudo digits.
@@ -335,6 +340,7 @@ function differenceDigit(num) {
 
     return DIFFdigit;
 }
+
 /**
  * @private
  * Convert number to the DUP format, using pseudo digits.

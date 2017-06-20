@@ -1,19 +1,11 @@
 {
   "name": "spectra-nmr-utilities",
   "version": "0.0.2",
-  "description": "",
+  "description": "spectra NMR utilities",
   "main": "./src/index.js",
   "files": [
     "src"
   ],
-  "scripts": {
-    "eslint": "eslint src test",
-    "eslint-fix": "npm run eslint -- --fix",
-    "test": "npm run test-mocha && npm run eslint",
-    "test-cov": "istanbul cover node_modules/.bin/_mocha -- --require should --reporter dot --recursive",
-    "test-travis": "istanbul cover node_modules/.bin/_mocha --report lcovonly -- --require should --reporter dot --recursive",
-    "test-mocha": "mocha --require should --reporter mocha-better-spec-reporter"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/cheminfo-js/spectra/packages/spectra-nmr-utilities.git"
@@ -24,14 +16,5 @@
   "bugs": {
     "url": "https://github.com/cheminfo-js/spectra/packages/spectra-nmr-utilities/issues"
   },
-  "homepage": "https://github.com/cheminfo-js/spectra/packages/spectra-nmr-utilities#readme",
-  "devDependencies": {
-    "eslint": "^3.12.2",
-    "eslint-config-cheminfo": "^1.6.0",
-    "eslint-plugin-no-only-tests": "^1.1.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
-    "mocha-better-spec-reporter": "^3.1.0",
-    "should": "^11.1.2"
-  }
+  "homepage": "https://github.com/cheminfo-js/spectra/packages/spectra-nmr-utilities#readme"
 }

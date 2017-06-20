@@ -1,9 +1,9 @@
 'use strict';
 
-const nmr = require('..');
-const predictor = require('nmr-predictor');
+require('should');
+const predictor = require('..');
 
-var molfile = `Benzene, ethyl-, ID: C100414
+const molfile = `Benzene, ethyl-, ID: C100414
   NIST    16081116462D 1   1.00000     0.00000
 Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
   8  8  0     0  0              1 V2000
@@ -26,24 +26,18 @@ Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
 M  END
 `;
 
-describe('Simulation from molfile', function () {
-    it('simulation gives {x,y} data', function () {
-        return predictor.spinus(molfile, {group: true}).then(prediction => {
-            const spinSystem = nmr.SpinSystem.fromPrediction(prediction);
-            var options = {
-                frequency: 400.082470657773,
-                from: 0,
-                to: 11,
-                lineWidth: 1,
-                nbPoints: 16384,
-                maxClusterSize: 8,
-                output: 'xy'
-            };
-            spinSystem.ensureClusterSize(options);
-            var simulation = nmr.simulate1D(spinSystem, options);
-            simulation.should.have.property('x');
-            simulation.should.have.property('y');
-            simulation.x.length.should.eql(16384);
-        });
+describe('URL JSON 1H prediction', function () {
+    it.skip('1H chemical shift prediction expanded', async function () {
+        await predictor.fetchProton('https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/h1.json', 'customProton');
+        const prediction = predictor.proton(molfile, {group: true, db: 'customProton'});
+        prediction.length.should.eql(5);
+    });
+});
+
+describe('URL JSON 13C prediction', function () {
+    it.skip('13C chemical shift prediction expanded', async function () {
+        await predictor.fetchCarbon('https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/nmrshiftdb2.json', 'customCarbon');
+        const prediction = predictor.carbon(molfile, {group: true, db: 'customCarbon'});
+        prediction.length.should.eql(6);
     });
 });

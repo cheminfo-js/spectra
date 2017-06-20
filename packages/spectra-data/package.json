@@ -6,6 +6,9 @@
     "spectra-data",
     "project"
   ],
+  "files": [
+    "src"
+  ],
   "author": "Andres Castillo",
   "contributors": [
     "Michaël Zasso",
@@ -18,20 +21,8 @@
   "homepage": "https://github.com/cheminfo-js/spectra/packages/spectra-data",
   "license": "MIT",
   "main": "./src/index.js",
-  "scripts": {
-    "eslint": "eslint src test --cache",
-    "eslint-fix": "npm run eslint -- --fix",
-    "test": "npm run test-mocha && npm run eslint",
-    "test-mocha": "mocha --require should --reporter mocha-better-spec-reporter --recursive src/**/__tests__/**/*.js"
-  },
   "devDependencies": {
-    "eslint": "^3.9.1",
-    "eslint-config-cheminfo": "^1.5.2",
-    "eslint-plugin-no-only-tests": "^1.1.0",
-    "mocha": "^3.1.2",
-    "mocha-better-spec-reporter": "^3.0.1",
-    "nmr-predictor": "^1.0.6",
-    "should": "^11.1.1"
+    "nmr-predictor": "^1.0.6"
   },
   "dependencies": {
     "brukerconverter": "^1.0.1",

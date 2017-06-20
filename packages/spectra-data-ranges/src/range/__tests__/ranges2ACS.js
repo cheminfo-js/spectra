@@ -1,7 +1,8 @@
 'use strict';
 
+require('should');
 const FS = require('fs');
-const spectraData = require('../../../spectra-data/src/');
+const spectraData = require('spectra-data');
 
 function createSpectraData(filename) {
     var spectrum = spectraData.NMR.fromJcamp(
@@ -12,8 +13,7 @@ function createSpectraData(filename) {
 
 
 describe('spectra-data examples peak picking in ACS format', function () {
-    this.timeout(100000);
-    var spectrum = createSpectraData('/../../../data-test/ethylbenzene/h1_0.jdx');
+    var spectrum = createSpectraData('/../../../../../data-test/ethylbenzene/h1_0.jdx');
 
     it('format ACS new input format', function () {
         var peakPicking2 = spectrum.createRanges({nH: 10,

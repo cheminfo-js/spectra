@@ -1,4 +1,6 @@
 'use strict';
+
+require('should');
 const Data = require('../../..');
 const FS = require('fs');
 
@@ -11,7 +13,7 @@ function createSpectraData(filename) {
 
 describe('spectra-data examples getRanges', function () {
     it('number of peaks', function () {
-        var spectrum = createSpectraData('/../../../data-test/indometacin/1h.dx');
+        var spectrum = createSpectraData('/../../../../../data-test/indometacin/1h.dx');
         var ranges = spectrum.getRanges({
             nH: 16,
             realTop: true,

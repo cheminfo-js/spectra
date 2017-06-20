@@ -29,7 +29,7 @@ module.exports = {
         var properties = initializeProperties(signals);
         var output = signals;
 
-		//First step of the optimization: Symmetry validation
+        //First step of the optimization: Symmetry validation
         var i, hits, index;
         var signal;
         for (i = output.length - 1; i >= 0; i--) {
@@ -45,18 +45,18 @@ module.exports = {
                 }
             }
         }
-		//Second step of the optimization: Diagonal image existence
+        //Second step of the optimization: Diagonal image existence
         for (i = output.length - 1; i >= 0; i--) {
             signal = output[i];
             if (properties[i][0] === 0) {
                 hits = checkCrossPeaks(output, properties, signal, true);
                 properties[i][1] += hits;
-				//checkCrossPeaks(output, properties, signal, false);
+                //checkCrossPeaks(output, properties, signal, false);
             }
         }
 
-		//Now, each peak have a score between 0 and 4, we can complete the patterns which
-		//contains peaks with high scores, and finally, we can remove peaks with scores 0 and 1
+        //Now, each peak have a score between 0 and 4, we can complete the patterns which
+        //contains peaks with high scores, and finally, we can remove peaks with scores 0 and 1
         var count = 0;
         for (i = output.length - 1; i >= 0; i--) {
             if (properties[i][0] !== 0 && properties[i][1] > 2) {
@@ -72,7 +72,7 @@ module.exports = {
         count--;
         for (i = output.length - 1; i >= 0; i--) {
             if (properties[i][0] !== 0 && properties[i][1] > 2
-					|| properties[i][0] === 0 && properties[i][1] > 1) {
+     || properties[i][0] === 0 && properties[i][1] > 1) {
                 toReturn[count--] = output[i];
             }
         }
@@ -85,7 +85,7 @@ module.exports = {
      * @param {Array} references
      */
     alignDimensions: function (signals2D, references) {
-		//For each reference dimension
+        //For each reference dimension
         for (var i = 0; i < references.length; i++) {
             var ref = references[i];
             if (ref)				{
@@ -96,7 +96,7 @@ module.exports = {
 };
 
 function completeMissingIfNeeded(output, properties, thisSignal, thisProp) {
-	//Check for symmetry
+    //Check for symmetry
     var index = exist(output, properties, thisSignal, -thisProp[0], true);
     var addedPeaks = 0;
     var newSignal = null;
@@ -113,7 +113,7 @@ function completeMissingIfNeeded(output, properties, thisSignal, thisProp) {
         properties.push(tmpProp);
         addedPeaks++;
     }
-	//Check for diagonal peaks
+    //Check for diagonal peaks
     var j, signal;
     var diagX = false;
     var diagY = false;
@@ -185,7 +185,7 @@ function checkCrossPeaks(output, properties, signal, updateProperties) {
             }
         }
     }
-	//Update found crossPeaks and diagonal peak
+    //Update found crossPeaks and diagonal peak
     shift /= (crossPeaksX.length + crossPeaksY.length + 4);
     if (crossPeaksX.length > 0) {
         for (i = crossPeaksX.length - 1; i >= 0; i--) {
@@ -237,7 +237,7 @@ function initializeProperties(signals) {
     var signalsProperties = new Array(signals.length);
     for (var i = signals.length - 1; i >= 0; i--) {
         signalsProperties[i] = [0, 0];
-		//We check if it is a diagonal peak
+        //We check if it is a diagonal peak
         if (Math.abs(signals[i].shiftX - signals[i].shiftY) <= diagonalError) {
             signalsProperties[i][1] = 1;
             var shift = (signals[i].shiftX * 2 + signals[i].shiftY) / 3.0;
@@ -266,15 +266,15 @@ function initializeProperties(signals) {
 function distanceTo(a, b, toImage) {
     if (!toImage) {
         return Math.sqrt(Math.pow(a.shiftX - b.shiftX, 2)
-			+ Math.pow(a.shiftY - b.shiftY, 2));
+   + Math.pow(a.shiftY - b.shiftY, 2));
     } else {
         return Math.sqrt(Math.pow(a.shiftX - b.shiftY, 2)
-			+ Math.pow(a.shiftY - b.shiftX, 2));
+   + Math.pow(a.shiftY - b.shiftX, 2));
     }
 }
 
 function alignSingleDimension(signals2D, references) {
-	//For each 2D signal
+    //For each 2D signal
     var center = 0;
     var width = 0;
     var i, j;
@@ -284,7 +284,7 @@ function alignSingleDimension(signals2D, references) {
             center = (references[j].startX + references[j].stopX) / 2;
             width = Math.abs(references[j].startX - references[j].stopX) / 2;
             if (signal2D.nucleusX === references[j].nucleus) {
-				//The 2D peak overlaps with the 1D signal
+                //The 2D peak overlaps with the 1D signal
                 if (Math.abs(signal2D.shiftX - center) <= width) {
                     signal2D._highlight.push(references[j]._highlight[0]);
                 }

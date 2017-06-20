@@ -1,5 +1,6 @@
 'use strict';
 
+require('should');
 const predictor = require('..');
 const fs = require('fs');
 
@@ -31,22 +32,18 @@ M  END
 
 describe('Spinus prediction', function () {
     it('1H chemical shift prediction expanded', async function () {
-        this.timeout(10000);
         const prediction = await predictor.spinus(molfile);
         prediction.length.should.equal(10);
     });
     it('1H chemical shift prediction grouped', async function () {
-        this.timeout(10000);
         const prediction = await predictor.spinus(molfile, {group: true});
         prediction.length.should.equal(5);
     });
     it('1H chemical shift prediction expanded from SMILES', async function () {
-        this.timeout(10000);
         const prediction = await predictor.spinus('c1ccccc1');
         prediction.length.should.equal(6);
     });
     it('1H chemical shift prediction expanded from SMILES', async function () {
-        this.timeout(10000);
         const prediction = await predictor.spinus('c1ccccc1CC');
         prediction.length.should.equal(10);
     });

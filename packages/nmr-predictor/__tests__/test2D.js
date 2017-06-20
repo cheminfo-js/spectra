@@ -1,5 +1,6 @@
 'use strict';
 
+require('should');
 const predictor = require('..');
 const fs = require('fs');
 

@@ -1,6 +1,6 @@
 'use strict';
 // small note on the best way to define array
-    // http://jsperf.com/lp-array-and-loops/2
+// http://jsperf.com/lp-array-and-loops/2
 
 const StatArray = require('ml-stat').array;
 const ArrayUtils = require('ml-array-utils');

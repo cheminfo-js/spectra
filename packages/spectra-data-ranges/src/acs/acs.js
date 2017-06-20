@@ -184,7 +184,7 @@ function appendSeparator(strings) {
 
 function formatAssignment(assignment) {
     assignment = assignment.replace(/([0-9]+)/g, '<sub>$1</sub>');
-    assignment = assignment.replace(/\"([^\"]*)\"/g, '<i>$1</i>');
+    assignment = assignment.replace(/"([^"]*)"/g, '<i>$1</i>');
     return assignment;
 }
 
