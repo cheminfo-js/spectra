@@ -47,9 +47,7 @@ class SpinSystem {
     }
 
     static fromPrediction(input) {
-        // console.log(JSON.stringify(input))
         let predictions = SpinSystem.ungroupAtoms(input);
-        // console.log(JSON.stringify(predictions));
         const nSpins = predictions.length;
         const cs = new Array(nSpins);
         const jc = Matrix.zeros(nSpins, nSpins);

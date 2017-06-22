@@ -169,9 +169,9 @@ setimmediate@^1.0.2:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/setimmediate/-/setimmediate-1.0.5.tgz#290cbb232e306942d7d7ea9b83732ab7856f8285"
 
-spectra-nmr-utilities@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/spectra-nmr-utilities/-/spectra-nmr-utilities-0.0.2.tgz#0d08362bb9ffb7a78c0ac7d853bf692e3c04820d"
+spectra-nmr-utilities@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/spectra-nmr-utilities/-/spectra-nmr-utilities-0.0.3.tgz#e0b0d44d64547676671b2961824803972182fba0"
 
 string_decoder@~0.10.x:
   version "0.10.31"

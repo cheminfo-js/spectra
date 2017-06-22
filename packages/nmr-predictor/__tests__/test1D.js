@@ -31,21 +31,25 @@ M  END
 `;
 
 describe('Spinus prediction', function () {
-    it('1H chemical shift prediction expanded', async function () {
-        const prediction = await predictor.spinus(molfile);
-        prediction.length.should.equal(10);
+    it('1H chemical shift prediction expanded', function () {
+        predictor.spinus(molfile).then(prediction => {
+            prediction.length.should.equal(10);
+        });
     });
-    it('1H chemical shift prediction grouped', async function () {
-        const prediction = await predictor.spinus(molfile, {group: true});
-        prediction.length.should.equal(5);
+    it('1H chemical shift prediction grouped', function () {
+        predictor.spinus(molfile, {group: true}).then(prediction => {
+            prediction.length.should.equal(5);
+        });
     });
-    it('1H chemical shift prediction expanded from SMILES', async function () {
-        const prediction = await predictor.spinus('c1ccccc1');
-        prediction.length.should.equal(6);
+    it('1H chemical shift prediction expanded from SMILES', function () {
+        predictor.spinus('c1ccccc1').then(prediction => {
+            prediction.length.should.equal(6);
+        });
     });
-    it('1H chemical shift prediction expanded from SMILES', async function () {
-        const prediction = await predictor.spinus('c1ccccc1CC');
-        prediction.length.should.equal(10);
+    it('1H chemical shift prediction expanded from SMILES', function () {
+        predictor.spinus('c1ccccc1CC').then(prediction => {
+            prediction.length.should.equal(10);
+        });
     });
 });
 

@@ -290,7 +290,7 @@ describe('Update ranges', function () {
         ranges = ranges.updateIntegrals({factor: 2});
         ranges.should.eql(new Ranges([{integral: 2}, {integral: 4}]));
     });
-    it('update multiplicity', function() {
+    it('update multiplicity', function () {
         var range = Ranges.fromSignals(signalsGrouped, {lineWidth: 1});
         range.updateMultiplicity();
         range[0].signal[0].multiplicity.should.equal('t');

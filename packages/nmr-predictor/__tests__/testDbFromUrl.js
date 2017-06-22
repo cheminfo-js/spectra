@@ -26,17 +26,19 @@ Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
 M  END
 `;
 
+const path = 'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/';
+
 describe('URL JSON 1H prediction', function () {
-    it.skip('1H chemical shift prediction expanded', async function () {
-        await predictor.fetchProton('https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/h1.json', 'customProton');
+    it.skip('1H chemical shift prediction expanded', function () {
+        predictor.fetchProton(path + 'h1.json', 'customProton');
         const prediction = predictor.proton(molfile, {group: true, db: 'customProton'});
         prediction.length.should.eql(5);
     });
 });
 
 describe('URL JSON 13C prediction', function () {
-    it.skip('13C chemical shift prediction expanded', async function () {
-        await predictor.fetchCarbon('https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/nmrshiftdb2.json', 'customCarbon');
+    it.skip('13C chemical shift prediction expanded', function () {
+        predictor.fetchCarbon(path + 'nmrshiftdb2.json', 'customCarbon');
         const prediction = predictor.carbon(molfile, {group: true, db: 'customCarbon'});
         prediction.length.should.eql(6);
     });
