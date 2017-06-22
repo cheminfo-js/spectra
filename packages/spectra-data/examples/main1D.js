@@ -14,6 +14,7 @@ function createSpectraData(filename, label, data) {
 //var spectrum=createSpectraData("/data/h1_119.jdx");
 var spectrum = createSpectraData('/data/broadPeak.jdx');
 
+
 var ranges = spectrum.getRanges({nH: 10, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true,
     gsdOptions: {minMaxRatio: 0.03, broadRatio: 0.0025, smoothY: true, nL: 4}
 });
