@@ -214,6 +214,19 @@ class Ranges extends Array {
         });
     }
 
+    updateMultiplicity(options = {}) {
+        this.forEach(range => {
+            if (range.signal) {
+                let signal = range.signal;
+                if (signal.length === 1) {
+                    signal[0].multiplicity = utils.joinCoupling(signal[0], options.tolerance);
+                } else {
+                    signal.forEach(signal => signal.multiplicity = 'm');
+                }
+            }
+        });
+    }
+
     clone() {
         let newRanges = JSON.parse(JSON.stringify(this));
         return new Ranges(newRanges);
