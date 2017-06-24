@@ -2,7 +2,7 @@
 
 const newArray = require('new-array');
 const superagent = require('superagent');
-const group = require('spectra-nmr-utilities').group;
+const {group} = require('spectra-nmr-utilities');
 const normalizeOptions = require('./normalizeOptions');
 
 /**

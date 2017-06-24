@@ -16,7 +16,7 @@
   "main": "./src/index.js",
   "dependencies": {
     "new-array": "^1.0.0",
-    "openchemlib-extended-minimal": "2.0.0",
+    "openchemlib-extended": "2.2.0",
     "spectra-nmr-utilities": "^0.0.5",
     "superagent": "^3.5.0"
   }

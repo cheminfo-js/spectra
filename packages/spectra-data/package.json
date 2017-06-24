@@ -21,6 +21,9 @@
   "homepage": "https://github.com/cheminfo-js/spectra/packages/spectra-data",
   "license": "MIT",
   "main": "./src/index.js",
+  "jest": {
+    "testEnvironment": "node"
+  },
   "devDependencies": {
     "nmr-predictor": "^1.0.9"
   },

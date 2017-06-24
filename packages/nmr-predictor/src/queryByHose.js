@@ -1,6 +1,6 @@
 'use strict';
 
-const OCLE = require('openchemlib-extended');
+const {Util} = require('openchemlib-extended');
 
 module.exports = function queryByHose(molecule, db, options) {
     var {
@@ -21,7 +21,7 @@ module.exports = function queryByHose(molecule, db, options) {
     var atomNumbers = [];
     var i, k, j, atom, hosesString;
     for (j = diaIDs.length - 1; j >= 0; j--) {
-        hosesString = OCLE.Util.getHoseCodesFromDiastereotopicID(diaIDs[j].oclID, {
+        hosesString = Util.getHoseCodesFromDiastereotopicID(diaIDs[j].oclID, {
             maxSphereSize: levels[0],
             type: algorithm
         });

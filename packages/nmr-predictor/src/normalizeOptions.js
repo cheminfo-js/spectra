@@ -1,6 +1,6 @@
 'use strict';
 
-const {Molecule} = require('openchemlib-extended-minimal');
+const {Molecule} = require('openchemlib-extended');
 
 const defaultOptions = {
     atomLabel: 'H',
