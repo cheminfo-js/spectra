@@ -106,7 +106,14 @@ new-array@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/new-array/-/new-array-1.0.0.tgz#5dbc639d961eac7f1a9fbc1a7146ec12f2924fbf"
 
-openchemlib-extended@^2.2.0:
+openchemlib-extended-minimal@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/openchemlib-extended-minimal/-/openchemlib-extended-minimal-2.0.0.tgz#ab9428e8b73c821a2518757f72f7e00050ba3d4e"
+  dependencies:
+    openchemlib "^5.1.2"
+    openchemlib-extended "^2.1.2"
+
+openchemlib-extended@^2.1.2:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/openchemlib-extended/-/openchemlib-extended-2.2.0.tgz#b906a59eb3b23d028464ece98229c23d8e609476"
   dependencies:
@@ -118,7 +125,7 @@ openchemlib-extended@^2.2.0:
     sdf-parser "^1.0.0"
     setimmediate "^1.0.2"
 
-openchemlib@^5.1.1:
+openchemlib@^5.1.1, openchemlib@^5.1.2:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/openchemlib/-/openchemlib-5.2.2.tgz#179b5a8bd3dd1ea33dda7a5e16b9ab93f4292721"
 
@@ -161,10 +168,6 @@ sdf-parser@^1.0.0:
 setimmediate@^1.0.2:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/setimmediate/-/setimmediate-1.0.5.tgz#290cbb232e306942d7d7ea9b83732ab7856f8285"
-
-spectra-nmr-utilities@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/spectra-nmr-utilities/-/spectra-nmr-utilities-0.0.5.tgz#1471cec1b8f6cc99e1b6faa4c899f72aa65d4a7f"
 
 string_decoder@~1.0.3:
   version "1.0.3"

@@ -1,8 +1,9 @@
 'use strict';
 
-const {Util} = require('openchemlib-extended');
+const getOcleFromOptions = require('./getOcleFromOptions');
 
 module.exports = function queryByHose(molecule, db, options) {
+    const {Util} = getOcleFromOptions(options);
     var {
         atomLabel = 'H',
         use = null,

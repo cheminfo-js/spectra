@@ -1,6 +1,6 @@
 'use strict';
 
-const {Molecule} = require('openchemlib-extended');
+const getOcleFromOptions = require('./getOcleFromOptions');
 
 const defaultOptions = {
     atomLabel: 'H',
@@ -8,7 +8,9 @@ const defaultOptions = {
     use: 'median'
 };
 
-module.exports = function options(molecule, options) {
+module.exports = function normalizeOptions(molecule, options) {
+    options = Object.assign({}, defaultOptions, options);
+    let {Molecule} = getOcleFromOptions(options);
     if (typeof molecule === 'string') {
         if (molecule.split(/[\r\n]+/).length > 2) {
             molecule = Molecule.fromMolfile(molecule);
@@ -18,14 +20,12 @@ module.exports = function options(molecule, options) {
     } else if (!(molecule instanceof Molecule)) {
         throw new Error('molecule must be a molfile string or Molecule instance');
     }
-    options = Object.assign({}, defaultOptions, options);
 
     if (options.atomLabel === 'H') {
         molecule.addImplicitHydrogens();
     }
     //@TODO Should be removed
     if (options.atomLabel === 'C') {
-        //molecule.addImplicitHydrogens();
         molecule.removeExplicitHydrogens();
     }
 
