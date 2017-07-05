@@ -19,5 +19,8 @@
     "openchemlib-extended-minimal": "^2.0.0",
     "spectra-nmr-utilities": "^0.0.5",
     "superagent": "^3.5.0"
+  },
+  "devDependencies": {
+    "ml-stat": "^1.3.3"
   }
 }
