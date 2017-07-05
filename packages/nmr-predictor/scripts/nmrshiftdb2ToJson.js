@@ -28,8 +28,6 @@ for (let i = 0; i < parsedSdf.molecules.length; i++) {
 
     fillDb(molecule, mol, fields, 'C', 'Spectrum 13C', db13C);
     fillDb(molecule, mol, fields, 'H', 'Spectrum 1H', db1H);
-
-    if (i === 25) break;
 }
 
 [db13C, db1H].forEach((db) => {
