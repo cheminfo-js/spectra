@@ -114,20 +114,20 @@ openchemlib-extended-minimal@^2.0.0:
     openchemlib-extended "^2.1.2"
 
 openchemlib-extended@^2.1.2:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/openchemlib-extended/-/openchemlib-extended-2.2.0.tgz#b906a59eb3b23d028464ece98229c23d8e609476"
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/openchemlib-extended/-/openchemlib-extended-2.3.1.tgz#36e5a09c8a4d589989d642da8921f61ceaaeb0ce"
   dependencies:
     ml-floyd-warshall "^1.0.0"
     ml-matrix "^2.3.0"
-    openchemlib "^5.1.1"
+    openchemlib "^5.2.3"
     papaparse "^4.1.2"
     rxn-parser "0.0.2"
     sdf-parser "^1.0.0"
     setimmediate "^1.0.2"
 
-openchemlib@^5.1.1, openchemlib@^5.1.2:
-  version "5.2.2"
-  resolved "https://registry.yarnpkg.com/openchemlib/-/openchemlib-5.2.2.tgz#179b5a8bd3dd1ea33dda7a5e16b9ab93f4292721"
+openchemlib@^5.1.2, openchemlib@^5.2.3:
+  version "5.2.3"
+  resolved "https://registry.yarnpkg.com/openchemlib/-/openchemlib-5.2.3.tgz#88f4603d002c2d82f0d6a66aa5d42a75aebd1863"
 
 papaparse@^4.1.2:
   version "4.3.3"
@@ -168,6 +168,10 @@ sdf-parser@^1.0.0:
 setimmediate@^1.0.2:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/setimmediate/-/setimmediate-1.0.5.tgz#290cbb232e306942d7d7ea9b83732ab7856f8285"
+
+spectra-nmr-utilities@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/spectra-nmr-utilities/-/spectra-nmr-utilities-0.0.5.tgz#1471cec1b8f6cc99e1b6faa4c899f72aa65d4a7f"
 
 string_decoder@~1.0.3:
   version "1.0.3"
