@@ -106,6 +106,16 @@ new-array@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/new-array/-/new-array-1.0.0.tgz#5dbc639d961eac7f1a9fbc1a7146ec12f2924fbf"
 
+num-sort@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/num-sort/-/num-sort-1.0.0.tgz#cabec1fd5f4da4aca995af90b7a0f379944e1dbd"
+  dependencies:
+    number-is-nan "^1.0.0"
+
+number-is-nan@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
+
 openchemlib-extended-minimal@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/openchemlib-extended-minimal/-/openchemlib-extended-minimal-2.0.0.tgz#ab9428e8b73c821a2518757f72f7e00050ba3d4e"

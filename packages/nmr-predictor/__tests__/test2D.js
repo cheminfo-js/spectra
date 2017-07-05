@@ -77,6 +77,8 @@ describe('2D prediction', function () {
     it('HSQC', function () {
         const c13 = predictor.carbon(molfile, {db: db13C});
         const h1 = predictor.proton(molfile, {db: db1H});
+        // console.log(c13);
+        // console.log(h1);
         const prediction = predictor.twoD(h1, c13, molfile, {minLength: 1, maxLength: 4});
         prediction.length.should.equal(24);
         prediction[0].fromChemicalShift.should.greaterThan(0);

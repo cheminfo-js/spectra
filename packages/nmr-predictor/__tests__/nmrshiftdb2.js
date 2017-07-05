@@ -1,17 +1,20 @@
-const nmrshiftdb2 = require('../data/nmrshiftdb.json');
+'use strict';
+
+const nmrshiftdb2 = require('../data/nmrshiftdb2.json');
 
 test('nmrshiftdb2', () => {
     expect(nmrshiftdb2).toBeInstanceOf(Array);
-    expect(nmrshiftdb2.length).toBe(6);
-    expect(nmrshiftdb2[0]).toEqual({});
-    expect(nmrshiftdb2[1]).toEqual({});
-    let id;
-    for (var i in nmrshiftdb2[2]) {
-        id = i;
-        break;
+    expect(nmrshiftdb2.length).toBe(5);
+    for (const el of nmrshiftdb2) {
+        let id;
+        for (var i in el) {
+            id = i;
+            break;
+        }
+        const value = el[id];
+        ['min', 'max', 'ncs', 'mean', 'median', 'std'].forEach((prop) => {
+            expect(typeof value[prop]).toBe('number');
+        });
     }
-    const value = nmrshiftdb2[2][id];
-    ['min', 'max', 'ncs', 'mean', 'median', 'std', 'cs'].forEach((prop) => {
-        expect(typeof value[prop]).toBe('number');
-    });
+
 });
