@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",
+    "convert-nmrshiftdb": "node packages/nmr-predictor/scripts/nmrshiftdb2ToJson.js",
     "eslint": "eslint packages *.js --cache",
     "eslint-fix": "npm run eslint -- --fix",
     "prepare": "npm run bootstrap",

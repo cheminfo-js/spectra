@@ -1,6 +1,6 @@
 'use strict';
 
-const nmrshiftdb2 = require('../data/nmrshiftdb2.json');
+const nmrshiftdb2 = require('../data/nmrshiftdb2-13c.json');
 
 test('nmrshiftdb2', () => {
     expect(nmrshiftdb2).toBeInstanceOf(Array);

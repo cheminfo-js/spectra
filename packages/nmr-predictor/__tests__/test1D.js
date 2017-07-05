@@ -5,7 +5,7 @@ const predictor = require('..');
 const fs = require('fs');
 
 const db1H = JSON.parse(fs.readFileSync(__dirname + '/../data/h1.json', 'utf8'));
-const db13C = JSON.parse(fs.readFileSync(__dirname + '/../data/nmrshiftdb2.json', 'utf8'));
+const db13C = JSON.parse(fs.readFileSync(__dirname + '/../data/nmrshiftdb2-13c.json', 'utf8'));
 
 const molfile = `Benzene, ethyl-, ID: C100414
   NIST    16081116462D 1   1.00000     0.00000

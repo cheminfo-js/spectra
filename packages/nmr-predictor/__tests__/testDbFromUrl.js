@@ -38,7 +38,7 @@ describe('URL JSON 1H prediction', function () {
 
 describe('URL JSON 13C prediction', function () {
     it.skip('13C chemical shift prediction expanded', function () {
-        predictor.fetchCarbon(path + 'nmrshiftdb2.json', 'customCarbon');
+        predictor.fetchCarbon(path + 'nmrshiftdb2-13c.json', 'customCarbon');
         const prediction = predictor.carbon(molfile, {group: true, db: 'customCarbon'});
         prediction.length.should.eql(6);
     });

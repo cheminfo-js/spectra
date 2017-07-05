@@ -175,6 +175,10 @@ sdf-parser@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/sdf-parser/-/sdf-parser-1.0.0.tgz#bd8b0128f599e95247054b06419835783f52295c"
 
+sdf-parser@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/sdf-parser/-/sdf-parser-2.3.1.tgz#0faa85cc731e00ebd850dd85512971a66fe3615c"
+
 setimmediate@^1.0.2:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/setimmediate/-/setimmediate-1.0.5.tgz#290cbb232e306942d7d7ea9b83732ab7856f8285"
