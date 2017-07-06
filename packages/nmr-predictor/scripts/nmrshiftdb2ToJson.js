@@ -70,7 +70,7 @@ function fillDb(molecule, mol, fields, atomLabel, fieldLabel, db) {
     for (const diaId of diaIds) {
         const hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {maxSphereSize, type: 0});
         for (const atom of diaId.atoms) {
-            atoms[atom] = hoseCodes;
+            atoms[atom] = {hoseCodes, values: []};
         }
     }
 
@@ -79,15 +79,20 @@ function fillDb(molecule, mol, fields, atomLabel, fieldLabel, db) {
         const chemicalShift = +signal[0];
         const atomId = signal[2];
         const refAtom = atoms[atomId];
-        if (refAtom) {
+        if (!refAtom) throw new Error(`could not identify atom ${atomId} in entry ${molecule['nmrshiftdb2 ID']}`);
+        refAtom.values.push(chemicalShift);
+    }
+
+    for (const atom of Object.values(atoms)) {
+        if (atom.values.length > 0) {
+            const chemicalShift = stat.mean(atom.values);
             for (let k = 0; k < maxSphereSize; k++) {
-                const hoseCode = refAtom[k];
+                const hoseCode = atom[k];
                 if (hoseCode) {
                     if (!db[k][hoseCode]) {
-                        db[k][hoseCode] = [chemicalShift];
-                    } else {
-                        db[k][hoseCode].push(chemicalShift);
+                        db[k][hoseCode] = [];
                     }
+                    db[k][hoseCode].push(chemicalShift);
                 }
             }
         }
