@@ -481,7 +481,7 @@ class SD {
      * @param {number} max - Maximum desired value for Y
      */
     setMinMax(min, max) {
-        ArrayUtils.scale(this.getYData(), {min: min, max: max, inplace: true});
+        ArrayUtils.scale(this.getYData(), {min: min, max: max, inPlace: true});
     }
 
     /**
@@ -489,7 +489,7 @@ class SD {
      * @param {number} min - Minimum desired value for Y
      */
     setMin(min) {
-        ArrayUtils.scale(this.getYData(), {min: min, inplace: true});
+        ArrayUtils.scale(this.getYData(), {min: min, inPlace: true});
     }
 
     /**
@@ -497,7 +497,7 @@ class SD {
      * @param {number} max - Maximum desired value for Y
      */
     setMax(max) {
-        ArrayUtils.scale(this.getYData(), {max: max, inplace: true});
+        ArrayUtils.scale(this.getYData(), {max: max, inPlace: true});
     }
 
     /**
