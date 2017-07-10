@@ -69,6 +69,9 @@ function fillDb(molecule, mol, fields, atomLabel, fieldLabel, db) {
     const atoms = {};
     for (const diaId of diaIds) {
         const hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {maxSphereSize, type: 0});
+        if (hoseCodes.length === 0) {
+            throw new Error('We can not find a hose code of level 1');
+        }
         for (const atom of diaId.atoms) {
             atoms[atom] = {hoseCodes, values: []};
         }
@@ -79,16 +82,17 @@ function fillDb(molecule, mol, fields, atomLabel, fieldLabel, db) {
         const chemicalShift = +signal[0];
         const atomId = signal[2];
         const refAtom = atoms[atomId];
-        // todo throw
-        //if (!refAtom) throw new Error(`could not identify atom ${atomId} in entry ${molecule['nmrshiftdb2 ID']}`);
+        // todo Add throw
+        //  if (!refAtom) throw new Error(`could not identify atom ${atomId} in entry ${molecule['nmrshiftdb2 ID']}`);
         if (refAtom) refAtom.values.push(chemicalShift);
     }
+
 
     for (const atom of Object.values(atoms)) {
         if (atom.values.length > 0) {
             const chemicalShift = stat.mean(atom.values);
             for (let k = 0; k < maxSphereSize; k++) {
-                const hoseCode = atom[k];
+                const hoseCode = atom.hoseCodes[k];
                 if (hoseCode) {
                     if (!db[k][hoseCode]) {
                         db[k][hoseCode] = [];
