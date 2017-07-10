@@ -124,20 +124,20 @@ openchemlib-extended-minimal@^2.0.0:
     openchemlib-extended "^2.1.2"
 
 openchemlib-extended@^2.1.2:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/openchemlib-extended/-/openchemlib-extended-2.3.1.tgz#36e5a09c8a4d589989d642da8921f61ceaaeb0ce"
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/openchemlib-extended/-/openchemlib-extended-2.3.3.tgz#015467a0f1cdfec4ba3edd86538915e2934523b1"
   dependencies:
     ml-floyd-warshall "^1.0.0"
     ml-matrix "^2.3.0"
-    openchemlib "^5.2.3"
+    openchemlib "^5.2.5"
     papaparse "^4.1.2"
     rxn-parser "0.0.2"
     sdf-parser "^1.0.0"
     setimmediate "^1.0.2"
 
-openchemlib@^5.1.2, openchemlib@^5.2.3:
-  version "5.2.3"
-  resolved "https://registry.yarnpkg.com/openchemlib/-/openchemlib-5.2.3.tgz#88f4603d002c2d82f0d6a66aa5d42a75aebd1863"
+openchemlib@^5.1.2, openchemlib@^5.2.5:
+  version "5.2.9"
+  resolved "https://registry.yarnpkg.com/openchemlib/-/openchemlib-5.2.9.tgz#5c5aad7fcfebccfd9879914b3d74f2648286f8d6"
 
 papaparse@^4.1.2:
   version "4.3.3"

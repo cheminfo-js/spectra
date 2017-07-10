@@ -79,8 +79,9 @@ function fillDb(molecule, mol, fields, atomLabel, fieldLabel, db) {
         const chemicalShift = +signal[0];
         const atomId = signal[2];
         const refAtom = atoms[atomId];
-        if (!refAtom) throw new Error(`could not identify atom ${atomId} in entry ${molecule['nmrshiftdb2 ID']}`);
-        refAtom.values.push(chemicalShift);
+        // todo throw
+        //if (!refAtom) throw new Error(`could not identify atom ${atomId} in entry ${molecule['nmrshiftdb2 ID']}`);
+        if (refAtom) refAtom.values.push(chemicalShift);
     }
 
     for (const atom of Object.values(atoms)) {
