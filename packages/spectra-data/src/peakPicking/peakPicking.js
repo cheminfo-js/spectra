@@ -48,7 +48,7 @@ function extractPeaks(spectrum, options = {}) {
         data = spectrum.getVector(options.from, options.to);
     }
     var peakList = GSD.gsd(data[0], data[1], options);
-    
+
     if (options.broadWidth) {
         peakList = GSD.post.joinBroadPeaks(peakList, {width: options.broadWidth});
     }
