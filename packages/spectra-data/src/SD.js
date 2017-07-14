@@ -31,7 +31,7 @@ class SD {
      * @param {RegExp} [options.keepRecordsRegExp=/^.+$/] A regular expression for metadata fields to extract from the jcamp
      * @return {SD} Return the constructed SD instance
      */
-    static fromJcamp(jcamp, options) {
+    static fromJcamp(jcamp, options = {}) {
         options = Object.assign({}, {keepSpectra: true, keepRecordsRegExp: /^.+$/}, options, {xy: true});
         var spectrum = JcampConverter.convert(jcamp, options);
         return new this(spectrum);
@@ -482,6 +482,7 @@ class SD {
      */
     setMinMax(min, max) {
         ArrayUtils.scale(this.getYData(), {min: min, max: max, inPlace: true});
+        this.updateFirstLastY();
     }
 
     /**
@@ -489,7 +490,8 @@ class SD {
      * @param {number} min - Minimum desired value for Y
      */
     setMin(min) {
-        ArrayUtils.scale(this.getYData(), {min: min, inPlace: true});
+        ArrayUtils.scale(this.getYData(), {min: min, max: this.getMaxY(), inPlace: true});
+        this.updateFirstLastY();
     }
 
     /**
@@ -497,7 +499,8 @@ class SD {
      * @param {number} max - Maximum desired value for Y
      */
     setMax(max) {
-        ArrayUtils.scale(this.getYData(), {max: max, inPlace: true});
+        ArrayUtils.scale(this.getYData(), {max: max, min: this.getMinY(), inPlace: true});
+        this.updateFirstLastY();
     }
 
     /**
@@ -505,13 +508,11 @@ class SD {
      * @param {number} value - Distance of the shift
      */
     yShift(value) {
-        var y = this.getSpectrumData().y;
-        var length = this.getNbPoints();
-        for (var i = 0; i < length; i++) {
+        var y = this.getYData();
+        for (var i = 0; i < y.length; i++) {
             y[i] += value;
         }
-        this.getSpectrum().firstY += value;
-        this.getSpectrum().lastY += value;
+        this.updateFirstLastY(y);
     }
 
     /**
@@ -527,12 +528,33 @@ class SD {
             for (var j = 0; j < length; j++) {
                 x[j] += globalShift;
             }
-
-            this.getSpectrum().firstX += globalShift;
-            this.getSpectrum().lastX += globalShift;
+            this.updateFirstLastX(x);
         }
     }
 
+    /**
+     * Update first and last values of Y data.
+     * @param {Array} y - array of Y spectra data.
+     */
+    updateFirstLastY(y) {
+        if (!Array.isArray(y)) {
+            y = this.getYData();
+        }
+        this.setFirstY(y[0]);
+        this.setLastY(y[y.length - 1]);
+    }
+
+    /**
+     * Update first and last values of X data.
+     * @param {Array} x - array of X spectra data.
+     */
+    updateFirstLastX(x) {
+        if (!Array.isArray(x)) {
+            x = this.getXData();
+        }
+        this.setFirstX(x[0]);
+        this.setLastX(x[x.length - 1]);
+    }
     /**
      * Fills a zone of the spectrum with the given value.
      * If value is undefined it will suppress the elements
@@ -542,7 +564,6 @@ class SD {
      */
     fill(from, to, value) {
         var start, end, x, y;
-
         for (var i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
 
@@ -578,6 +599,11 @@ class SD {
         this.setDataClass(DATACLASS_PEAK);
     }
 
+    /**
+     * This function suppress a zones of the given spectraData within the given x range.
+     * Returns a spectraData of type PEAKDATA without peaks in the given region
+     * @param {Array} zones - Array with from-to limits of the spectrum to suppress.
+     */
     suppressZones(zones = []) {
         for (var i = 0; i < zones.length; i++) {
             this.suppressZone(zones[i].from, zones[i].to);
@@ -747,7 +773,7 @@ class SD {
      * @param {Array} ranges - array of objects ranges
      * @param {object} options - option such as nH for normalization, if it is nH is zero the integral value returned is absolute value
      */
-    updateIntegrals(ranges, options) {
+    updateIntegrals(ranges, options = {}) {
         var sum = 0;
         ranges.forEach(range => {
             range.integral = this.getArea(range.from, range.to);
@@ -926,7 +952,7 @@ class SD {
      * @param {object} options - parameters to calculation of peakPicking
      * @return {*}
      */
-    getPeaks(options = {}) {
+    getPeaks(options) {
         let peaks;
         if (this.peaks) {
             peaks = this.peaks;

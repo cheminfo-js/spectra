@@ -14,10 +14,7 @@ const normalizeOptions = require('./normalizeOptions');
 module.exports = function spinus(molecule, options) {
     [molecule, options] = normalizeOptions(molecule, options);
     return fromSpinus(molecule).then(prediction => {
-        if (options.group) {
-            prediction = group(prediction);
-        }
-        return prediction;
+        return options.group ? group(prediction) : prediction;
     });
 };
 

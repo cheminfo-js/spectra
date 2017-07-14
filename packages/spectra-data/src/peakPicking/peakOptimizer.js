@@ -1,6 +1,5 @@
 'use strict';
 
-
 var diagonalError = 0.05;
 var	tolerance = 0.05;
 
