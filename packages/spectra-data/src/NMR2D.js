@@ -5,7 +5,9 @@ const peakPicking2D = require('./peakPicking/peakPicking2D');
 const PeakOptimizer = require('./peakPicking/peakOptimizer');
 const Brukerconverter = require('brukerconverter');
 const Filters = require('./filters/Filters.js');
-const StatArray = require('ml-stat').array;
+// const StatArray = require('ml-stat').array;
+const min = require('ml-array-min');
+const max = require('ml-array-max');
 const simule2DNmrSpectrum = require('nmr-simulation').simulate2D;
 
 class NMR2D extends SD {
@@ -108,9 +110,10 @@ class NMR2D extends SD {
             result.xType = options.xType || options.nucleusX || '1H';
             spectra.push(spectrum);
 
-            let minMax = StatArray.minMax(y);
-            minZ = Math.min(minZ, minMax.min);
-            maxZ = Math.max(maxZ, minMax.max);
+            // let minMax = StatArray.minMax(y);
+
+            minZ = Math.min(minZ, min(y));
+            maxZ = Math.max(maxZ, max(y));
 
         });
 

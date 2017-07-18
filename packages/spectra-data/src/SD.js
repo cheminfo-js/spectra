@@ -2,8 +2,11 @@
 // small note on the best way to define array
 // http://jsperf.com/lp-array-and-loops/2
 
-const StatArray = require('ml-stat').array;
 const ArrayUtils = require('ml-array-utils');
+const min = require('ml-array-min');
+const max = require('ml-array-max');
+const getMedian = require('ml-array-median');
+const rescale = require('ml-array-rescale');
 const JcampConverter = require('jcampconverter');
 const JcampCreator = require('./jcampEncoder/JcampCreator');
 const peakPicking = require('./peakPicking/peakPicking');
@@ -360,7 +363,7 @@ class SD {
      * @return {number}
      */
     getMinY(i) {
-        return StatArray.min(this.getYData(i));
+        return min(this.getYData(i));
     }
 
     /**
@@ -369,7 +372,7 @@ class SD {
      * @return {number}
      */
     getMaxY(i) {
-        return StatArray.max(this.getYData(i));
+        return max(this.getYData(i));
     }
 
     /**
@@ -378,7 +381,7 @@ class SD {
      * @return {{min, max}|*}
      */
     getMinMaxY(i) {
-        return StatArray.minMax(this.getYData(i));
+        return {min: this.getMinY(i), max: this.getMaxY(i)};
     }
 
 
@@ -396,7 +399,7 @@ class SD {
         } else {
             data = this.getYData();
         }
-        var median = StatArray.median(data);
+        var median = getMedian(data);
         return median * this.getNMRPeakThreshold(this.getNucleus(1));
     }
 
@@ -481,7 +484,8 @@ class SD {
      * @param {number} max - Maximum desired value for Y
      */
     setMinMax(min, max) {
-        ArrayUtils.scale(this.getYData(), {min: min, max: max, inPlace: true});
+        let y = this.getYData();
+        rescale(y, {min: min, max: max, output: y});
         this.updateFirstLastY();
     }
 
@@ -490,7 +494,8 @@ class SD {
      * @param {number} min - Minimum desired value for Y
      */
     setMin(min) {
-        ArrayUtils.scale(this.getYData(), {min: min, max: this.getMaxY(), inPlace: true});
+        let y = this.getYData();
+        rescale(y, {min: min, output: y, autoMinMax: true});
         this.updateFirstLastY();
     }
 
@@ -499,7 +504,8 @@ class SD {
      * @param {number} max - Maximum desired value for Y
      */
     setMax(max) {
-        ArrayUtils.scale(this.getYData(), {max: max, min: this.getMinY(), inPlace: true});
+        let y = this.getYData();
+        rescale(y, {max: max, output: y, autoMinMax: true});
         this.updateFirstLastY();
     }
 
