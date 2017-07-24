@@ -30,7 +30,6 @@
     "ml-matrix": "^2.3.0",
     "ml-simple-clustering": "0.1.0",
     "ml-sparse-matrix": "^0.2.1",
-    "new-array": "^1.0.0",
     "num-sort": "^1.0.0"
   },
   "devDependencies": {

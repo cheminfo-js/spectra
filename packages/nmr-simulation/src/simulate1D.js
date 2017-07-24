@@ -4,7 +4,6 @@ const Matrix = require('ml-matrix');
 const SparseMatrix = require('ml-sparse-matrix');
 const binarySearch = require('binary-search');
 const sortAsc = require('num-sort').asc;
-const newArray = require('new-array');
 
 const getPauli = require('./pauli');
 
@@ -12,13 +11,17 @@ const smallValue = 1e-2;
 
 function simulate1d(spinSystem, options) {
     var i, j;
-    const frequencyMHz = (options.frequency || 400);
-    const from = (options.from || 0) * frequencyMHz;
+    const {
+        lineWidth = 1,
+        nbPoints = 1024,
+        maxClusterSize = 10,
+        output = 'y',
+        frequency: frequencyMHz =  400,
+        noiseFactor = 1
+    } = options;
+
+    const from = options.from * frequencyMHz || 0;
     const to = (options.to || 10) * frequencyMHz;
-    const lineWidth = options.lineWidth || 1;
-    const nbPoints = options.nbPoints || 1024;
-    const maxClusterSize = options.maxClusterSize || 10;
-    const output = options.output || 'y';
 
     const chemicalShifts = spinSystem.chemicalShifts.slice();
     for (i = 0; i < chemicalShifts.length; i++) {
@@ -36,7 +39,7 @@ function simulate1d(spinSystem, options) {
         gaussian[i] = 1e9 * Math.exp(-((i - b) * (i - b)) / c);
     }
 
-    const result = new newArray(nbPoints, 0);
+    var result = options.withNoise ? [...new Array(nbPoints)].map(() => Math.random() * noiseFactor) : new Array(nbPoints).fill(0);
 
     const multiplicity = spinSystem.multiplicity;
     for (var h = 0; h < spinSystem.clusters.length; h++) {
