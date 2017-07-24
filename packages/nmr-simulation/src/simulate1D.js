@@ -16,7 +16,7 @@ function simulate1d(spinSystem, options) {
         nbPoints = 1024,
         maxClusterSize = 10,
         output = 'y',
-        frequency: frequencyMHz =  400,
+        frequency: frequencyMHz = 400,
         noiseFactor = 1
     } = options;
 
