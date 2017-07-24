@@ -2,49 +2,60 @@
 
 require('should');
 const nmr = require('..');
-const predictor = require('nmr-predictor');
+const prediction = [
+    { atomIDs: [ '15', '16', '17' ],
+    diaIDs: [ 'did@`@fTeYWaj@@@GzP`HeT' ],
+    nbAtoms: 3,
+    delta: 0.992,
+    atomLabel: 'H',
+    j: [ [Object], [Object] ],
+    multiplicity: 't' },
+    { atomIDs: [ '9' ],
+        diaIDs: [ 'did@`@fTfUvf`@h@GzP`HeT' ],
+        nbAtoms: 1,
+        delta: 7.196,
+        atomLabel: 'H',
+        j: [ [Object], [Object], [Object], [Object] ],
+        multiplicity: 'tt' },
+    { atomIDs: [ '10', '13' ],
+        diaIDs: [ 'did@`@fTfYUn`HH@GzP`HeT' ],
+        nbAtoms: 2,
+        delta: 7.162,
+        atomLabel: 'H',
+        j: [ [Object], [Object], [Object], [Object] ],
+        multiplicity: 'dddd' },
+    { atomIDs: [ '11', '12' ],
+        diaIDs: [ 'did@`@fTf[Waj@@bJ@_iB@bUP' ],
+        nbAtoms: 2,
+        delta: 2.653,
+        atomLabel: 'H',
+        j: [ [Object], [Object], [Object] ],
+        multiplicity: 'q' },
+    { atomIDs: [ '8', '14' ],
+        diaIDs: [ 'did@`@f\\bbRaih@J@A~dHBIU@' ],
+        nbAtoms: 2,
+        delta: 7.26,
+        atomLabel: 'H',
+        j: [ [Object], [Object], [Object], [Object] ],
+        multiplicity: 'tdd' } ]
 
-var molfile = `Benzene, ethyl-, ID: C100414
-  NIST    16081116462D 1   1.00000     0.00000
-Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
-  8  8  0     0  0              1 V2000
-    0.5015    0.0000    0.0000 C   0  0  0  0  0  0           0  0  0
-    0.0000    0.8526    0.0000 C   0  0  0  0  0  0           0  0  0
-    1.5046    0.0000    0.0000 C   0  0  0  0  0  0           0  0  0
-    2.0062    0.8526    0.0000 C   0  0  0  0  0  0           0  0  0
-    3.0092    0.8526    0.0000 C   0  0  0  0  0  0           0  0  0
-    1.5046    1.7554    0.0000 C   0  0  0  0  0  0           0  0  0
-    0.5015    1.7052    0.0000 C   0  0  0  0  0  0           0  0  0
-    3.5108    0.0000    0.0000 C   0  0  0  0  0  0           0  0  0
-  1  2  2  0     0  0
-  3  1  1  0     0  0
-  2  7  1  0     0  0
-  4  3  2  0     0  0
-  4  5  1  0     0  0
-  6  4  1  0     0  0
-  5  8  1  0     0  0
-  7  6  2  0     0  0
-M  END
-`;
+var options = {
+    frequency: 400.082470657773,
+    from: 0,
+    to: 11,
+    lineWidth: 1,
+    nbPoints: 16384,
+    maxClusterSize: 8,
+    output: 'xy'
+};
 
 describe('Simulation from molfile', function () {
     it('simulation gives {x,y} data', function () {
-        return predictor.spinus(molfile, {group: true}).then(prediction => {
-            const spinSystem = nmr.SpinSystem.fromPrediction(prediction);
-            var options = {
-                frequency: 400.082470657773,
-                from: 0,
-                to: 11,
-                lineWidth: 1,
-                nbPoints: 16384,
-                maxClusterSize: 8,
-                output: 'xy'
-            };
-            spinSystem.ensureClusterSize(options);
-            var simulation = nmr.simulate1D(spinSystem, options);
-            simulation.should.have.property('x');
-            simulation.should.have.property('y');
-            simulation.x.length.should.eql(16384);
-        });
+        const spinSystem = nmr.SpinSystem.fromPrediction(prediction);
+        spinSystem.ensureClusterSize(options);
+        var simulation = nmr.simulate1D(spinSystem, options);
+        simulation.should.have.property('x');
+        simulation.should.have.property('y');
+        simulation.x.length.should.eql(16384);
     });
 });
