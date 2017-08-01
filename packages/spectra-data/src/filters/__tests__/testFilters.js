@@ -15,14 +15,14 @@ function createSpectraData(filename) {
 
 describe('spectra-data examples Filters', function () {
     it('fourier Tranformation', function () {
-        var spectrum = createSpectraData('/../../../../../data-test/fftTest/FID.dx');
+        var spectrum = createSpectraData('/../../../../../data-__tests__/fftTest/FID.dx');
         spectrum.zeroFilling(spectrum.getNbPoints() * 2).digitalFilter({nbPoints: 67}).fourierTransform();
         spectrum.phaseCorrection(-Math.PI / 2, 0);
         spectrum.getXUnits().should.equal('PPM');
 
     });
     it('zeroFilling nbPoints', function () {
-        var spectrum = createSpectraData('/../../../../../data-test/fftTest/FID.dx');
+        var spectrum = createSpectraData('/../../../../../data-__tests__/fftTest/FID.dx');
         spectrum.zeroFilling(10).getNbPoints().should.equal(10);
         spectrum.zeroFilling(20).getNbPoints().should.equal(20);
     });
