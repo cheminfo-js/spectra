@@ -43,7 +43,7 @@ const db = JSON.parse(loadFile("/../src/h1_database.json"));
 predictor.setDb(db, 'proton', 'proton');
 
 var spectrum = createSpectraData("/../../../data-test/ethylbenzene/h1_0.jdx");
-var peakPicking = spectrum.createPeaks({
+var peakPicking = spectrum.getRanges({
     "nH": nH,
     realTop: true,
     thresholdFactor: 1,
