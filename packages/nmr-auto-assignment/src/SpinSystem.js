@@ -42,7 +42,7 @@ class SpinSystem {
                     diaIDByAtomLabel[dia.atomLabel] = [dia.diaIDs[0]];
                     indexByAtomLabel[dia.atomLabel] = [i];
                 }
-                this.diaList[i] = dia.integral;
+                this.diaList[i] = dia.nbAtoms;
                 this.chemicalShiftsT[i] = dia.delta;
                 this.chemicalShiftsTError[i] = dia.error || 0;
             }
