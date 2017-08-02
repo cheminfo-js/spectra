@@ -54,7 +54,6 @@ module.exports = function queryByHose(molecule, db, options) {
         }
         atom.atomLabel = atomLabel;
         atom.level = levels[k - 1];
-        console.log(use);
         if (use === 'median') {
             atom.delta = res.median;
         } else if (use === 'mean') {

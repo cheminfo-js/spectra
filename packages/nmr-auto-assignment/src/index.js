@@ -4,6 +4,7 @@
 const SpinSystem = require('./SpinSystem');
 const AutoAssigner = require('./AutoAssigner');
 const getOcleFromOptions = require('./getOcleFromOptions');
+const nmrUtilities = require('spectra-nmr-utilities');
 
 function autoAssign(entry, options) {
     if(entry.spectra.h1PeakList){
@@ -77,12 +78,12 @@ function assignmentFromPeakPicking(entry, options) {
     }
 
     //H1 prediction
-    var h1pred = predictor.proton(molecule, Object.assign({}, options, {group:true, ignoreLabile: false}));
-    console.log(h1pred)
+    var h1pred = predictor.proton(molecule, Object.assign({}, options, { ignoreLabile: false}));
+
     if(!h1pred || h1pred.length === 0)
         return null;
 
-    //console.log(h1pred);
+    nmrUtilities.group(h1pred);
     var optionsError = {iteration:options.iteration || 1, learningRatio:options.learningRatio || 1};
 
     for (var j=0; j<h1pred.length; j++) {
@@ -90,10 +91,10 @@ function assignmentFromPeakPicking(entry, options) {
     }
 
     h1pred.sort(function(a,b) {
-        if (a.atomLabel==b.atomLabel) {
-            return b.integral-a.integral;
+        if (a.atomLabel === b.atomLabel) {
+            return b.nbAtoms - a.nbAtoms;
         }
-        return a.atomLabel<b.atomLabel?1:-1;
+        return a.atomLabel < b.atomLabel ? 1: -1;
     });
 
     try{
@@ -112,15 +113,15 @@ function assignmentFromPeakPicking(entry, options) {
 function  getError(prediction, param){
     //console.log(prediction)
     //Never use predictions with less than 3 votes
-    if(prediction.std==0||prediction.ncs<3){
+    if(prediction.std === 0 || prediction.ncs < 3){
         return 20;
     }
-    else{
+    else {
         //factor is between 1 and +inf
         //console.log(prediction.ncs+" "+(param.iteration+1)+" "+param.learningRatio);
-        var factor = 3*prediction.std/
-            (Math.pow(prediction.ncs,(param.iteration+1)*param.learningRatio));//(param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
-        return 3*prediction.std+factor;
+        var factor = 3 * prediction.std /
+            (Math.pow(prediction.ncs,(param.iteration + 1) * param.learningRatio));//(param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
+        return 3 * prediction.std + factor;
     }
     return 20;
 }
