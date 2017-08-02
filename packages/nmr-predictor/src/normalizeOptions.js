@@ -11,6 +11,7 @@ const defaultOptions = {
 module.exports = function normalizeOptions(molecule, options) {
     options = Object.assign({}, defaultOptions, options);
     let {Molecule} = getOcleFromOptions(options);
+    //console.log("HEre"+Molecule);
     if (typeof molecule === 'string') {
         if (molecule.split(/[\r\n]+/).length > 2) {
             molecule = Molecule.fromMolfile(molecule);

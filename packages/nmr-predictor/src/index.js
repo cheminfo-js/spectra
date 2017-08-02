@@ -47,6 +47,15 @@ function fetch(url, dbName, type) {
     return fetching;
 }
 
+function setDb(db, dbName, type) {
+    const database = {
+        type,
+        db: db,
+        fetching: null
+    };
+    databases[dbName] = database;
+}
+
 function proton(molecule, options) {
     options.atomLabel = 'H';
     [molecule, options] = normalizeOptions(molecule, options);
@@ -74,6 +83,7 @@ function getDb(option, type) {
 module.exports = {
     fetchProton,
     fetchCarbon,
+    setDb,
     proton,
     carbon,
     spinus,

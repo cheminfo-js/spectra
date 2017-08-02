@@ -1,4 +1,4 @@
-const Predictor = require('../src/index.js');
+const predictor = require('../src/index.js');
 
 var molfile = `
 Actelion Java MolfileCreator 1.0
@@ -43,7 +43,6 @@ Actelion Java MolfileCreator 1.0
 M  END
 `;
 
-var predictor = new Predictor('spinus');
 predictor.spinus(molfile).then(prediction => {
     //var a = simule2DNmrSpectrum(prediction, {nbPointsX: 100, nbPointsY: 100});
     console.log(prediction)

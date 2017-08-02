@@ -3,7 +3,7 @@
  */
 const SpinSystem = require('./SpinSystem');
 const AutoAssigner = require('./AutoAssigner');
-const OCLE = require("openchemlib-extended-minimal");
+const getOcleFromOptions = require('./getOcleFromOptions');
 
 function autoAssign(entry, options) {
     if(entry.spectra.h1PeakList){
@@ -77,7 +77,8 @@ function assignmentFromPeakPicking(entry, options) {
     }
 
     //H1 prediction
-    var h1pred = predictor.proton(molecule, {group:true, ignoreLabile: false});
+    var h1pred = predictor.proton(molecule, Object.assign({}, options, {group:true, ignoreLabile: false}));
+    console.log(h1pred)
     if(!h1pred || h1pred.length === 0)
         return null;
 

@@ -5,7 +5,7 @@
 
 const SD = require('spectra-data');
 const FS = require('fs');
-const OCLE = require("openchemlib-extended");
+const OCLE = require("openchemlib-extended-minimal");
 const autoassigner = require('../src/index');
 const predictor = require("nmr-predictor");
 
@@ -25,6 +25,7 @@ function loadFile(filename){
 var molfile = loadFile("/../../../data-test/ethylbenzene/mol_0.mol");
 var molecule = OCLE.Molecule.fromMolfile(molfile);
 molecule.addImplicitHydrogens();
+//if(molecule instanceof Molecule)
 var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/,"$1")*1;
 var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
 for (var j=0; j<diaIDs.length; j++) {
@@ -37,11 +38,12 @@ diaIDs.sort(function(a,b) {
     }
     return a.atomLabel<b.atomLabel?1:-1;
 });
-const db = JSON.parse(loadFile("/../src/h1_database.json"));
-predictor.dataBases = {'proton': db};
 
-var spectrum = createSpectraData("/../../../data-test/ethylbenzene/z1h_0.jdx");
-var peakPicking = spectrum.nmrPeakDetection({
+const db = JSON.parse(loadFile("/../src/h1_database.json"));
+predictor.setDb(db, 'proton', 'proton');
+
+var spectrum = createSpectraData("/../../../data-test/ethylbenzene/h1_0.jdx");
+var peakPicking = spectrum.createPeaks({
     "nH": nH,
     realTop: true,
     thresholdFactor: 1,
@@ -53,7 +55,9 @@ var peakPicking = spectrum.nmrPeakDetection({
 
 
 
-var result = autoassigner({molecule:molecule, diaIDs:diaIDs,
-        spectra:{h1PeakList:peakPicking, solvent:spectrum.getParamString(".SOLVENT NAME", "unknown")}},
-    {minScore:1 ,maxSolutions:3000, errorCS:-1 , predictor: predictor, condensed:true}
+var result = autoassigner({molecule: molecule, diaIDs:diaIDs,
+        spectra:{h1PeakList: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")}},
+    {minScore: 1 ,maxSolutions: 3000, errorCS: -1 , predictor: predictor, condensed: true, OCLE: OCLE}
 );
+
+console.log(result);
