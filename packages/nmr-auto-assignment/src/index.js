@@ -101,10 +101,8 @@ function assignmentFromPeakPicking(entry, options) {
 
     try{
         spectra.h1PeakList.sort(function(a, b ){ return b.integral - a.integral });
-        //console.log(spectra.h1PeakList[0].signal[0])
 
         const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList);
-        console.log(spinSystem);
         const autoAssigner = new AutoAssigner(spinSystem, options);
         return autoAssigner.getAssignments();
     }
