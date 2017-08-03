@@ -17,6 +17,14 @@ function createSpectraData(filename, label, data) {
     return spectrum;
 };
 
+
+function createSpectraData2D(filename, label, data) {
+    var spectrum = SD.NMR2D.fromJcamp(
+        FS.readFileSync(__dirname + filename).toString()
+    );
+    return spectrum;
+};
+
 function loadFile(filename){
     return FS.readFileSync(__dirname + filename).toString();
 }
@@ -43,6 +51,8 @@ const db = JSON.parse(loadFile("/../src/h1_database.json"));
 predictor.setDb(db, 'proton', 'proton');
 
 var spectrum = createSpectraData("/../../../data-test/ethylbenzene/h1_0.jdx");
+var cosy = createSpectraData2D("/../../../data-test/ethylbenzene/cosy_0.jdx");
+
 var peakPicking = spectrum.getRanges({
     "nH": nH,
     realTop: true,
@@ -55,9 +65,15 @@ var peakPicking = spectrum.getRanges({
 
 
 
+var cosyZones = cosy.getZones({thresholdFactor:1.5});
+
+var infoCOSY = molecule.getAllPaths({fromLabel: "H", toLabel: "H", minLength: 0, maxLength: 3});
+
+console.log(cosyZones);
+
 var result = autoassigner({molecule: molecule, diaIDs:diaIDs,
         spectra:{h1PeakList: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")}},
-    {minScore: 1 ,maxSolutions: 3000, errorCS: -1 , predictor: predictor, condensed: true, OCLE: OCLE}
+    {cosySignals: cosyZones, cosyPaths: infoCOSY, minScore: 1 ,maxSolutions: 3000, errorCS: -1 , predictor: predictor, condensed: true, OCLE: OCLE}
 );
-console.log(JSON.stringify(peakPicking));
-console.log(JSON.stringify(result));
+//console.log(JSON.stringify(peakPicking));
+//console.log(JSON.stringify(result));
