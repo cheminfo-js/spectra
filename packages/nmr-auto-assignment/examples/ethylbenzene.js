@@ -59,5 +59,5 @@ var result = autoassigner({molecule: molecule, diaIDs:diaIDs,
         spectra:{h1PeakList: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")}},
     {minScore: 1 ,maxSolutions: 3000, errorCS: -1 , predictor: predictor, condensed: true, OCLE: OCLE}
 );
-console.log(JSON.stringify(peakPicking));
-console.log(JSON.stringify(result));
+
+console.log(result);

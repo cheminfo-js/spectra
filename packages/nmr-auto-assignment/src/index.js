@@ -102,7 +102,7 @@ function assignmentFromPeakPicking(entry, options) {
     try{
         spectra.h1PeakList.sort(function(a, b ){ return b.integral - a.integral });
 
-        const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList, options);
+        const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList);
         const autoAssigner = new AutoAssigner(spinSystem, options);
         return autoAssigner.getAssignments();
     }
