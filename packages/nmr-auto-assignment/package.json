@@ -26,13 +26,17 @@
     "build": "cheminfo build --no-uglify"
   },
   "devDependencies": {
+    "cheminfo-tools": "^1.9.0",
+    "mocha": "^3.0.2",
+    "mocha-better-spec-reporter": "^3.0.2",
+    "should": "^11.1.0"
   },
   "dependencies": {
     "ml-stat": "^1.3.3",
-    "ml-matrix": "^2.3.0",
-    "nmr-predictor": "^1.1.1",
-    "openchemlib-extended-minimal": "^2.0.0",
-    "spectra-data": "^3.1.12",
+    "ml-matrix": "^2.0.0",
+    "nmr-predictor": "0.0.5",
+    "openchemlib-extended": "1.9.1",
+    "spectra-data": "^1.7.10",
     "ml-tree-set": "0.1.1"
   }
 }

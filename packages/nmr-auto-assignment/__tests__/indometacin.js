@@ -7,7 +7,7 @@ const SD = require('spectra-data');
 const FS = require('fs');
 const OCLE = require("openchemlib-extended");
 const autoassigner = require('../src/index');
-const predictor = require("nmr-predictor");
+const Predictor = require("nmr-predictor");
 
 
 function createSpectraData(filename, label, data) {
