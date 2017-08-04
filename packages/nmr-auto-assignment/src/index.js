@@ -83,7 +83,10 @@ function assignmentFromPeakPicking(entry, options) {
     if(!h1pred || h1pred.length === 0)
         return null;
 
+    //console.log(h1pred);
+
     nmrUtilities.group(h1pred);
+    console.log(h1pred);
 
 
     var optionsError = {iteration:options.iteration || 1, learningRatio:options.learningRatio || 1};
@@ -104,7 +107,7 @@ function assignmentFromPeakPicking(entry, options) {
         //console.log(spectra.h1PeakList[0].signal[0])
 
         const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList);
-        console.log(spinSystem);
+        //console.log(spinSystem);
         const autoAssigner = new AutoAssigner(spinSystem, options);
         return autoAssigner.getAssignments();
     }
