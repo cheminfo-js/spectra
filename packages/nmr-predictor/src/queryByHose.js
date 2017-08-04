@@ -8,7 +8,7 @@ module.exports = function queryByHose(molecule, db, options) {
     const {Util} = getOcleFromOptions(options);
     const {
         atomLabel = 'H',
-        use = 'median',
+        use = null,
         algorithm = 0,
         levels = [4, 3, 2, 1, 0]
     } = options;
@@ -54,13 +54,12 @@ module.exports = function queryByHose(molecule, db, options) {
         }
         atom.atomLabel = atomLabel;
         atom.level = levels[k - 1];
-        console.log(use);
         if (use === 'median') {
             atom.delta = res.median;
         } else if (use === 'mean') {
             atom.delta = res.mean;
         }
-        atom.nbAtoms = 1;
+        atom.integral = 1;
         atom.atomIDs = [atomNumber];
         atom.ncs = res.ncs;
         atom.std = res.std;

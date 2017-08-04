@@ -38,11 +38,9 @@ describe('Auto-assignment indometacin', function () {
         }
         return a.atomLabel<b.atomLabel?1:-1;
     });
-    const db = JSON.parse(loadFile("/../src/h1_database.json"));
-    predictor.dataBases = {'proton': db};
+    const predictor = new Predictor(JSON.parse(loadFile("/../src/h1_database.json")));
 
     var spectrum = createSpectraData("/../../../data-test/indometacin/1h.dx");
-
     spectrum.fillWith(2.48,2.52,0);//Solvent
     spectrum.fillWith(3.28,3.36,0);//Water in solvent
     var peakPicking = spectrum.nmrPeakDetection({

@@ -7,7 +7,7 @@ const SD = require('spectra-data');
 const FS = require('fs');
 const OCLE = require("openchemlib-extended");
 const autoassigner = require('../src/index');
-const predictor = require("nmr-predictor");
+const Predictor = require("nmr-predictor");
 
 
 function createSpectraData(filename, label, data) {
@@ -38,9 +38,7 @@ describe('Auto-assignment ethylbenzene', function () {
         }
         return a.atomLabel<b.atomLabel?1:-1;
     });
-
-    const db = JSON.parse(loadFile("/../src/h1_database.json"));
-    predictor.dataBases = {'proton': db};
+    const predictor = new Predictor(JSON.parse(loadFile("/../src/h1_database.json")));
 
     var spectrum = createSpectraData("/../../../data-test/ethylbenzene/z1h_0.jdx");
     var peakPicking = spectrum.nmrPeakDetection({
