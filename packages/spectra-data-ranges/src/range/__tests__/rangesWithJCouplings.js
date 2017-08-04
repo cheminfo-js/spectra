@@ -14,7 +14,7 @@ function createSpectraData(filename) {
 
 describe('spectra-data examples peak picking ', function () {
     var nH = 8;
-    var spectrum = createSpectraData('/../../../../../data-__tests__/ethylvinylether/1h.jdx');
+    var spectrum = createSpectraData('/../../../../../data-test/ethylvinylether/1h.jdx');
     var peakPicking = spectrum.getRanges({nH: nH, realTopDetection: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H'});
     it('patterns for ethylvinylether (OLD)', function () {
 

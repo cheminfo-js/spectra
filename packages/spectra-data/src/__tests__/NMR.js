@@ -12,7 +12,7 @@ function createSpectraData(filename) {
 }
 
 describe('spectra-data examples ethylvinylether/1h.jdx', function () {
-    var spectrum = createSpectraData('/../../../../data-__tests__/ethylvinylether/1h.jdx');
+    var spectrum = createSpectraData('/../../../../data-test/ethylvinylether/1h.jdx');
 
     it('getNucleus', function () {
         spectrum.getNucleus().should.equal('1H');
