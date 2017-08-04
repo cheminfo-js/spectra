@@ -69,11 +69,18 @@ var cosyZones = cosy.getZones({thresholdFactor:1.5});
 
 var infoCOSY = molecule.getAllPaths({fromLabel: "H", toLabel: "H", minLength: 0, maxLength: 3});
 
-console.log(cosyZones);
+//console.log(cosyZones);
 
 var result = autoassigner({molecule: molecule, diaIDs:diaIDs,
         spectra:{h1PeakList: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")}},
-    {cosySignals: cosyZones, cosyPaths: infoCOSY, minScore: 1 ,maxSolutions: 3000, errorCS: -1 , predictor: predictor, condensed: true, OCLE: OCLE}
+    {cosySignals: cosyZones, cosyPaths: infoCOSY, minScore: 1 ,maxSolutions: 3000, errorCS:  0, predictor: predictor, condensed: true, OCLE: OCLE}
+);
+console.log(result.length);
+
+var result = autoassigner({molecule: molecule, diaIDs:diaIDs,
+        spectra:{h1PeakList: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")}},
+    {minScore: 1 ,maxSolutions: 3000, errorCS:  0, predictor: predictor, condensed: true, OCLE: OCLE}
 );
 //console.log(JSON.stringify(peakPicking));
 //console.log(JSON.stringify(result));
+console.log(result.length);
