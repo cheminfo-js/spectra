@@ -115,12 +115,10 @@ module.exports.group = function group(signals, options = {}) {
     }
     for (i = 0; i < signals.length; i++) {
         j = signals[i].j;
-        if (j && j.lengthpublish > 0) {
-            for (k = 0; k < j.length; k++) {
-                j[k].multiplicity = patterns[j[k].assignment.length];
-            }
-            signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
+        for (k = 0; k < j.length; k++) {
+            j[k].multiplicity = patterns[j[k].assignment.length];
         }
+        signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
     }
     return signals;
 };

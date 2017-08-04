@@ -33,7 +33,6 @@
     "nmr-predictor": "^1.1.1",
     "openchemlib-extended-minimal": "^2.0.0",
     "spectra-data": "^3.1.12",
-    "ml-tree-set": "0.1.1",
-    "spectra-nmr-utilities": "^0.0.5"
+    "ml-tree-set": "0.1.1"
   }
 }

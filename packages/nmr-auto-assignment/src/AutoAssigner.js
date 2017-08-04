@@ -8,7 +8,7 @@ const defaultOptions = {minScore:1, maxSolutions: 100, errorCS:-1, onlyCount: fa
 
 const DEBUG = false;
 
-class Assignment {
+class Assignment{
     constructor(spinSystem, opt){
         var options = Object.assign({}, defaultOptions, opt);
         this.spinSystem = spinSystem;
