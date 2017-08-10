@@ -438,6 +438,14 @@ class NMR extends SD {
         return result;
     }
 
+    /**
+     * Change the intensities of a respective impurities signals based on peak picking and solvent impurities
+     * @param {string} solvent - solvent name
+     * @param {object} [options = {}] - object may have the peak picking options if this.peaks does not exist.
+     * @param {string} [options.impurity = null] - options to fill a particular impurity of the solvent some thing like 'solvent_residual_peak'
+     * @param {number} [options.value = 0] - value to fill
+     * @param {number} [options.error = 0.025] - tolerance to find the chemical shift of the impurities.
+     */
     fillImpurity(solvent, options = {}) {
         const {
             impurity = null,
@@ -452,20 +460,16 @@ class NMR extends SD {
 
         let peaks = this.getPeaks(options);
 
-        let filteredPeaks = peaks.filter((peak) => {
+        peaks.map((peak) => {
             for (let impurity in solventImpurities) {
                 for (let signal of impurity) {
                     if (peak.width + error > Math.abs(signal.shift - peak.x)) {
-                        return true;
+                        let from = peak.x + peak.width;
+                        let to = peak.x - peak.width;
+                        this.fill(from, to, value);
                     }
                 }
             }
-        });
-
-        filteredPeaks.forEach((peak) => {
-            let from = peak.x + peak.width;
-            let to = peak.x - peak.width;
-            this.fill(from, to, value);
         });
     }
 }
