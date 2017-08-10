@@ -419,7 +419,7 @@ class NMR extends SD {
      * @return {object}
      */
     getImpurities(solvent) {
-        return this.getImpurity(solvent, null);
+        return this.getImpurity(solvent);
     }
 
     /**
@@ -428,7 +428,7 @@ class NMR extends SD {
      * @param {string} impurity - impurity name
      * @return {object}
      */
-    getImpurity(solvent, impurity) {
+    getImpurity(solvent, impurity = null) {
         solvent = solvent.toLowerCase();
         if (solvent === '(cd3)2so') solvent = 'dmso';
         var result = impurities[solvent];
@@ -438,6 +438,36 @@ class NMR extends SD {
         return result;
     }
 
+    fillImpurity(solvent, options = {}) {
+        const {
+            impurity = null,
+            value = 0,
+            error = 0.025
+        } = options;
+
+        const solventImpurities = this.getImpurities(solvent, impurity);
+        if (! solventImpurities) {
+            throw Error('The solvent does not mach with a impurities into the list');
+        }
+
+        let peaks = this.getPeaks(options);
+
+        let filteredPeaks = peaks.filter((peak) => {
+            for (let impurity in solventImpurities) {
+                for (let signal of impurity) {
+                    if (peak.width + error > Math.abs(signal.shift - peak.x)) {
+                        return true;
+                    }
+                }
+            }
+        });
+
+        filteredPeaks.forEach((peak) => {
+            let from = peak.x + peak.width;
+            let to = peak.x - peak.width;
+            this.fill(from, to, value);
+        });
+    }
 }
 
 module.exports = NMR;
