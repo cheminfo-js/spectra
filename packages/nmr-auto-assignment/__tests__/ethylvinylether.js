@@ -1,7 +1,7 @@
 /**
  * Created by acastillo on 5/7/16.
  */
-'use strict';
+/*'use strict';
 
 const SD = require('spectra-data');
 const FS = require('fs');
@@ -25,9 +25,9 @@ function loadFile(filename){
 describe('Auto-assignment ethylvinylether', function () {
     var molfile = loadFile("/../../../data-test/ethylvinylether/structure.mol");
     var molecule = OCLE.Molecule.fromMolfile(molfile);
-    molecule.addImplicitHydrogens();
-    var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/,"$1")*1;
-    var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
+    molecule.addImplicitHydrogens();*/
+//    var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/,"$1")*1;
+/*    var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
     for (var j=0; j<diaIDs.length; j++) {
         diaIDs[j].nbEquivalent=diaIDs[j].atoms.length;
     }
@@ -60,4 +60,4 @@ describe('Auto-assignment ethylvinylether', function () {
         );
         //console.log(JSON.stringify(result));
     });
-});
+});*/

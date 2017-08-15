@@ -5,12 +5,13 @@ const SpinSystem = require('./SpinSystem');
 const AutoAssigner = require('./AutoAssigner');
 const getOcleFromOptions = require('./getOcleFromOptions');
 const nmrUtilities = require('spectra-nmr-utilities');
+let OCLE;
 
 function autoAssign(entry, options) {
-    if(entry.spectra.h1PeakList){
+    if (entry && entry.spectra && entry.spectra.nmr && entry.spectra.nmr[0].range || entry.spectra.nmr[0].region) {
         return assignmentFromPeakPicking(entry, options);
     }
-    else{
+    else {
         return assignmentFromRaw(entry, options);
     }
 }
@@ -51,73 +52,74 @@ function assignmentFromRaw(entry, options) {
 function assignmentFromPeakPicking(entry, options) {
     const predictor = options.predictor;
     var molecule, diaIDs, molfile;
-
+    OCLE = getOcleFromOptions(options);
     var spectra = entry.spectra;
-    if(!entry.molecule) {
-        molecule = OCLE.Molecule.fromMolfile(entry.molfile);
+    if (!entry.general.ocl) {
+        molecule = OCLE.Molecule.fromMolfile(entry.general.molfile);
         molecule.addImplicitHydrogens();
-        diaIDs=molecule.getGroupedDiastereotopicAtomIDs();
+        diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
 
-        for (var j = 0; j < diaIDs.length; j++) {
-            diaIDs[j].nbEquivalent=diaIDs[j].atoms.length;
-        }
-
-        diaIDs.sort(function(a,b) {
+        diaIDs.sort(function (a, b) {
             if (a.atomLabel == b.atomLabel) {
-                return b.nbEquivalent-a.nbEquivalent;
+                return b.counter - a.counter;
             }
-            return a.atomLabel<b.atomLabel?1:-1;
+            return a.atomLabel < b.atomLabel ? 1 : -1;
         });
-        entry.molecule = molecule;
-        entry.diaIDs = diaIDs;
-        entry.diaID = molecule.getIDCode();
+        entry.general.ocl = {value: molecule};
+        entry.general.ocl.diaIDs = diaIDs;
+        entry.general.ocl.diaID = molecule.getIDCode();
     }
     else {
-        molecule = entry.molecule;
-        diaIDs = entry.diaIDs;
+        molecule = entry.general.ocl.value;
+        diaIDs = entry.general.ocl.diaIDs;
     }
 
     //H1 prediction
-    var h1pred = predictor.proton(molecule, Object.assign({}, options, { ignoreLabile: false}));
+    var h1pred = predictor.proton(molecule, Object.assign({}, options, {ignoreLabile: false}));
 
-    if(!h1pred || h1pred.length === 0)
+    if (!h1pred || h1pred.length === 0)
         return null;
 
     nmrUtilities.group(h1pred);
 
 
-    var optionsError = {iteration:options.iteration || 1, learningRatio:options.learningRatio || 1};
+    var optionsError = {iteration: options.iteration || 1, learningRatio: options.learningRatio || 1};
 
-    for (var j=0; j<h1pred.length; j++) {
+    for (var j = 0; j < h1pred.length; j++) {
         h1pred[j].error = getError(h1pred[j], optionsError);
     }
 
-    h1pred.sort(function(a,b) {
+    h1pred.sort(function (a, b) {
         if (a.atomLabel === b.atomLabel) {
             return b.nbAtoms - a.nbAtoms;
         }
-        return a.atomLabel < b.atomLabel ? 1: -1;
+        return a.atomLabel < b.atomLabel ? 1 : -1;
     });
 
-    spectra.h1PeakList.sort(function(a, b ){ return b.integral - a.integral });
+    for(let nmr in spectra.nmr) {
+        if(nmr.experiment === "1d") {
+            nmr.range.sort(function (a, b) {
+                return b.integral - a.integral
+            });
+        }
+    }
 
     const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList, options);
     const autoAssigner = new AutoAssigner(spinSystem, options);
     return autoAssigner.getAssignments();
-
 }
 
-function  getError(prediction, param){
+function getError(prediction, param) {
     //console.log(prediction)
     //Never use predictions with less than 3 votes
-    if(prediction.std === 0 || prediction.ncs < 3){
+    if (prediction.std === 0 || prediction.ncs < 3) {
         return 20;
     }
     else {
         //factor is between 1 and +inf
         //console.log(prediction.ncs+" "+(param.iteration+1)+" "+param.learningRatio);
         var factor = 3 * prediction.std /
-            (Math.pow(prediction.ncs,(param.iteration + 1) * param.learningRatio));//(param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
+            (Math.pow(prediction.ncs, (param.iteration + 1) * param.learningRatio));//(param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
         return 3 * prediction.std + factor;
     }
     return 20;

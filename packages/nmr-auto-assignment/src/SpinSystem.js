@@ -10,7 +10,7 @@ class SpinSystem {
         this.signalsArray = signalsArray;
         this.cosy = options.cosySignals || null;
         this.paths = options.paths || null;
-        this.connCosy = options.cosyPaths || null;
+        this.cosyPaths = options.cosyPaths || null;
         this.connHmbc = options.hmbcPaths || null;
         this.hmbc = options.hmbcSignals || null;
         this.init();
@@ -67,13 +67,13 @@ class SpinSystem {
         //System.out.println(diaIDsH.size());
         //var row,col;
 
-        if (this.cosy && this.cosy.length > 0 && this.connCosy.length > 0) {
+        if (this.cosy && this.cosy.length > 0 && this.cosyPaths.length > 0) {
             this.cosyT = new Array(nH);
             for(let i = 0; i < nH; i++)
                 this.cosyT[i] = new Array(nH);
 
             //To parse the theoretical COSY
-            for (var pair of this.connCosy) {
+            for (var pair of this.cosyPaths) {
                 let row = diaIDByAtomLabel["H"].indexOf(pair.fromDiaID);
                 let col = diaIDByAtomLabel["H"].indexOf(pair.toDiaID);
 
@@ -200,7 +200,6 @@ class SpinSystem {
 
         return -1;
     }
-
 }
 
 module.exports = SpinSystem;
