@@ -74,8 +74,11 @@ function assignmentFromPeakPicking(entry, options) {
         diaIDs = entry.general.ocl.diaIDs;
     }
 
+    let prediction = [];
+    if(let nmr in entry.spectra.nmr) {
+        prediction.push(predictByExperiment(molecule, nmr, options))
+    }
     //H1 prediction
-    var h1pred = predictor.proton(molecule, Object.assign({}, options, {ignoreLabile: false}));
 
     if (!h1pred || h1pred.length === 0)
         return null;
@@ -104,9 +107,25 @@ function assignmentFromPeakPicking(entry, options) {
         }
     }
 
-    const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList, options);
+    const spinSystem = new SpinSystem(spectra, prediction, options);
     const autoAssigner = new AutoAssigner(spinSystem, options);
     return autoAssigner.getAssignments();
+}
+
+function predictByExperiment(molecule, nmr, options) {
+    if(nmr.experiment === "1d") {
+        if(nmr.nucleus === "1H") {
+            return options.predictor.proton(molecule, Object.assign({}, options, {ignoreLabile: false}));
+        }
+
+        if(nmr.nucleus === "13C") {
+            return options.predictor.carbon(molecule, Object.assign({}, options, {ignoreLabile: false}));
+        }
+    }
+    else {
+        if(nmr.experiment === "cosy")
+            return options.predictor.twoD();
+    }
 }
 
 function getError(prediction, param) {
