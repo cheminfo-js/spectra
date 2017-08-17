@@ -1,7 +1,7 @@
 /**
  * Created by acastillo on 7/5/16.
  */
-const SpinSystem = require('./SpinSystem');
+const SpinSystem = require('./SpinSystem2');
 const AutoAssigner = require('./AutoAssigner');
 const getOcleFromOptions = require('./getOcleFromOptions');
 const nmrUtilities = require('spectra-nmr-utilities');
@@ -75,37 +75,15 @@ function assignmentFromPeakPicking(entry, options) {
     }
 
     let prediction = [];
-    if(let nmr in entry.spectra.nmr) {
-        prediction.push(predictByExperiment(molecule, nmr, options))
-    }
-    //H1 prediction
+    entry.spectra.nmr.forEach(nmr => {
+        prediction.push(predictByExperiment(molecule, nmr, options));
 
-    if (!h1pred || h1pred.length === 0)
-        return null;
-
-    nmrUtilities.group(h1pred);
-
-
-    var optionsError = {iteration: options.iteration || 1, learningRatio: options.learningRatio || 1};
-
-    for (var j = 0; j < h1pred.length; j++) {
-        h1pred[j].error = getError(h1pred[j], optionsError);
-    }
-
-    h1pred.sort(function (a, b) {
-        if (a.atomLabel === b.atomLabel) {
-            return b.nbAtoms - a.nbAtoms;
-        }
-        return a.atomLabel < b.atomLabel ? 1 : -1;
-    });
-
-    for(let nmr in spectra.nmr) {
         if(nmr.experiment === "1d") {
             nmr.range.sort(function (a, b) {
-                return b.integral - a.integral
+                return b.integral - a.integral;
             });
         }
-    }
+    })
 
     const spinSystem = new SpinSystem(spectra, prediction, options);
     const autoAssigner = new AutoAssigner(spinSystem, options);
@@ -114,17 +92,36 @@ function assignmentFromPeakPicking(entry, options) {
 
 function predictByExperiment(molecule, nmr, options) {
     if(nmr.experiment === "1d") {
+        let pred;
         if(nmr.nucleus === "1H") {
-            return options.predictor.proton(molecule, Object.assign({}, options, {ignoreLabile: false}));
+            pred = options.predictor.proton(molecule, Object.assign({}, options, {ignoreLabile: false}));
         }
 
         if(nmr.nucleus === "13C") {
-            return options.predictor.carbon(molecule, Object.assign({}, options, {ignoreLabile: false}));
+            pred = options.predictor.carbon(molecule, Object.assign({}, options, {ignoreLabile: false}));
         }
+
+        nmrUtilities.group(pred);
+
+        var optionsError = {iteration: options.iteration || 1, learningRatio: options.learningRatio || 1};
+
+        for (var j = 0; j < pred.length; j++) {
+            pred[j].error = getError(pred[j], optionsError);
+        }
+
+        pred.sort(function (a, b) {
+            if (a.atomLabel === b.atomLabel) {
+                return b.nbAtoms - a.nbAtoms;
+            }
+            return a.atomLabel < b.atomLabel ? 1 : -1;
+        });
+
+        return pred;
     }
     else {
         if(nmr.experiment === "cosy")
-            return options.predictor.twoD();
+            return molecule.getAllPaths({fromLabel: "H", toLabel: "H", minLength: 0, maxLength: 3});
+        //TODO Add other 2D experiments
     }
 }
 
