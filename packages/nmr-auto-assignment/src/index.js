@@ -2,7 +2,7 @@
  * Created by acastillo on 7/5/16.
  */
 const SpinSystem = require('./SpinSystem2');
-const AutoAssigner = require('./AutoAssigner');
+const AutoAssigner = require('./AutoAssigner2');
 const getOcleFromOptions = require('./getOcleFromOptions');
 const nmrUtilities = require('spectra-nmr-utilities');
 let OCLE;
@@ -58,13 +58,13 @@ function assignmentFromPeakPicking(entry, options) {
         molecule = OCLE.Molecule.fromMolfile(entry.general.molfile);
         molecule.addImplicitHydrogens();
         diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
-
         diaIDs.sort(function (a, b) {
-            if (a.atomLabel == b.atomLabel) {
+            if (a.atomLabel === b.atomLabel) {
                 return b.counter - a.counter;
             }
             return a.atomLabel < b.atomLabel ? 1 : -1;
         });
+
         entry.general.ocl = {value: molecule};
         entry.general.ocl.diaIDs = diaIDs;
         entry.general.ocl.diaID = molecule.getIDCode();
@@ -73,6 +73,8 @@ function assignmentFromPeakPicking(entry, options) {
         molecule = entry.general.ocl.value;
         diaIDs = entry.general.ocl.diaIDs;
     }
+
+   // console.log(diaIDs);
 
     let prediction = [];
     entry.spectra.nmr.forEach(nmr => {
@@ -85,6 +87,7 @@ function assignmentFromPeakPicking(entry, options) {
         }
     })
 
+
     const spinSystem = new SpinSystem(spectra, prediction, options);
     const autoAssigner = new AutoAssigner(spinSystem, options);
     return autoAssigner.getAssignments();
@@ -93,11 +96,11 @@ function assignmentFromPeakPicking(entry, options) {
 function predictByExperiment(molecule, nmr, options) {
     if(nmr.experiment === "1d") {
         let pred;
-        if(nmr.nucleus === "1H") {
+        if(nmr.nucleus === "H") {
             pred = options.predictor.proton(molecule, Object.assign({}, options, {ignoreLabile: false}));
         }
 
-        if(nmr.nucleus === "13C") {
+        if(nmr.nucleus === "C") {
             pred = options.predictor.carbon(molecule, Object.assign({}, options, {ignoreLabile: false}));
         }
 
@@ -115,6 +118,8 @@ function predictByExperiment(molecule, nmr, options) {
             }
             return a.atomLabel < b.atomLabel ? 1 : -1;
         });
+
+        console.log(pred);
 
         return pred;
     }
