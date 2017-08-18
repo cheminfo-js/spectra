@@ -13,6 +13,12 @@ class Assignment {
         var options = Object.assign({}, defaultOptions, opt);
         this.spinSystem = spinSystem;
         this.keys = this.spinSystem.sources.getKeys();
+        this.sourcesIDs = [];
+        this.targetIDs = [];
+        this.keys.forEach(key => {
+            this.sourcesIDs = this.sourcesIDs.concat(this.spinSystem.sources[key]);
+            this.targetIDs = this.targetIDs.concat(this.spinSystem.targets[key]);
+        });
 
         this.minScore = options.minScore;
         this.maxSolutions = options.maxSolutions;
@@ -43,9 +49,8 @@ class Assignment {
      */
     generateExpandMap() {
         this.expandMap = {};
-        let keys = this.spinSystem.sources.getKeys();
         let errorAbs = Math.abs(this.errorCS);
-        keys.forEach(key => {
+        this.keys.forEach(key => {
             let sourcesIDs = this.spinSystem.sources[key];
             let targetIDs = this.spinSystem.targets[key];
             sourcesIDs.forEach(sourceID => {
@@ -107,12 +112,9 @@ class Assignment {
     }
 
     freeSources(partial) {
-        this.keys.forEach(key => {
-           let partialByKey = partial[key];
-           for(let i = 0; i < partialByKey.length; i++)
-               if(partialByKey[i].length == 0)
-                   return {key:key, index: i};
-        });
+        for(let i = 0; i < partial.length; i++)
+            if(partial[i].length == 0)
+                return i;
 
         return null;
     }
@@ -130,9 +132,9 @@ class Assignment {
                 return;
             }
 
-            let sourceID = system.sources[sourceAddress.key][sourceAddress.index];
+            let sourceID = this.sourcesIDs[sourceAddress.index];
             let souce = system.sourcesConstrains[sourceID];//The 1D prediction to be assigned
-            let expand = this.getExpand(sourceID);
+            let expand = this.expandMap[sourceID];
 
 
             //We can speed up it by checking the chemical shift first
