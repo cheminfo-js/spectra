@@ -96,7 +96,7 @@ class Assignment {
             let partial = new Array(nTargets);
             for (let i = 0; i < nTargets; i++) {
                 this.score[i] = 1;
-                partial[i] = [];
+                partial[i] = null;
             }
 
             this.exploreTreeRec(this.spinSystem, nTargets - 1, nSources - 1, partial);
@@ -113,7 +113,7 @@ class Assignment {
 
     freeSources(partial) {
         for(let i = 0; i < partial.length; i++)
-            if(partial[i].length == 0)
+            if(partial[i] === null)
                 return i;
 
         return null;
@@ -132,10 +132,31 @@ class Assignment {
                 return;
             }
 
-            let sourceID = this.sourcesIDs[sourceAddress.index];
+            let sourceID = this.sourcesIDs[sourceAddress];
             let souce = system.sourcesConstrains[sourceID];//The 1D prediction to be assigned
             let expand = this.expandMap[sourceID];
 
+            expand.forEach(targetID => {
+                partial[sourceAddress] = targetID;
+                if(this.isPlausible(partial, system.sourcesConstrains)) {
+                    this.score = this.partialScore(partial, system.sourcesConstrains);
+                    if (this.score > 0) {
+                        //If there is no more sources or targets available, we have a solution for the assignment problem
+                        if(this.freeSources(partial) === null || this.availableTargets(partial) === null) {
+                             this.nSolutions++;
+                             var solution = {assignment: this._cloneArray(partial), score: this.score};
+                            if (this.solutions.length >= this.maxSolutions) {
+                                if (this.score > this.solutions.last().score) {
+                                    this.solutions.pollLast();
+                                    this.solutions.add(solution);
+                                }
+                            } else {
+                                this.solutions.add(solution);
+                            }
+                        }
+                    }
+                }
+            });
 
             //We can speed up it by checking the chemical shift first
             if (diaMask[indexDia] && this._isWithinCSRange(indexSignal, indexDia)) {
