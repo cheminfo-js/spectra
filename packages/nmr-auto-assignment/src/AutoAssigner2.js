@@ -12,7 +12,8 @@ class Assignment {
     constructor(spinSystem, opt) {
         var options = Object.assign({}, defaultOptions, opt);
         this.spinSystem = spinSystem;
-        this.keys = this.spinSystem.sources.getKeys();
+        this.keys = Object.keys(this.spinSystem.sources);
+
         this.sourcesIDs = [];
         this.targetIDs = [];
         this.keys.forEach(key => {
@@ -40,6 +41,8 @@ class Assignment {
         this.comparator = function (a, b) {
             return b.score - a.score;
         }
+        this.generateExpandMap();
+
     }
 
     /**
@@ -59,19 +62,22 @@ class Assignment {
                 this.expandMap[sourceID] = [];
                 targetIDs.forEach(targetID => {
                     let target = this.spinSystem.targetsConstains[targetID];
-                    if(source.nbAtoms <= target.integral) {
-                        if(this.errorCS === 0 || source.delta === -9999999) { //Chemical shift is not a restriction
+                    if (source.nbAtoms - target.integral < 1) {
+                        if (this.errorCS === 0 || source.delta === -9999999) { //Chemical shift is not a restriction
                             this.expandMap[sourceID].push(targetID);
                         } else {
                             let tmp = (target.from + target.to) / 2;
-                            if(Math.abs(source.delta - tmp ) < (source.error
-                                + Math.abs(target.from - target.to)) / 2 +  errorAbs)
+                            if (Math.abs(source.delta - tmp) < (source.error
+                                + Math.abs(target.from - target.to)) / 2 + errorAbs)
                                 this.expandMap[sourceID].push(targetID);
                         }
                     }
                 });
+                this.expandMap[sourceID].push("*");
             });
         });
+
+        //console.log(this.expandMap)
     }
 
     getAssignments() {
@@ -79,7 +85,7 @@ class Assignment {
         this.timeStart = date.getTime();
         var i, j, k, nTargets, nSources;
 
-        if (DEBUG) console.log(this.spinSystem);
+        //if (DEBUG) console.log(this.spinSystem);
 
         this.lowerBound = this.minScore;
 
@@ -90,16 +96,23 @@ class Assignment {
 
             nTargets = this.spinSystem.nTargets;
             nSources = this.spinSystem.nSources;
-            this.expandMap = this.generateExpandMap();
-
-            this.scores =new Array(nTargets);
-            let partial = new Array(nTargets);
-            for (let i = 0; i < nTargets; i++) {
-                this.score[i] = 1;
+            //this.expandMap = this.generateExpandMap();
+            this.scores = new Array(nSources);
+            let partial = new Array(nSources);
+            for (let i = 0; i < nSources; i++) {
+                this.scores[i] = 1;
                 partial[i] = null;
             }
+            /*
+            console.log(this.sourcesIDs.map(value => {
+                return this.spinSystem.sourcesConstrains[value].nbAtoms + " " + this.spinSystem.sourcesConstrains[value].delta
+            }));
 
-            this.exploreTreeRec(this.spinSystem, nTargets - 1, nSources - 1, partial);
+            console.log(this.targetIDs.map(value => {
+                return this.spinSystem.targetsConstains[value].signalID + " "+this.spinSystem.targetsConstains[value].integral + " " + this.spinSystem.targetsConstains[value].from
+            }));*/
+
+            this.exploreTreeRec(this.spinSystem, 0, partial);
 
             this.lowerBound -= 0.1;
             if (DEBUG) console.log("Decreasing lowerBound: " + this.lowerBound);
@@ -112,19 +125,97 @@ class Assignment {
     }
 
     freeSources(partial) {
-        for(let i = 0; i < partial.length; i++)
-            if(partial[i] === null)
+        for (let i = 0; i < partial.length; i++)
+            if (partial[i] === null)
                 return i;
 
         return null;
     }
 
+    isPlausible(partial, sourceConstrains, sourceID, targetID) {
+        if (targetID === "*")
+            return true;
+        return this.partialScore(partial, sourceConstrains, sourceID, targetID) > 0 ? true: false;
+    }
+
+    partialScore(partial, sourceConstrains, sourceID, targetID) {
+        let partialInverse = {};
+        //Get the inverse of the assignment function
+        partial.forEach((targetID, index) => {
+            if(targetID && targetID !== "*") {
+                if(!partialInverse[targetID]) {
+                    partialInverse[targetID] = [this.sourcesIDs[index]];
+                }
+                else {
+                    partialInverse[targetID].push(this.sourcesIDs[index]);
+                }
+            }
+        });
+
+        for(let key in partialInverse) {
+            let targetToSource = partialInverse[key];
+            let total = targetToSource.reduce((sum, value) => {
+                return sum + this.spinSystem.sourcesConstrains[value].nbAtoms;
+            }, 0);
+            if(Math.abs(total  - this.spinSystem.targetsConstains[key].integral) >= 1) {
+                return 0;
+            }
+        }
+
+        return 1;
+
+        /*var score = 0;
+        var expLH = 0;
+        if (this.spinSystem.cosyLines != null) {
+            expLH++;
+            score = this._cosyScore(partial, current, keySingalAsg);
+        }
+        if (this.spinSystem.hmbcLines != null) {
+            expLH++;
+            score += this._hmbcScore(partial, current, keySingalAsg);
+        }
+        if (this.spinSystem.chemicalShiftsT != null && this.errorCS > 0) {
+            expLH++;
+            score += this._chemicalShiftScore(partial, current, keySingalAsg);
+        }
+
+        if (expLH == 0) {
+            expLH = 3;
+            score = 3;
+        }
+
+        this.scores[current] = score / expLH;
+        var sumLh = 0;
+        var count = 0;
+        for (var i = this.scores.length - 1; i >= 0; i--) {
+            if (this.scores[i] != -1) {
+                sumLh += this.scores[i];
+                count++;
+            }
+        }
+
+        if (sumLh < this.scores.length * this.lowerBound)
+            return -sumLh / count;
+        return sumLh / count;*/
+    }
+
+    scoreIntegration(partial, sourceConstrains, sourceID, targetID) {
+        partial.forEach((targetID, index) => {
+            if(targetID !== null) {
+                let source = this.spinSystem.sourcesConstrains[this.sourcesIDs[index]];
+                let target = this.spinSystem.targetsConstains[targetID];
+            }
+        });
+    }
+
     //We try to assign while there is more sources to be assigned
-    exploreTreeRec(system, indexSignal, indexDia, partial) {
-        //If this happens, we can assign this atom group to this signal
-        let sourceAddress;
-        let targetAddress;
-        while ((sourceAddress = this.freeSources(partial)) !== null) {
+    exploreTreeRec(system, sourceAddress, partial) {
+        /*console.log(partial.map(value => {
+            if(value !== null && value !== "*")
+                return this.spinSystem.targetsConstains[value].integral;
+            else return "*"
+        }));*/
+        if (sourceAddress < system.nSources) {
             //Force a return if the loop time is longer than the given timeout
             const d = new Date();
             if ((d.getTime() - this.timeStart) > this.timeout) {
@@ -133,18 +224,20 @@ class Assignment {
             }
 
             let sourceID = this.sourcesIDs[sourceAddress];
-            let souce = system.sourcesConstrains[sourceID];//The 1D prediction to be assigned
+            let source = system.sourcesConstrains[sourceID];//The 1D prediction to be assigned
             let expand = this.expandMap[sourceID];
-
+            //console.log(expand);
             expand.forEach(targetID => {
+                //console.log("->" + targetID);
                 partial[sourceAddress] = targetID;
-                if(this.isPlausible(partial, system.sourcesConstrains)) {
+                if (this.isPlausible(partial, system.sourcesConstrains, sourceID, targetID)) {
                     this.score = this.partialScore(partial, system.sourcesConstrains);
                     if (this.score > 0) {
                         //If there is no more sources or targets available, we have a solution for the assignment problem
-                        if(this.freeSources(partial) === null || this.availableTargets(partial) === null) {
-                             this.nSolutions++;
-                             var solution = {assignment: this._cloneArray(partial), score: this.score};
+                        if (sourceAddress === system.nSources - 1) {
+                            console.log("Found " + JSON.stringify(partial));
+                            this.nSolutions++;
+                            var solution = {assignment: this._cloneArray(partial), score: this.score};
                             if (this.solutions.length >= this.maxSolutions) {
                                 if (this.score > this.solutions.last().score) {
                                     this.solutions.pollLast();
@@ -154,95 +247,18 @@ class Assignment {
                                 this.solutions.add(solution);
                             }
                         }
-                    }
-                }
-            });
-
-            //We can speed up it by checking the chemical shift first
-            if (diaMask[indexDia] && this._isWithinCSRange(indexSignal, indexDia)) {
-                this.nSteps++;
-                const sizePartial = partial[indexSignal].length;
-                //Assign the atom group to the signal
-                diaMask[indexDia] = false;//Mark this atom group as used
-                partial[indexSignal][sizePartial] = indexDia;//Add the atom group index to the assignment list
-                signals[indexSignal] -= diaList[indexDia];//Subtract the group from signal integral
-                //If this signal is completely assigned, we have to verify all the restrictions
-                if (signals[indexSignal] == 0) {
-                    let keySum = this._accomplishCounts(indexSignal, partial);
-                    if (DEBUG) console.log("Accomplish count: " + keySum);
-                    if (keySum != 0) {
-                        //Verify the restrictions. A good solution should give a high score
-                        this.score = this._solutionScore(partial, indexSignal, keySum);
-                        if (DEBUG) console.log(this.score + " " + partial);
-                        //This is a solution
-                        if (this.score > 0) {
-                            if (indexSignal == 0) {//We found a new solution
-                                this.nSolutions++;
-                                var solution = {assignment: this._cloneArray(partial), score: this.score};
-                                if (this.solutions.length >= this.maxSolutions) {
-                                    if (this.score > this.solutions.last().score) {
-                                        this.solutions.pollLast();
-                                        this.solutions.add(solution);
-                                    }
-                                } else {
-                                    this.solutions.add(solution);
-                                }
-                            }
-                            else {
-                                //Each new signal that we assign will produce a new level on the tree.
-                                indexSignal--;//Lets go forward with the next signal
-                                indexDia = diaList.length;
-                                while (!diaMask[--indexDia]);
-                                //SolutionTree newLevel = new SolutionTree(solution);
-                                this.exploreTreeRec(signals, diaList, indexSignal, indexDia, diaMask, partial);
-                                indexSignal++;
-                            }
+                        else {
+                            this.exploreTreeRec(system, sourceAddress + 1, partial);
                         }
                     }
+                }
 
-                }
-                else {
-                    //It says that the signal should be assigned by combining 2 or more signals
-                    const previousIndexDia = indexDia;
-                    while (indexDia > 0 && !diaMask[--indexDia]);
-                    if (indexDia >= 0)
-                        this.exploreTreeRec(signals, diaList, indexSignal, indexDia, diaMask, partial);
-                    indexDia = previousIndexDia;
-                }
-                //Deallocate this atom group to try the next one.
-                indexDia = partial[indexSignal].splice(sizePartial, 1);//Add the atom group index to the assignment list
-                diaMask[indexDia] = true;//Mark this atom group as available
-                signals[indexSignal] += diaList[indexDia];//Subtract the group from signal integral
-                this.scores[indexSignal] = 1;
-            }
-            indexDia--;
+            });
         }
     }
 
     _cloneArray(data) {
         return JSON.parse(JSON.stringify(data));
-    }
-
-    _isWithinCSRange(indexSignal, indexDia) {
-        if (this.spinSystem.chemicalShiftsE != null && this.spinSystem.chemicalShiftsT != null) {
-            if (this.errorCS == 0)
-                return true;
-            var cfAtoms = this.spinSystem.chemicalShiftsT[indexDia];
-
-            if (cfAtoms == -9999999)
-                return true;
-            var cfSignal = this.spinSystem.chemicalShiftsE[indexSignal];
-            var error = this.spinSystem.chemicalShiftsTError[indexDia];
-            if (error < Math.abs(this.errorCS))
-                error = this.errorCS;
-
-            var csError = Math.abs(this.spinSystem.signalsWidth[indexSignal] / 2.0 + Math.abs(error));
-            if (Math.abs(cfSignal - cfAtoms) <= csError)
-                return true;
-            else
-                return false;
-        }
-        return true;
     }
 
     _accomplishCounts(indexSignal, partial) {
@@ -517,7 +533,7 @@ class Assignment {
 
 
     _formatAssignmentOutput(format) {
-        var nSignals = this.spinSystem.signalsArray.length;
+        /*var nSignals = this.spinSystem.nTargets;
         var i, j, k;
         var assignment = this.solutions.elements;
         var nSolutions = this.solutions.length;
@@ -527,9 +543,9 @@ class Assignment {
             var assignmentNew = {};
             for (j = 0; j < nSignals; j++) {
                 var diaIDs = assignment[j];
-                var tmp = new Array(diaIDs.length);
-                for (k = 0; k < diaIDs.length; k++) {
-                    tmp[k] = this.spinSystem.diaIDsArray[diaIDs[k]].diaIDs[0];
+                var tmp = new Array(this.sourcesIDs.length);
+                for (k = 0; k < this.sourcesIDs.length; k++) {
+                    tmp[k] = this.sourcesIDs[k];
                 }
                 if (this.condensed)
                     assignmentNew[this.spinSystem.signalsArray[j].signalID] = tmp;
@@ -543,7 +559,7 @@ class Assignment {
             }
             if (this.condensed)
                 this.solutions.elements[i].assignment = assignmentNew;
-        }
+        }*/
     }
 }
 module.exports = Assignment;

@@ -119,7 +119,7 @@ function predictByExperiment(molecule, nmr, options) {
             return a.atomLabel < b.atomLabel ? 1 : -1;
         });
 
-        console.log(pred);
+        //console.log(pred);
 
         return pred;
     }
