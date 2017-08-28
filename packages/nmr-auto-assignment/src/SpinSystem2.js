@@ -40,7 +40,7 @@ class SpinSystem {
 
         rows.forEach(row => {
             cols.forEach(col => {
-                targetConstains[row + "_" + col] = region;
+                targetConstains[row + " " + col] = region;
             });
         });
     }
@@ -66,7 +66,7 @@ class SpinSystem {
             }
             else {
                 pred.forEach(atomPred => {
-                    this.sourcesConstrains[atomPred.fromDiaID + "_" + atomPred.toDiaID] = atomPred;
+                    this.sourcesConstrains[atomPred.fromDiaID + " " + atomPred.toDiaID] = atomPred;
                 });
             }
         });

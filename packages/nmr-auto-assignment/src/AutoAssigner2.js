@@ -124,14 +124,6 @@ class Assignment {
         return this.solutions.elements;
     }
 
-    freeSources(partial) {
-        for (let i = 0; i < partial.length; i++)
-            if (partial[i] === null)
-                return i;
-
-        return null;
-    }
-
     isPlausible(partial, sourceConstrains, sourceID, targetID) {
         if (targetID === "*")
             return true;
@@ -141,8 +133,11 @@ class Assignment {
     partialScore(partial, sourceConstrains, sourceID, targetID) {
         let partialInverse = {};
         //Get the inverse of the assignment function
+        var activeDomainOnSource = [];
+
         partial.forEach((targetID, index) => {
             if(targetID && targetID !== "*") {
+                activeDomainOnSource.push(index);
                 if(!partialInverse[targetID]) {
                     partialInverse[targetID] = [this.sourcesIDs[index]];
                 }
@@ -152,6 +147,7 @@ class Assignment {
             }
         });
 
+        //Integration score
         for(let key in partialInverse) {
             let targetToSource = partialInverse[key];
             let total = targetToSource.reduce((sum, value) => {
@@ -163,6 +159,33 @@ class Assignment {
         }
 
         return 1;
+
+        var activeDomainOnTarget = Object.keys(partialInverse);
+
+        var andConstrains = {};
+        for(let i = 0; i < activeDomainOnSource.length; i++) {
+            let targetI = this.sourcesIDs[activeDomainOnSource[i]];
+            for(let j = i + 1; j < activeDomainOnSource.length; j++) {
+                let targetJ = this.sourcesIDs[activeDomainOnSource[j]];
+                let sourceConstrain = this.spinSystem.sourcesConstrains[targetI + " " + targetJ];
+                let keyOnTargerMap = partial[activeDomainOnSource[i]] + " " + partial[activeDomainOnSource[j]];
+                let targetConstrain = this.spinSystem.targetsConstains[keyOnTargerMap];
+                let value = 1;
+                if(! andConstrains[keyOnTargerMap]) {
+                     andConstrains[keyOnTargerMap] = value;
+                } else {
+                     andConstrains[keyOnTargerMap] = Math.max( andConstrains[keyOnTargerMap], value);
+                }
+            }
+        }
+
+        let andKeys = Object.keys(andConstrains);
+        let sumAnd = 0;
+        andKeys.forEach(key => {
+            sumAnd += andConstrains[key];
+        });
+
+        return sumAnd / (activeDomainOnTarget.length * (activeDomainOnTarget.length + 1 ) / 2);
 
         /*var score = 0;
         var expLH = 0;
