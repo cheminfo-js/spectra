@@ -59,6 +59,15 @@ var result = autoassigner({general: {molfile: molfile},
     {minScore: 1, maxSolutions: 3000, errorCS: 1, predictor: predictor, condensed: true, OCLE: OCLE}
 );
 console.log(result.length);
+console.log(result[0]);
+console.log(result[1]);
+console.log(result[2]);
+
+console.log(result[result.length - 1]);
+
+
+
+
 /*
 var result = autoassigner({general: {molfile: molfile},
         spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")},
