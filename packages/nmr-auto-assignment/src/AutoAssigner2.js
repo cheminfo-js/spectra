@@ -160,9 +160,11 @@ class Assignment {
         }
 
         //Chemical shift score
-        let chemicalShiftScore = 0;
+        let chemicalShiftScore = 1;
+        let count = 1;
         if(this.errorCS > 0) {
-            let count = 0;
+            chemicalShiftScore = 0;
+            count = 0;
             partial.forEach((targetID, index) => {
                 if(targetID && targetID !== "*") {
                     count++;
