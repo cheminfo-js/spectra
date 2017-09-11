@@ -45,6 +45,12 @@ M  END
 
 predictor.spinus(molfile).then(prediction => {
     //var a = simule2DNmrSpectrum(prediction, {nbPointsX: 100, nbPointsY: 100});
-    console.log(prediction)
+    //console.log(prediction)
     //API.createData("data", a.to2DArray());
 }).catch(reason => {return new Error(reason)});
+
+predictor.fetchProton().then(value => {
+    const prediction = predictor.proton(molfile, {group: true});
+    console.log(prediction.length);
+});
+
