@@ -1,6 +1,6 @@
 {
   "name": "spectra-data",
-  "version": "3.1.12",
+  "version": "3.1.13",
   "description": "spectra-data project - manipulate spectra",
   "keywords": [
     "spectra-data",
@@ -25,7 +25,7 @@
     "testEnvironment": "node"
   },
   "devDependencies": {
-    "nmr-predictor": "^1.1.1"
+    "nmr-predictor": "^1.1.2"
   },
   "dependencies": {
     "brukerconverter": "^1.0.1",
@@ -40,8 +40,8 @@
     "ml-gsd": "^2.0.1",
     "ml-matrix-peaks-finder": "^0.2.1",
     "ml-simple-clustering": "^0.1.0",
-    "nmr-simulation": "^1.0.8",
-    "spectra-data-ranges": "^0.0.7",
-    "spectra-nmr-utilities": "^0.0.5"
+    "nmr-simulation": "^1.0.9",
+    "spectra-data-ranges": "^0.0.8",
+    "spectra-nmr-utilities": "^0.0.6"
   }
 }

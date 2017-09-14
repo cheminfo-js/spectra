@@ -1,6 +1,6 @@
 {
   "name": "spectra-nmr-utilities",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "spectra NMR utilities",
   "main": "./src/index.js",
   "files": [
