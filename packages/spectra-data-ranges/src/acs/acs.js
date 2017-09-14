@@ -31,7 +31,9 @@ var globalOptions = {
 };
 
 function toAcs(ranges, options = {}) {
-    var nucleus = (options.nucleus || '1H').toLowerCase().replace(/[0-9]/g, '');
+    options = Object.assign({}, options);
+    if (!options.nucleus) options.nucleus = '1H';
+    var nucleus = options.nucleus.toLowerCase().replace(/[0-9]/g, '');
     var defaultOptions = globalOptions[nucleus];
     options = Object.assign({}, defaultOptions, {ascending: false, format: 'IMJA'}, options);
 
