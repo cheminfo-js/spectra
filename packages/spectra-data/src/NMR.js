@@ -454,13 +454,13 @@ class NMR extends SD {
         } = options;
 
         const solventImpurities = this.getImpurities(solvent, impurity);
-        if (! solventImpurities) {
+        if (!solventImpurities) {
             throw Error('The solvent does not mach with a impurities into the list');
         }
 
         let peaks = this.getPeaks(options);
 
-        peaks.map((peak) => {
+        peaks.forEach((peak) => {
             for (let impurity in solventImpurities) {
                 for (let signal of impurity) {
                     if (peak.width + error > Math.abs(signal.shift - peak.x)) {
