@@ -78,7 +78,24 @@ module.exports.ACSParser = function (totalString, options = {}) {
             newString += totalString.charAt(i);
         }
     }
-
+    totalString = newString.replace(/,(?!([^\[]*\]))/gi, '|');
+    totalString = totalString.replace(/,/gi, '/');
+    var parts = totalString.split('\|');
+    var delta = '';
+    for (let part of parts) {
+        var ppmValueA = null;
+        var ppmValueB = null;
+        var couplings = [];
+        var intensity = 0;
+        var multString = '';
+        var assignment = '';
+        var indexOf = part.indexOf('[');
+        if (indexOf > 0) {
+            delta = part.substring(0, indexOf);
+            part = part.substring(indexOf + 1);
+            indexOf = part.indexOf(']');
+        }
+    }
     return totalString;
 };
 
