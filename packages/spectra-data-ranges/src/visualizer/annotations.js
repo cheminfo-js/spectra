@@ -1,5 +1,3 @@
-'use strict';
-
 var options1D = {type: 'rect', line: 0, lineLabel: 1, labelColor: 'red', strokeColor: 'red', strokeWidth: '1px', fillColor: 'green', width: 0.05, height: 10, toFixed: 1, maxLines: Number.MAX_VALUE, selectable: true, fromToc: false};
 var options2D = {type: 'rect', labelColor: 'red', strokeColor: 'red', strokeWidth: '1px', fillColor: 'green', width: '6px', height: '6px'};
 
@@ -101,5 +99,4 @@ function annotations2D(zones, optionsG) {
     return annotations;
 }
 
-module.exports = {annotations2D: annotations2D, annotations1D: annotations1D};
-
+export {annotations2D, annotations1D};

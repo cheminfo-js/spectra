@@ -1,6 +1,4 @@
-'use strict';
-
-const SparseMatrix = require('ml-sparse-matrix');
+import SparseMatrix from 'ml-sparse-matrix';
 
 function createPauli(mult) {
     const spin = (mult - 1) / 2;
@@ -33,9 +31,7 @@ function diag(A, d, n, m) {
 
 const pauli2 = createPauli(2);
 
-function getPauli(mult) {
+export default function getPauli(mult) {
     if (mult === 2) return pauli2;
     else return createPauli(mult);
 }
-
-module.exports = getPauli;

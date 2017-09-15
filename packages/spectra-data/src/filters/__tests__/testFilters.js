@@ -1,12 +1,11 @@
-'use strict';
 
 require('should');
-var Data = require('../../..');
+import {NMR} from '../../index';
 var FS = require('fs');
 
 
 function createSpectraData(filename) {
-    var spectrum = Data.NMR.fromJcamp(
+    var spectrum = NMR.fromJcamp(
         FS.readFileSync(__dirname + filename).toString()
     );
     return spectrum;

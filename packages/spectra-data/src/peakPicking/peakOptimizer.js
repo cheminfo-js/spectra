@@ -1,9 +1,7 @@
-'use strict';
-
 var diagonalError = 0.05;
 var	tolerance = 0.05;
 
-module.exports = {
+export default {
 
     clean: function (peaks, threshold) {
         var max = Number.NEGATIVE_INFINITY;

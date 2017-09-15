@@ -1,8 +1,7 @@
-'use strict';
 
 const patterns = ['s', 'd', 't', 'q', 'quint', 'h', 'sept', 'o', 'n'];
 
-module.exports.nmrJ = function nmrJ(Js, options = {}) {
+export function nmrJ(Js, options = {}) {
     var jString = '';
     options = Object.assign({}, {separator: ', ', nbDecimal: 2}, options);
     let j, i;
@@ -14,9 +13,9 @@ module.exports.nmrJ = function nmrJ(Js, options = {}) {
         jString += j.multiplicity + ' ' + j.coupling.toFixed(options.nbDecimal);
     }
     return jString;
-};
+}
 
-module.exports.joinCoupling = function joinCoupling(signal, tolerance = 0.05) {
+export function joinCoupling(signal, tolerance = 0.05) {
     var jc = signal.j;
     if (jc && jc.length > 0) {
         var cont = jc[0].assignment ? jc[0].assignment.length : 1;
@@ -81,9 +80,9 @@ module.exports.joinCoupling = function joinCoupling(signal, tolerance = 0.05) {
         pattern = 'm';
     }
     return pattern;
-};
+}
 
-module.exports.group = function group(signals, options = {}) {
+export function group(signals, options = {}) {
     var i, k;
     for (i = 0; i < signals.length; i++) {
         var j = signals[i].j;
@@ -121,10 +120,10 @@ module.exports.group = function group(signals, options = {}) {
         signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
     }
     return signals;
-};
+}
 
 
-module.exports.compilePattern = function compilePattern(signal, tolerance = 0.05) {
+export function compilePattern(signal, tolerance = 0.05) {
     var jc = signal.j;
     var pattern = '';
     if (jc && jc.length > 0) {
@@ -147,5 +146,4 @@ module.exports.compilePattern = function compilePattern(signal, tolerance = 0.05
         pattern = 'm';
     }
     return pattern;
-};
-
+}

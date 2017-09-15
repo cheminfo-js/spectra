@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * This function performs a circular shift of the input object without realocating memory.
  * Positive values of shifts will shift to the right and negative values will do to the left
@@ -8,7 +6,7 @@
  * @param {Array} array - the array that will be rotated
  * @param {number} shift
  */
-function rotate(array, shift) {
+export default function rotate(array, shift) {
     var nbPoints = array.length;
     //Lets calculate the lest amount of points to shift.
     //It decreases the amount of validations in the loop
@@ -60,5 +58,3 @@ function putInRange(value, nbPoints) {
     }
     return value;
 }
-
-module.exports = rotate;

@@ -1,8 +1,6 @@
-'use strict';
+import normalizeOptions from './normalizeOptions';
 
-const normalizeOptions = require('./normalizeOptions');
-
-module.exports = function twoD(dim1, dim2, molecule, options) {
+export default function twoD(dim1, dim2, molecule, options) {
     [molecule, options] = normalizeOptions(molecule, options);
     var fromAtomLabel = '';
     var toAtomLabel = '';
@@ -50,7 +48,7 @@ module.exports = function twoD(dim1, dim2, molecule, options) {
     });
 
     return paths;
-};
+}
 
 function getCouplingConstant(idMap, fromDiaID, toDiaID) {
     const j = idMap[fromDiaID].j;

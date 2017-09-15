@@ -1,17 +1,15 @@
-'use strict';
-
-const SD = require('./SD');
-const Filters = require('./filters/Filters.js');
-const Brukerconverter = require('brukerconverter');
-const peaks2Ranges = require('./peakPicking/peaks2Ranges');
-const simulator = require('nmr-simulation');
-const impurities = require('./peakPicking/impurities.json');
+import SD from './SD';
+import * as Filters from './filters/Filters.js';
+import Brukerconverter from 'brukerconverter';
+import peaks2Ranges from './peakPicking/peaks2Ranges';
+import {SpinSystem, simulate1D} from 'nmr-simulation';
+import impurities from './peakPicking/impurities.js';
 
 /**
  * @class NMR
  * @extends SD
  */
-class NMR extends SD {
+export default class NMR extends SD {
 
     constructor(sd) {
         super(sd);
@@ -32,10 +30,10 @@ class NMR extends SD {
             output: 'xy'
         }, options);
 
-        const spinSystem = simulator.SpinSystem.fromPrediction(prediction);
+        const spinSystem = SpinSystem.fromPrediction(prediction);
 
         spinSystem.ensureClusterSize(options);
-        var data = simulator.simulate1D(spinSystem, options);
+        var data = simulate1D(spinSystem, options);
         return NMR.fromXY(data.x, data.y, options);
     }
 
@@ -473,5 +471,3 @@ class NMR extends SD {
         });
     }
 }
-
-module.exports = NMR;

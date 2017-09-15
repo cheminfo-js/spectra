@@ -1,4 +1,2 @@
-'use strict';
-
-module.exports.profile = require('./profile.js');
-module.exports.singleFitting = require('.singleFitting.js');
+export {default as profile} from './profile';
+export {default as singleFitting} from './singleFitting';

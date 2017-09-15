@@ -13,7 +13,8 @@
   },
   "homepage": "https://github.com/cheminfo-js/spectra/packages/nmr-predictor",
   "license": "MIT",
-  "main": "./src/index.js",
+  "main": "./lib/index.js",
+  "module": "./src/index.js",
   "dependencies": {
     "new-array": "^1.0.0",
     "num-sort": "^1.0.0",

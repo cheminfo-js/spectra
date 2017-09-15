@@ -1,13 +1,11 @@
-'use strict';
-
-const Matrix = require('ml-matrix');
+import Matrix from 'ml-matrix';
 
 let defOptions = {
     H: {frequency: 400, lineWidth: 10},
     C: {frequency: 100, lineWidth: 10}
 };
 
-function simule2DNmrSpectrum(table, options) {
+export default function simule2DNmrSpectrum(table, options) {
     var i;
     const fromLabel = table[0].fromAtomLabel;
     const toLabel = table[0].toLabel;
@@ -88,6 +86,3 @@ function addPeak(matrix, peak) {
         }
     }
 }
-
-
-module.exports = simule2DNmrSpectrum;

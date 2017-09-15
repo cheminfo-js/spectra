@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-'use strict';
+
 
 const fs = require('fs');
 const OCLE = require('openchemlib-extended-minimal');

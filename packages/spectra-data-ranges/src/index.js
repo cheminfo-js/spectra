@@ -1,4 +1,3 @@
-'use strict';
-
-module.exports.GUI = require('./visualizer/annotations');
-module.exports.Ranges = require('./range/Ranges');
+import * as GUI from './visualizer/annotations';
+export {GUI};
+export {default as Ranges} from './range/Ranges';

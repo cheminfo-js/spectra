@@ -1,6 +1,4 @@
-'use strict';
-
-const fft = require('ml-fft');
+import fft from 'ml-fft';
 
 /**
  * This function make a fourier transformation to each FID withing a SD instance
@@ -8,7 +6,7 @@ const fft = require('ml-fft');
  * @returns {SD} return SD with spectrum and FID
  */
 
-function fourierTransform(spectraData) {
+export default function fourierTransform(spectraData) {
 
     var nbPoints = spectraData.getNbPoints();
     var nSubSpectra = spectraData.getNbSubSpectra() / 2;
@@ -83,5 +81,3 @@ function updateSpectra(spectraData, spectraType) {
 
     //TODO update minmax in Y axis
 }
-
-module.exports = fourierTransform;

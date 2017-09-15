@@ -1,6 +1,5 @@
-'use strict';
+import Encoder from './VectorEncoder';
 
-const Encoder = require('./VectorEncoder');
 const CRLF = '\r\n';
 const version = 'Cheminfo tools ' + require('../../package.json').version;
 const defaultParameters = {encode: 'DIFDUP', yFactor: 1, type: 'SIMPLE', keep: []};
@@ -11,7 +10,7 @@ const defaultParameters = {encode: 'DIFDUP', yFactor: 1, type: 'SIMPLE', keep: [
  * @author acastillo
  *
  */
-class JcampCreator {
+export default class JcampCreator {
 
     /**
      * This function creates a String that represents the given spectraData, in the format JCAM-DX 5.0
@@ -377,6 +376,3 @@ function simpleHead(spectraData, scale, scaleX, encodeFormat, userDefinedParams)
     spectraData.setActiveElement(0);
     return outString;
 }
-
-module.exports = JcampCreator;
-

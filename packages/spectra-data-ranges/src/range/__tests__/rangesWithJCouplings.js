@@ -1,4 +1,3 @@
-'use strict';
 
 require('should');
 var spectraData = require('spectra-data');

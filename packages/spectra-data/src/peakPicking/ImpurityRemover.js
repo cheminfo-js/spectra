@@ -1,6 +1,4 @@
-'use strict';
-
-const impurities = require('./impurities.json');
+import impurities from './impurities';
 const toCheck = ['solvent_residual_peak', 'H2O', 'TMS'];
 
 function checkImpurity(peakList, impurity, options) {
@@ -20,7 +18,7 @@ function checkImpurity(peakList, impurity, options) {
     }
 }
 
-function removeImpurities(peakList, options = {}) {
+export default function removeImpurities(peakList, options = {}) {
     var {
         solvent = '',
         error = 0.025
@@ -36,5 +34,3 @@ function removeImpurities(peakList, options = {}) {
     }
     return peakList;
 }
-
-module.exports = removeImpurities;

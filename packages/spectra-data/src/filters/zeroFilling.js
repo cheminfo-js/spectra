@@ -1,13 +1,11 @@
-'use strict';
 /**
  * This function make a zero filling to each Active element in a SD instance.
- * @param {SD} spectra-data instance.
+ * @param {SD} spectraData instance.
  * @param {number} zeroFillingX - number of points that FID will have, if is it lower
  * than initial number of points, the FID will be spliced
+ * @return {SD}
  */
-
-
-function zeroFilling(spectraData, zeroFillingX) {
+export default function zeroFilling(spectraData, zeroFillingX) {
     var nbSubSpectra = spectraData.getNbSubSpectra();
     //var zeroPadding = spectraData.getParamDouble("$$ZEROPADDING", 0);
     var nbXPoints, lastX, deltaX, k, x, y;
@@ -36,4 +34,3 @@ function zeroFilling(spectraData, zeroFillingX) {
     return spectraData;
     // @TODO implement zeroFillingY for 2D spectra
 }
-module.exports = zeroFilling;

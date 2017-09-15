@@ -1,10 +1,8 @@
-'use strict';
+import numSort from 'num-sort';
 
-const numSort = require('num-sort');
+import getOcleFromOptions from './getOcleFromOptions';
 
-const getOcleFromOptions = require('./getOcleFromOptions');
-
-module.exports = function queryByHose(molecule, db, options) {
+export default function queryByHose(molecule, db, options) {
     const {Util} = getOcleFromOptions(options);
     const {
         atomLabel = 'H',
@@ -101,4 +99,4 @@ module.exports = function queryByHose(molecule, db, options) {
         }
     }
     return toReturn;
-};
+}

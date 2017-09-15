@@ -1,4 +1,3 @@
-'use strict';
 /**
  * nbDecimalsDelta : default depends nucleus H, F: 2 otherwise 1
  * nbDecimalsJ : default depends nucleus H, F: 1, otherwise 0
@@ -8,7 +7,7 @@
  * detailSeparator : ', '
  */
 
-const joinCoupling = require('spectra-nmr-utilities').joinCoupling;
+import {joinCoupling} from 'spectra-nmr-utilities';
 var globalOptions = {
     h: {
         nucleus: '1H',
@@ -30,7 +29,7 @@ var globalOptions = {
     }
 };
 
-function toAcs(ranges, options = {}) {
+export default function toAcs(ranges, options = {}) {
     options = Object.assign({}, options);
     if (!options.nucleus) options.nucleus = '1H';
     var nucleus = options.nucleus.toLowerCase().replace(/[0-9]/g, '');
@@ -213,4 +212,3 @@ function pushAssignment(signal, parenthesis) {
         parenthesis.push(formatAssignment(signal.assignment));
     }
 }
-module.exports = toAcs;

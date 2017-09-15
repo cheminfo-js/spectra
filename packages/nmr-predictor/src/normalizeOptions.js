@@ -1,6 +1,4 @@
-'use strict';
-
-const getOcleFromOptions = require('./getOcleFromOptions');
+import getOcleFromOptions from './getOcleFromOptions';
 
 const defaultOptions = {
     atomLabel: 'H',
@@ -8,7 +6,7 @@ const defaultOptions = {
     use: 'median'
 };
 
-module.exports = function normalizeOptions(molecule, options) {
+export default function normalizeOptions(molecule, options) {
     options = Object.assign({}, defaultOptions, options);
     let {Molecule} = getOcleFromOptions(options);
     if (typeof molecule === 'string') {
@@ -30,4 +28,4 @@ module.exports = function normalizeOptions(molecule, options) {
     }
 
     return [molecule, options];
-};
+}

@@ -1,8 +1,6 @@
-'use strict';
+import rotate from './rotate';
 
-var rotate = require('./rotate');
-
-function digitalFilter(spectraData, options) {
+export default function digitalFilter(spectraData, options) {
     let activeElement = spectraData.activeElement;
     var nbPoints = 0;
     if (options.nbPoints) {
@@ -30,5 +28,3 @@ function digitalFilter(spectraData, options) {
     spectraData.setActiveElement(activeElement);
     return spectraData;
 }
-
-module.exports = digitalFilter;

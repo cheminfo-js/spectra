@@ -1,8 +1,6 @@
-'use strict';
-
-const JAnalyzer = require('./jAnalyzer');
-const Ranges = require('spectra-data-ranges').Ranges;
-const impurityRemover = require('./ImpurityRemover');
+import JAnalyzer from './jAnalyzer';
+import impurityRemover from './ImpurityRemover';
+import {Ranges} from 'spectra-data-ranges';
 
 const defaultOptions = {
     nH: 100,
@@ -29,7 +27,7 @@ const defaultOptions = {
  * @returns {Array}
  */
 
-function createRanges(spectrum, peakList, options) {
+export default function createRanges(spectrum, peakList, options) {
     options = Object.assign({}, defaultOptions, options);
     var i, j;
     var nH = options.nH;
@@ -244,5 +242,3 @@ function detectSignals(spectrum, peakList, options = {}) {
 function computeArea(peak) {
     return Math.abs(peak.intensity * peak.width * 1.57); // todo add an option with this value: 1.772453851
 }
-
-module.exports = createRanges;

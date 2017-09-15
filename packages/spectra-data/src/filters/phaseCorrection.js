@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Phase correction filter
  * @param {SD} spectraData - SD instance
@@ -7,7 +5,7 @@
  * @param {number} [phi1 = 0] - value
  * @return {SD} returns the modified spectraData
  */
-function phaseCorrection(spectraData, phi0, phi1) {
+export default function phaseCorrection(spectraData, phi0, phi1) {
 
     phi0 = Number.isFinite(phi0) ? phi0 : 0;
     phi1 = Number.isFinite(phi1) ? phi1 : 0;
@@ -45,5 +43,3 @@ function phaseCorrection(spectraData, phi0, phi1) {
 
     return spectraData;
 }
-
-module.exports = phaseCorrection;

@@ -1,4 +1,3 @@
-'use strict';
 /**
  * This function converts an array of peaks [{x, y, width}] in a vector equally x,y vector from a given window
  * TODO: This function is very general and should be placed somewhere else
@@ -12,7 +11,7 @@
  * @return {{x: Array, y: Array}}
  */
 
-function peak2Vector(peaks, options = {}) {
+export default function peak2Vector(peaks, options = {}) {
     var {
         from = null,
         to = null,
@@ -84,5 +83,3 @@ function peak2Vector(peaks, options = {}) {
 
     return {x: x, y: y};
 }
-
-module.exports = peak2Vector;

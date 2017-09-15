@@ -1,15 +1,13 @@
-'use strict';
+import Matrix from 'ml-matrix';
+import SparseMatrix from 'ml-sparse-matrix';
+import binarySearch from 'binary-search';
+import {asc as sortAsc} from 'num-sort';
 
-const Matrix = require('ml-matrix');
-const SparseMatrix = require('ml-sparse-matrix');
-const binarySearch = require('binary-search');
-const sortAsc = require('num-sort').asc;
-
-const getPauli = require('./pauli');
+import getPauli from './pauli';
 
 const smallValue = 1e-2;
 
-function simulate1d(spinSystem, options) {
+export default function simulate1d(spinSystem, options) {
     var i, j;
     const {
         lineWidth = 1,
@@ -292,5 +290,3 @@ function _getX(from, to, nbPoints) {
     }
     return x;
 }
-
-module.exports = simulate1d;

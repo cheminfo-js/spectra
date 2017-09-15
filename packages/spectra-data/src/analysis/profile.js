@@ -1,16 +1,13 @@
-'use strict';
-
 /**
  * This function extract the grandient of concentration from a spatial (z) profile acquired with successives
  * experiments of spatially selective NMR. More information with descriptive pictures are found here: 10.1002/mrc.4561
  *
- * @param {array} pdata - array of SD instances with peakPicking done.
- * @param {array} signals - list of chemical shift of signals.
+ * @param {Array} pdata - array of SD instances with peakPicking done.
+ * @param {Array} signals - list of chemical shift of signals.
  * @param {number} maxShiftDiference - maximal difference between two signals from subsequent slices.
- * @returns {Array}
+ * @return {Array}
  */
-
-function profile(pdata, signals, maxShiftDiference) {
+export default function profile(pdata, signals, maxShiftDiference) {
 
     var peaks = pdata[0].peakPicking;
 
@@ -55,5 +52,3 @@ function profile(pdata, signals, maxShiftDiference) {
     }
     return Data;
 }
-
-module.exports = profile;

@@ -1,9 +1,8 @@
-'use strict';
 
-const newArray = require('new-array');
-const superagent = require('superagent');
-const {group} = require('spectra-nmr-utilities');
-const normalizeOptions = require('./normalizeOptions');
+import newArray from 'new-array';
+import superagent from 'superagent';
+import {group} from 'spectra-nmr-utilities';
+import normalizeOptions from './normalizeOptions';
 
 /**
  * Makes a prediction using spinus
@@ -11,12 +10,12 @@ const normalizeOptions = require('./normalizeOptions');
  * @param {object} [options]
  * @return {Promise<Array>}
  */
-module.exports = function spinus(molecule, options) {
+export default function spinus(molecule, options) {
     [molecule, options] = normalizeOptions(molecule, options);
     return fromSpinus(molecule).then(prediction => {
         return options.group ? group(prediction) : prediction;
     });
-};
+}
 
 function fromSpinus(molecule) {
     const request = superagent.post('https://www.nmrdb.org/service/predictor');

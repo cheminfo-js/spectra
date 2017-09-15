@@ -1,6 +1,4 @@
-'use strict';
-
-const GSD = require('ml-gsd');
+import GSD from 'ml-gsd';
 
 /**
  * Implementation of the peak picking method described by Cobas in:
@@ -35,7 +33,7 @@ const defaultOptions = {
 };
 
 
-function extractPeaks(spectrum, options = {}) {
+export default function extractPeaks(spectrum, options = {}) {
     options = Object.assign({}, defaultOptions, options, {optimize: false, broadWidth: false});
 
     if (!options.noiseLevel) {
@@ -74,5 +72,3 @@ function clearList(peakList, threshold) {
     }
     return peakList;
 }
-
-module.exports = extractPeaks;

@@ -2,14 +2,12 @@
  * This library implements the J analyser described by Cobas et al in the paper:
  * A two-stage approach to automatic determination of 1H NMR coupling constants
  */
-'use strict';
-
 const patterns = ['s', 'd', 't', 'q', 'quint', 'h', 'sept', 'o', 'n'];
 var symRatio = 1.5;
 var maxErrorIter1 = 2.5;//Hz
 var maxErrorIter2 = 1;//Hz
 
-module.exports = {
+export default {
     /**
      * The compilation process implements at the first stage a normalization procedure described by Golotvin et al.
      * embedding in peak-component-counting method described by Hoyes et al.

@@ -1,9 +1,7 @@
-'use strict';
-
-var PeakOptimizer = require('./peakOptimizer');
-var simpleClustering = require('ml-simple-clustering');
-var matrixPeakFinders = require('ml-matrix-peaks-finder');
-var FFTUtils = require('ml-fft').FFTUtils;
+import PeakOptimizer from './peakOptimizer';
+import simpleClustering from 'ml-simple-clustering';
+import matrixPeakFinders from 'ml-matrix-peaks-finder';
+import {FFTUtils} from 'ml-fft';
 
 const smallFilter = [
     [0, 0, 1, 2, 2, 2, 1, 0, 0],
@@ -16,7 +14,7 @@ const smallFilter = [
     [0, 1, 3, 7, 7, 7, 3, 1, 0],
     [0, 0, 1, 2, 2, 2, 1, 0, 0]];
 
-function getZones(spectraData, thresholdFactor) {
+export default function getZones(spectraData, thresholdFactor) {
     if (thresholdFactor === 0) {
         thresholdFactor = 1;
     }
@@ -162,5 +160,3 @@ function createSignals2D(peaks, spectraData, tolerance) {
     }
     return signals;
 }
-
-module.exports = getZones;

@@ -1,4 +1,3 @@
-'use strict';
 
 const nmrshiftdb2 = require('../data/nmrshiftdb2-13c.json');
 

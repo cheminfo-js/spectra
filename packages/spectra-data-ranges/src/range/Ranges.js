@@ -1,12 +1,10 @@
-'use strict';
+import acs from '../acs/acs';
+import peak2Vector from './peak2Vector';
+import * as GUI from '../visualizer/annotations';
+import * as utils from 'spectra-nmr-utilities';
+import {array as arrayUtils} from 'ml-stat';
 
-const acs = require('../acs/acs');
-const peak2Vector = require('./peak2Vector');
-const GUI = require('../visualizer/annotations');
-const utils = require('spectra-nmr-utilities');
-const arrayUtils = require('ml-stat').array;
-
-class Ranges extends Array {
+export default class Ranges extends Array {
 
     constructor(ranges) {
         if (Array.isArray(ranges)) {
@@ -232,5 +230,3 @@ class Ranges extends Array {
         return new Ranges(newRanges);
     }
 }
-
-module.exports = Ranges;
