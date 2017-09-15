@@ -4,6 +4,7 @@
   "description": "NMR chemical shift predictor",
   "keywords": [],
   "files": [
+    "lib",
     "src"
   ],
   "author": "andcastillo",

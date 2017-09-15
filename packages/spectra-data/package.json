@@ -7,6 +7,7 @@
     "project"
   ],
   "files": [
+    "lib",
     "src"
   ],
   "author": "Andres Castillo",
