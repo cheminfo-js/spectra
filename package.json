@@ -7,6 +7,7 @@
     "convert-nmrshiftdb": "node packages/nmr-predictor/scripts/nmrshiftdb2ToJson.js",
     "eslint": "eslint packages *.js --cache",
     "eslint-fix": "npm run eslint -- --fix",
+    "local-build": "node_modules/.bin/cheminfo build --entry builder/SD.js --root SD --out-name 'SD'",
     "prepare": "npm run bootstrap",
     "test": "run-s build test-only eslint",
     "test-only": "jest",
@@ -16,7 +17,10 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-jest": "^21.0.2",
+    "babel-plugin-remove-comments": "^2.0.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-preset-babili": "^0.1.4",
+    "cheminfo-tools": "^1.19.4",
     "eslint": "^4.0.0",
     "eslint-config-cheminfo": "^1.8.0",
     "eslint-plugin-no-only-tests": "^2.0.0",
