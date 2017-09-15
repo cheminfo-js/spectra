@@ -15,12 +15,12 @@
     "eslint": "^4.0.0",
     "eslint-config-cheminfo": "^1.8.0",
     "eslint-plugin-no-only-tests": "^2.0.0",
-    "jest": "^20.0.4",
-    "lerna": "^2.0.0-rc.4",
+    "jest": "^21.1.0",
+    "lerna": "^2.1.2",
     "npm-run-all": "^4.0.2",
-    "should": "^11.2.1"
+    "should": "^13.0.1"
   },
   "dependencies": {
-    "babel-jest": "^20.0.3"
+    "babel-jest": "^21.0.2"
   }
 }
