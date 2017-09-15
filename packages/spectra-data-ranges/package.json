@@ -1,6 +1,6 @@
 {
   "name": "spectra-data-ranges",
-  "version": "0.0.8",
+  "version": "1.0.0",
   "description": "",
   "main": "./lib/index.js",
   "module": "./src/index.js",
@@ -20,6 +20,6 @@
   "homepage": "https://github.com/cheminfo-js/spectra/packages/spectra-data-ranges#readme",
   "dependencies": {
     "ml-stat": "^1.3.0",
-    "spectra-nmr-utilities": "^0.0.6"
+    "spectra-nmr-utilities": "^1.0.0"
   }
 }
