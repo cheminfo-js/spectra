@@ -1,6 +1,55 @@
 var options1D = {type: 'rect', line: 0, lineLabel: 1, labelColor: 'red', strokeColor: 'red', strokeWidth: '1px', fillColor: 'green', width: 0.05, height: 10, toFixed: 1, maxLines: Number.MAX_VALUE, selectable: true, fromToc: false};
 var options2D = {type: 'rect', labelColor: 'red', strokeColor: 'red', strokeWidth: '1px', fillColor: 'green', width: '6px', height: '6px'};
 
+/**
+ * Add missing highlight in ranges array
+ * A range must have highlights to link the various modules in the visualizer
+ * If there is no assignment, highlight will be a random number
+ * If there is an assignment, we will take it from the signals
+ * @param {Array} ranges - An array of ranges
+ * @return {boolean}
+ */
+function ensureRangesHighlight(ranges) {
+    let isChanged = false;
+    if (ranges && Array.isArray(ranges)) {
+        for (let range of ranges) {
+            if (!range._highlight) {
+                Object.defineProperty(range, '_highlight', {
+                    enumerable: false,
+                    writable: true
+                });
+                range._highlight = [];
+            }
+            // assignment can only be done at the level of a signal !
+            if (range.signal) {
+                let newHighlight = [];
+                for (let signal of range.signal) {
+                    if (signal.diaID) {
+                        if (Array.isArray(signal.diaID)) {
+                            for (let diaID of signal.diaID.length) {
+                                newHighlight.push(diaID);
+                            }
+                        } else {
+                            newHighlight.push(signal.diaID);
+                        }
+                    }
+                }
+                if (range._highlight.join('.') !== newHighlight.join('.')) {
+                    range._highlight = newHighlight;
+                    isChanged = true;
+                }
+            }
+            // is there is still no highlight ... we just add a random number
+            if (range._highlight.length === 0) {
+                range._highlight.push(Math.random());
+                isChanged = true;
+            }
+        }
+    }
+    return isChanged;
+}
+
+
 function annotations1D(ranges, optionsG) {
     var options = Object.assign({}, options1D, optionsG);
     var height = options.height;
@@ -20,16 +69,6 @@ function annotations1D(ranges, optionsG) {
             annotation.position = [{x: index.delta - options.width, y: (line * height) + 'px'},
                 {x: index.delta + options.width, y: (line * height + 3) + 'px'}];
         } else {
-            if (!annotation._highlight || annotation._highlight.length === 0) {
-                annotation._highlight = [index.signalID];
-                index.signal.forEach(function (signal) {
-                    if (signal.diaID) {
-                        for (let j = 0; j < signal.diaID.length; j++) {
-                            annotation._highlight.push(signal.diaID[j]);
-                        }
-                    }
-                });
-            }
             if (!index.to || !index.from || index.to === index.from) {
                 annotation.position = [{x: index.signal[0].delta - options.width, y: (options.line * height) + 'px'},
                     {x: index.signal[0].delta + options.width, y: (options.line * height + 3) + 'px'}];
@@ -38,8 +77,6 @@ function annotations1D(ranges, optionsG) {
                     {x: index.from, y: (options.line * height + 3) + 'px'}];
             }
         }
-
-        index._highlight = annotation._highlight;
 
         annotation.type = options.type;
 
@@ -70,7 +107,7 @@ function annotations2D(zones, optionsG) {
         var signal = zones[k];
         var annotation = {};
         annotation.type = options.type;
-        annotation._highlight = signal._highlight;//["cosy"+k];
+        annotation._highlight = signal._highlight;
         if (!annotation._highlight || annotation._highlight.length === 0) {
             annotation._highlight = [signal.signalID];
         }
@@ -99,4 +136,4 @@ function annotations2D(zones, optionsG) {
     return annotations;
 }
 
-export {annotations2D, annotations1D};
+export {annotations2D, annotations1D, ensureRangesHighlight};

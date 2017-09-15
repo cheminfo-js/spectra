@@ -169,6 +169,10 @@ export default class Ranges extends Array {
         return GUI.annotations1D(this, options);
     }
 
+    ensureHighlight() {
+        return GUI.ensureRangesHighlight(this);
+    }
+
 
     toIndex(options = {}) {
         var index = [];
