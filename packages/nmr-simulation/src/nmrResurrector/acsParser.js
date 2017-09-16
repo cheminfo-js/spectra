@@ -48,15 +48,86 @@ module.exports.ACSParser = function (totalString, options = {}) {
             }
         }
     }
-    console.log(totalString);
     // totalString = totalString.replace("([^a-zA-Z])app[^ ,]*", "$1");//I don't know how to do
     // totalString = totalString.replace("([^a-zA-Z])exch[^ ,]*", "$1");
     totalString = totalString.replace(/([^a-zA-Z])J[0-9]*[ =]+/gi, '$1J=');
     totalString = totalString.replace(/ */gi, '');
     totalString = totalString.replace(/\[/gi, '('); //I don't understand what it means
     totalString = totalString.replace(/\]/gi, ')');
-    console.log(totalString);
 
+    let newString = replaceParenthesis(totalString);
+    totalString = newString.replace(/,(?!([^\[]*\]))/gi, '|');
+
+    totalString = totalString.replace(/,/gi, '/');
+
+    var parts = totalString.split('\|');
+    var delta = '';
+    for (let part of parts) {
+        var ppmValueA = null;
+        var ppmValueB = null;
+        var couplings = [];
+        var intensity = 0;
+        var multString = '';
+        var assignment = '';
+        var indexOf = part.indexOf('[');
+        if (indexOf > 0) {
+            delta = part.substring(0, indexOf);
+            part = part.substring(indexOf + 1);
+            indexOf = part.indexOf(']');
+            if (indexOf > 0) {
+                part = part.substring(0, indexOf);
+                // part = part.replace(/\/(?!([^0-9]))/gi, '|'); // It's when we have more than one coupling constant
+                let signalParts = part.split('/');
+                var currentStatus = 'statusUnknow';
+                for (let signalPart of signalParts) {
+                    if (signalPart.match(/^[a-z]+/g) && multString === '') {
+                        currentStatus = 'statusMultiplicity';
+                        multString = signalPart;
+                    } else if (signalPart.match(/^[0-9][a-z|A-Z]/g) && intensity === 0) {
+                        currentStatus = 'statusIntegration';
+                        intensity = parseFloat(part.replace('[^0-9.]', ''));
+                    } else if (signalPart.indexOf('Hz') > 0) {
+                        currentStatus = 'statusCouplingConstant';
+                        signalPart = signalPart.replace(/^[0-9]*J=/gi, '');
+                        couplings.push(parseFloat(signalPart.replace('[^0-9.]', '')));
+                    }
+                }
+            }
+        } else {
+            delta = part;
+        }
+        // delta = delta.replace(/[ï¿½]*/gi, "-");
+        delta = delta.replace("to", "-");
+        delta = delta.replace(/(^.[^-]*)-/gi, '$1|');
+        indexOf = delta.indexOf("|");
+        if (indexOf > 0) {
+            ppmValueA = parseFloat(delta.substring(0, indexOf));
+            ppmValueB = parseFloat(delta.substring(indexOf + 1));
+        } else {
+            ppmValueB = parseFloat(delta);
+            ppmValueA = ppmValueB;
+        }
+        allSignals.push(createNmrSignal1D(multString, ppmValueA, ppmValueB, couplings, intensity, assignment,
+            frequency, nucleus));
+    }
+
+};
+
+function createNmrSignal1D(multString, ppmValueA, ppmValueB, couplings, intensity, assignment,
+                           frequency, nucleus) {
+    var signal = {
+        nbAtoms: intensity,
+        multiplicity: multString
+    };
+
+
+}
+
+function determineNucleus(string) {
+
+};
+
+function replaceParenthesis(totalString) {
     var parenthesisLevel = 0;
     var newString = '';
     for (let i = 0; i < totalString.length; i++) {
@@ -78,26 +149,5 @@ module.exports.ACSParser = function (totalString, options = {}) {
             newString += totalString.charAt(i);
         }
     }
-    totalString = newString.replace(/,(?!([^\[]*\]))/gi, '|');
-    totalString = totalString.replace(/,/gi, '/');
-    var parts = totalString.split('\|');
-    var delta = '';
-    for (let part of parts) {
-        var ppmValueA = null;
-        var ppmValueB = null;
-        var couplings = [];
-        var intensity = 0;
-        var multString = '';
-        var assignment = '';
-        var indexOf = part.indexOf('[');
-        if (indexOf > 0) {
-            delta = part.substring(0, indexOf);
-            part = part.substring(indexOf + 1);
-            indexOf = part.indexOf(']');
-        }
-    }
-    return totalString;
-};
-
-function determineNucleus(string) {
+    return newString;
 }
