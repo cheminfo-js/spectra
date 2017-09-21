@@ -78,7 +78,9 @@ class Assignment {
         });
     }
 
-    getAssignments() {
+
+
+    buildAssignments() {
         var date = new Date();
         this.timeStart = date.getTime();
         var i, j, k, nTargets, nSources;
@@ -113,9 +115,42 @@ class Assignment {
         } while (this.solutions.isEmpty() && this.lowerBound >= 0.4);
 
         //Format the result
-        this._formatAssignmentOutput();
+        //this._formatAssignmentOutput();
 
+        //return this.solutions.elements;
+    }
+
+    getAssignments() {
         return this.solutions.elements;
+    }
+
+    setAssignmentOnRanges(ranges, index) {
+        if(index < this.solutions.length) {
+            //Clean up any previous assignment
+            for(let i = 0; i < ranges.length; i++) {
+                ranges[i].signal.forEach(signal => {
+                    signal.diaID = [];
+                });
+            }
+
+            let solution = this.solutions.elements[index];
+            solution.assignment.forEach((signalId, diaIndex) => {
+                let range;
+                for(let i = 0; i < ranges.length; i++) {
+                    if(ranges[i].signalID == signalId) {
+                        range = ranges[i];
+                        break;
+                    }
+                }
+                range.signal.forEach(signal => {
+                    signal.diaID.push(this.sourcesIDs[diaIndex]);
+                });
+            });
+
+
+            return solution.score;
+        }
+        return 0;
     }
 
     isPlausible(partial, sourceConstrains, sourceID, targetID) {
@@ -298,36 +333,6 @@ class Assignment {
 
     _cloneArray(data) {
         return JSON.parse(JSON.stringify(data));
-    }
-
-    _formatAssignmentOutput(format) {
-        /*var nSignals = this.spinSystem.nTargets;
-        var i, j, k;
-        var assignment = this.solutions.elements;
-        var nSolutions = this.solutions.length;
-        for (i = 0; i < nSolutions; i++) {
-            var assignment = this.solutions.elements[i].assignment;
-            this.solutions.elements[i].index = i + "";
-            var assignmentNew = {};
-            for (j = 0; j < nSignals; j++) {
-                var diaIDs = assignment[j];
-                var tmp = new Array(this.sourcesIDs.length);
-                for (k = 0; k < this.sourcesIDs.length; k++) {
-                    tmp[k] = this.sourcesIDs[k];
-                }
-                if (this.condensed)
-                    assignmentNew[this.spinSystem.signalsArray[j].signalID] = tmp;
-                else {
-                    assignment[j] = {
-                        signalID: this.spinSystem.signalsArray[j].signalID,
-                        delta: Math.round(this.spinSystem.signalsArray[j].signal[0].delta * 100) / 100,
-                        diaID: tmp
-                    }
-                }
-            }
-            if (this.condensed)
-                this.solutions.elements[i].assignment = assignmentNew;
-        }*/
     }
 }
 module.exports = Assignment;

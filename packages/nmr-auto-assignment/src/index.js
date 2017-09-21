@@ -90,7 +90,8 @@ function assignmentFromPeakPicking(entry, options) {
 
     const spinSystem = new SpinSystem(spectra, prediction, options);
     const autoAssigner = new AutoAssigner(spinSystem, options);
-    return autoAssigner.getAssignments();
+    autoAssigner.buildAssignments();
+    return autoAssigner;
 }
 
 function predictByExperiment(molecule, nmr, options) {

@@ -58,15 +58,19 @@ var result = autoassigner({general: {molfile: molfile},
                        {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}]}},
     {minScore: 1, maxSolutions: 3000, errorCS: 1, predictor: predictor, condensed: true, OCLE: OCLE}
 );
-console.log(result.length);
-console.log(result[0]);
-console.log(result[1]);
+
+console.log(result.getAssignments().length);
+console.log(result.getAssignments()[0]);
+console.log(result.getAssignments()[1]);
+
+result.setAssignmentOnRanges(peakPicking, 0);
+console.log(JSON.stringify(peakPicking));
 
 var result = autoassigner({general: {molfile: molfile},
         spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")},
                        {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}]}},
     {minScore: 1, maxSolutions: 3000, errorCS: 0, predictor: predictor, condensed: true, OCLE: OCLE}
-);
+).getAssignments();
 console.log(result.length);
 console.log(result[0]);
 console.log(result[1]);
@@ -74,7 +78,7 @@ console.log(result[1]);
 var result = autoassigner({general: {molfile: molfile},
         spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")}]}},
     {minScore: 1, maxSolutions: 3000, errorCS: 0, predictor: predictor, condensed: true, OCLE: OCLE}
-);
+).getAssignments();
 console.log(result.length);
 console.log(result[0]);
 console.log(result[1]);
