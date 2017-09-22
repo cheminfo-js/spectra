@@ -27,8 +27,7 @@ function loadFile(filename){
     return FS.readFileSync(__dirname + filename).toString();
 }
 
-var molfile = loadFile("/../../../data-test/ethylbenzene/mol_0.mol");
-var molecule = OCLE.Molecule.fromMolfile(molfile);
+var molecule = OCLE.Molecule.fromSmiles("CCc1ccccc1");
 molecule.addImplicitHydrogens();
 //if(molecule instanceof Molecule)
 var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/,"$1")*1;
@@ -55,7 +54,7 @@ console.log(JSON.stringify(peakPicking));
 
 //The input structure should fit the ELN JSON format.
 
-var result = autoassigner({general: {molfile: molfile},
+var result = autoassigner({general: {molfile: molecule.toMolfileV3()},
         spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")},
                        {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}]}},
     {minScore: 0.8, maxSolutions: 3000, errorCS: 1, predictor: predictor, condensed: true, OCLE: OCLE}
@@ -68,7 +67,7 @@ console.log(result.getAssignments()[1]);
 result.setAssignmentOnRanges(peakPicking, 0);
 //console.log(JSON.stringify(peakPicking));
 
-var result = autoassigner({general: {molfile: molfile},
+var result = autoassigner({general: {molfile: molecule.toMolfileV3()},
         spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")},
                        {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}]}},
     {minScore: 0.9, maxSolutions: 3000, errorCS: 0, predictor: predictor, condensed: true, OCLE: OCLE}
@@ -77,7 +76,7 @@ console.log(result.length);
 console.log(result[0]);
 console.log(result[result.length-1]);
 
-var result = autoassigner({general: {molfile: molfile},
+var result = autoassigner({general: {molfile: molecule.toMolfileV3()},
         spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")}]}},
     {minScore: 1, maxSolutions: 3000, errorCS: 0, predictor: predictor, condensed: true, OCLE: OCLE}
 ).getAssignments();
