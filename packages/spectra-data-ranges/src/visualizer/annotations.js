@@ -1,4 +1,19 @@
-var options1D = {type: 'rect', line: 0, lineLabel: 1, labelColor: 'red', strokeColor: 'red', strokeWidth: '1px', fillColor: 'green', width: 0.05, height: 10, toFixed: 1, maxLines: Number.MAX_VALUE, selectable: true, fromToc: false};
+var options1D = {
+    type: 'rect',
+    line: 0,
+    lineLabel: 1,
+    labelColor: 'red',
+    strokeColor: 'red',
+    strokeWidth: '1px',
+    fillColor: 'green',
+    width: 0.05,
+    height: 10,
+    toFixed: 1,
+    maxLines: Number.MAX_VALUE,
+    selectable: true,
+    fromToc: false
+};
+
 var options2D = {type: 'rect', labelColor: 'red', strokeColor: 'red', strokeWidth: '1px', fillColor: 'green', width: '6px', height: '6px'};
 
 /**
@@ -25,6 +40,13 @@ function ensureRangesHighlight(ranges) {
                 let newHighlight = [];
 
                 for (let signal of range.signal) {
+                    if (!signal._highlight) {
+                        Object.defineProperty(range, '_highlight', {
+                            enumerable: false,
+                            writable: true
+                        });
+                    }
+                    signal._highlight=signal.diaID;
                     if (signal.diaID) {
                         if (Array.isArray(signal.diaID)) {
                             for (let diaID of signal.diaID) {
@@ -35,14 +57,17 @@ function ensureRangesHighlight(ranges) {
                         }
                     }
                 }
-                if (range._highlight.join('.') !== newHighlight.join('.')) {
+                // there is some newHighlight and before it was just a random number
+                // or the highlight changed
+                if ( (newHighlight.length>0 && range._highlight.length>0 && range._highlight[0].match(/^[0-9.]+$/)) ||
+                        (newHighlight.length!==0 && range._highlight.join('.') !== newHighlight.join('.'))) {
                     range._highlight = newHighlight;
                     isChanged = true;
                 }
             }
             // is there is still no highlight ... we just add a random number
             if (range._highlight.length === 0) {
-                range._highlight.push(Math.random());
+                range._highlight.push(String(Math.random()));
                 isChanged = true;
             }
         }
@@ -72,10 +97,10 @@ function annotations1D(ranges, optionsG) {
         } else {
             if (!index.to || !index.from || index.to === index.from) {
                 annotation.position = [{x: index.signal[0].delta - options.width, y: (options.line * height) + 'px'},
-                    {x: index.signal[0].delta + options.width, y: (options.line * height + 3) + 'px'}];
+                    {x: index.signal[0].delta + options.width, y: (options.line * height + 8) + 'px'}];
             } else {
                 annotation.position = [{x: index.to, y: (options.line * height) + 'px'},
-                    {x: index.from, y: (options.line * height + 3) + 'px'}];
+                    {x: index.from, y: (options.line * height + 8) + 'px'}];
             }
         }
 

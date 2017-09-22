@@ -8,7 +8,7 @@
  */
 
 import {joinCoupling} from 'spectra-nmr-utilities';
-var globalOptions = {
+const globalOptions = {
     h: {
         nucleus: '1H',
         nbDecimalDelta: 2,
@@ -36,7 +36,7 @@ export default function toAcs(ranges, options = {}) {
     var defaultOptions = globalOptions[nucleus];
     options = Object.assign({}, defaultOptions, {ascending: false, format: 'IMJA'}, options);
 
-    ranges = ranges.clone();
+    ranges = JSON.parse(JSON.stringify(ranges));;
     if (options.ascending === true) {
         ranges.sort((a, b) => {
             let fromA = Math.min(a.from, a.to);
