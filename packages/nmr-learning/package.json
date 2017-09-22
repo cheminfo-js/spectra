@@ -1,0 +1,38 @@
+{
+  "name": "nmr-learning",
+  "version": "1.0.8",
+  "description": "Learn a database of chemical shift and coupling constants assignments",
+  "main": "src/index.js",
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cheminfo-js/spectra.git"
+  },
+  "keywords": [
+    "nmr",
+    "predictor",
+    "prediction",
+    "spin",
+    "system",
+    "assignment"
+  ],
+  "author": "Andres Castillo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cheminfo-js/spectra/issues"
+  },
+  "homepage": "https://github.com/cheminfo-js/spectra/packages/nmr-learning#readme",
+  "dependencies": {
+    "binary-search": "^1.3.2",
+    "ml-hclust": "^1.3.0",
+    "ml-matrix": "^2.3.0",
+    "ml-simple-clustering": "0.1.0",
+    "ml-sparse-matrix": "^0.2.1",
+    "num-sort": "^1.0.0"
+  },
+  "devDependencies": {
+    "nmr-predictor": "^1.1.1"
+  }
+}
