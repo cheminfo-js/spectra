@@ -4,13 +4,13 @@ import {Ranges} from 'spectra-data-ranges';
 
 const defaultOptions = {
     nH: 100,
-    idPrefix: '',
     clean: 0.5,
     thresholdFactor: 1,
     compile: true,
     integralType: 'sum',
     optimize: true,
     frequencyCluster: 16,
+    keepPeaks: false
 };
 
 /**
@@ -23,7 +23,7 @@ const defaultOptions = {
  * @param {number} [options.frequencyCluster = 16] - distance limit to clustering peaks.
  * @param {number} [options.clean] - If exits it remove all the signals with integral < clean value
  * @param {boolean} [options.compile = true] - If true, the Janalyzer function is run over signals to compile the patterns.
- * @param {string} [options.idPrefix = ''] - prefix for signal ID
+ * @param {boolean} [options.keepPeaks = false] - If true each signal will contain an array of peaks.
  * @returns {Array}
  */
 
@@ -109,15 +109,6 @@ export default function createRanges(spectrum, peakList, options) {
         }
     }
 
-    for (i = 0; i < signals.length; i++) {
-        if (options.idPrefix && options.idPrefix.length > 0) {
-            signals[i].signalID = options.idPrefix + '_' + (i + 1);
-        } else {
-            signals[i].signalID = (i + 1) + '';
-        }
-        signals[i]._highlight = [signals[i].signalID];
-    }
-
     let ranges = new Array(signals.length);
     for (i = 0; i < signals.length; i++) {
         var signal = signals[i];
@@ -144,6 +135,13 @@ export default function createRanges(spectrum, peakList, options) {
             ranges[i].signal[0].delta = signal.delta1;
         }
     }
+
+    if (!options.keepPeaks) {
+        ranges.forEach(range => {
+            if (range.signal) range.signal.forEach(signal => delete signal.peaks);
+        });
+    }
+
 
     return new Ranges(ranges);
 }

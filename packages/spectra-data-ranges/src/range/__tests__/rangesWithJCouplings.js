@@ -14,7 +14,7 @@ function createSpectraData(filename) {
 describe('spectra-data examples peak picking ', function () {
     var nH = 8;
     var spectrum = createSpectraData('/../../../../../data-test/ethylvinylether/1h.jdx');
-    var peakPicking = spectrum.getRanges({nH: nH, realTopDetection: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H'});
+    var peakPicking = spectrum.getRanges({nH: nH, realTopDetection: true, thresholdFactor: 1, clean: 0.5, compile: true});
     it('patterns for ethylvinylether (OLD)', function () {
 
         for (var i = 0; i < peakPicking.length; i++) {
@@ -39,10 +39,6 @@ describe('spectra-data examples peak picking ', function () {
 
     it('Number of patterns', function () {
         peakPicking.length.should.equal(5);
-    });
-
-    it('Signal ID', function () {
-        peakPicking[0].signalID.substr(0, 3).should.equal('1H_');
     });
 
     it('examples integration and multiplet limits', function () {
