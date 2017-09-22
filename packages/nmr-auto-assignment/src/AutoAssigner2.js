@@ -308,7 +308,7 @@ class Assignment {
                     this.score = this.partialScore(partial, system.sourcesConstrains);
                     if (this.score > 0) {
                         //If there is no more sources or targets available, we have a solution for the assignment problem
-                        if (sourceAddress === system.nSources - 1) {
+                        if (sourceAddress === system.nSources - 1 && this.score >= this.minScore) {
                             //console.log(this.score + " Found " + JSON.stringify(partial));
                             this.nSolutions++;
                             var solution = {assignment: this._cloneArray(partial), score: this.score};

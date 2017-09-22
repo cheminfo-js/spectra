@@ -18,35 +18,6 @@ function autoAssign(entry, options) {
 
 function assignmentFromRaw(entry, options) {
     //TODO Implement this method
-    /*var molfile = entry.molfile;
-     var spectra = entry.spectra;
-
-     var molecule =  OCLE.Molecule.fromMolfile(molfile);
-
-     molecule.addImplicitHydrogens();
-
-     entry.molecule = molecule;
-     entry.diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
-
-     //Simulate and process the 1H-NMR spectrum at 400MHz
-     var jcampFile = molFiles[i].replace("mol_","h1_").replace(".mol",".jdx");
-     var spectraData1H = SD.load(spectra.h1);//
-
-
-     var signals = spectraData1H.nmrPeakDetection({nStddev:3, baselineRejoin:5, compute:false});
-     spectra.solvent = spectraData1H.getParamString(".SOLVENT NAME", "unknown");
-     entry.diaID = molecule.toIDCode();
-
-     signals = integration(signals, molecule.countAtom("H"));
-
-     for(var j=0;j< signals.length;j++){
-     signals[j]._highlight=[-(j+1)];
-     }
-
-     spectra.h1PeakList = signals;
-
-     return assignmentFromPeakPicking(entry,options);
-     */
 }
 
 function assignmentFromPeakPicking(entry, options) {

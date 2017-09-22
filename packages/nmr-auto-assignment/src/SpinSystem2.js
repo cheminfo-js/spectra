@@ -75,7 +75,6 @@ class SpinSystem {
         this.targets = {};
         this.spectra.nmr.forEach(nmr => {
             if(nmr.experiment === "1d") {
-                console.log();
                 nmr.range.forEach(range => {
                     this.targetsConstains[range.signalID] = range;
                     if(!this.targets[nmr.nucleus])
