@@ -61,7 +61,6 @@ export default class Ranges extends Array {
 
         //2. Merge the overlaping ranges
         for (i = 0; i < result.length; i++) {
-            result[i]._highlight = result[i].signal[0].diaIDs;
             center = (result[i].from + result[i].to) / 2;
             width = Math.abs(result[i].from - result[i].to);
             for (j = result.length - 1; j > i; j--) {
@@ -71,7 +70,6 @@ export default class Ranges extends Array {
                     result[i].from = Math.min(result[i].from, result[j].from);
                     result[i].to = Math.max(result[i].to, result[j].to);
                     result[i].integral += result[j].integral;
-                    result[i]._highlight.push(result[j].signal[0].diaIDs[0]);
                     result[j].signal.forEach(a => {
                         result[i].signal.push(a);
                     });
