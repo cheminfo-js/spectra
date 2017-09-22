@@ -46,7 +46,7 @@ function ensureRangesHighlight(ranges) {
                             writable: true
                         });
                     }
-                    signal._highlight=signal.diaID;
+                    signal._highlight = signal.diaID;
                     if (signal.diaID) {
                         if (Array.isArray(signal.diaID)) {
                             for (let diaID of signal.diaID) {
@@ -59,8 +59,8 @@ function ensureRangesHighlight(ranges) {
                 }
                 // there is some newHighlight and before it was just a random number
                 // or the highlight changed
-                if ( (newHighlight.length>0 && range._highlight.length>0 && range._highlight[0].match(/^[0-9.]+$/)) ||
-                        (newHighlight.length!==0 && range._highlight.join('.') !== newHighlight.join('.'))) {
+                if ((newHighlight.length > 0 && range._highlight.length > 0 && range._highlight[0].match(/^[0-9.]+$/)) ||
+                        (newHighlight.length !== 0 && range._highlight.join('.') !== newHighlight.join('.'))) {
                     range._highlight = newHighlight;
                     isChanged = true;
                 }
