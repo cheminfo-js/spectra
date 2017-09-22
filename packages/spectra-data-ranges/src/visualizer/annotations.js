@@ -23,10 +23,11 @@ function ensureRangesHighlight(ranges) {
             // assignment can only be done at the level of a signal !
             if (range.signal) {
                 let newHighlight = [];
+
                 for (let signal of range.signal) {
                     if (signal.diaID) {
                         if (Array.isArray(signal.diaID)) {
-                            for (let diaID of signal.diaID.length) {
+                            for (let diaID of signal.diaID) {
                                 newHighlight.push(diaID);
                             }
                         } else {
