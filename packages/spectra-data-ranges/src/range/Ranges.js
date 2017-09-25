@@ -1,6 +1,5 @@
 import acs from '../acs/acs';
 import peak2Vector from './peak2Vector';
-import * as GUI from '../visualizer/annotations';
 import * as utils from 'spectra-nmr-utilities';
 import {array as arrayUtils} from 'ml-stat';
 import round from 'lodash.round';
@@ -163,15 +162,6 @@ export default class Ranges extends Array {
     getACS(options) {
         return acs(this, options);
     }
-
-    getAnnotations(options) {
-        return GUI.annotations1D(this, options);
-    }
-
-    ensureHighlight() {
-        return GUI.ensureRangesHighlight(this);
-    }
-
 
     toIndex(options = {}) {
         var index = [];
