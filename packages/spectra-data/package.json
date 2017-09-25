@@ -32,6 +32,7 @@
   "dependencies": {
     "brukerconverter": "^1.0.1",
     "jcampconverter": "^2.4.5",
+    "lodash.round": "^4.0.4",
     "ml-array-max": "^1.0.1",
     "ml-array-median": "^1.0.0",
     "ml-array-min": "^1.0.1",

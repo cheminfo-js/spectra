@@ -785,12 +785,7 @@ export default class SD {
             range.integral = this.getArea(range.from, range.to);
             sum += range.integral;
         });
-        if (options.nH !== 0) {
-            var factor = options.nH / sum;
-            ranges.forEach(range => {
-                range.integral *= factor;
-            });
-        }
+        ranges.updateIntegrals({sum: options.nH});
     }
 
     /**

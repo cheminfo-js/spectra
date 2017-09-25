@@ -1,6 +1,7 @@
 import JAnalyzer from './jAnalyzer';
 import impurityRemover from './ImpurityRemover';
 import {Ranges} from 'spectra-data-ranges';
+import round from 'lodash.round';
 
 const defaultOptions = {
     nH: 100,
@@ -113,33 +114,28 @@ export default function createRanges(spectrum, peakList, options) {
     for (i = 0; i < signals.length; i++) {
         var signal = signals[i];
         ranges[i] = {
-            from: signal.integralData.from,
-            to: signal.integralData.to,
-            integral: signal.integralData.value,
+            from: round(signal.integralData.from, 5),
+            to: round(signal.integralData.to, 5),
+            integral: round(signal.integralData.value, 5),
             signal: [{
                 nbAtoms: 0,
                 diaID: [],
                 multiplicity: signal.multiplicity,
-                peak: signal.peaks,
                 kind: '',
                 remark: ''
             }]
 
         };
+        if (options.keepPeaks) {
+            ranges[i].signal[0].peak = signal.peaks;
+        }
         if (signal.nmrJs) {
             ranges[i].signal[0].j = signal.nmrJs;
         }
         if (!signal.asymmetric || signal.multiplicity === 'm') {
-            ranges[i].signal[0].delta = signal.delta1;
+            ranges[i].signal[0].delta = round(signal.delta1, 5);
         }
     }
-
-    if (!options.keepPeaks) {
-        ranges.forEach(range => {
-            if (range.signal) range.signal.forEach(signal => delete signal.peaks);
-        });
-    }
-
 
     return new Ranges(ranges);
 }

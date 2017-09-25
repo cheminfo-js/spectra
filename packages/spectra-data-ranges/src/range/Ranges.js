@@ -118,7 +118,7 @@ export default class Ranges extends Array {
             factor = nH / sumObserved;
         }
         for (i = 0; i < this.length; i++) {
-            this[i].integral = round(this[i].integral * factor, 2);
+            this[i].integral = round(this[i].integral * factor, 5);
         }
         return this;
     }
