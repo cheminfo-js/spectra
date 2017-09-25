@@ -1,7 +1,6 @@
-/**
- * Created by acastillo on 9/16/15.
- */
+'use strict';
 const FS = require('fs');
+const SD = require('spectra-data');
 
 function loadFile(filename){
     return FS.readFileSync(__dirname + filename).toString();
@@ -25,15 +24,16 @@ function load(path, datasetName, options) {
 
     //var datasetName = "learningDataSet";
     //var path = "/Research/NMR/AutoAssign/data/"+datasetName;
-    var molFiles = fs.readdirSync(path);
+    var molFiles = fs.readdirSync(path).filter(line => {
+            return line.endsWith(filter.filter);
+        });
+
     var max = 100;//molFiles.length;
     var result = [];//new Array(max);
     // we could now loop on the sdf to add the int index
     for (var i = 0; i < max; i++) {
         try {
-            var sdfi = {dataset: datasetName, id: i + ""};
             var molfile = loadFile(molFiles[i]);
-
             var molecule = OCLE.Molecule.fromMolfile(molfile);
             molecule.addImplicitHydrogens();
             var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/,"$1")*1;
@@ -65,6 +65,7 @@ function load(path, datasetName, options) {
                     format:"new"
                 }
             );
+
             let sample = {general: {ocl: ocl, molfile: molecule.toMolfile()},
                              spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")}]}};
                             // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}

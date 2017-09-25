@@ -5,6 +5,8 @@ const FS = require('fs');
 const OCLE = require("openchemlib-extended-minimal");
 const autoassigner = require('../nmr-auto-assignment/src/index');
 const predictor = require("nmr-predictor");
+const cheminfo = require("./preprocess/cheminfo");
+const maybridge = require("./preprocess/maybridge");
 
 
 function loadFile(filename) {
@@ -71,18 +73,15 @@ function start() {
                 // we could now loop on the sdf to add the int index
                 for (i = 0; i < max; i++) {
                     try {
-                        catalogID = dataset[i].id;
-                        datasetName = dataset[i].dataset;
-
-                        result = autoAssign(dataset[i], {
-                            "db": fastDB,
-                            "debug": false,
-                            "ignoreLabile": ignoreLabile,
-                            "iterationQuery": "=" + (iteration - 1),
-                            "hoseLevels": [5, 4, 3],
-                            "learningRatio": learningRatio,
-                            "iteration": iteration
-                        });//"IN ("+(iteration-1)+","+iteration+")"});
+                        predictor.setDb(fastDB, 'proton', 'proton');
+                        result = autoassigner({general: {molfile: molecule.toMolfileV3()},
+                                        spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")},
+                                        {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}]}},
+                                        {minScore: 0.8, maxSolutions: 3000, errorCS: -1, predictor: predictor, condensed: true, OCLE: OCLE,
+                                        "levels": [5, 4, 3],
+                                        "ignoreLabile": ignoreLabile,
+                                        "learningRatio": learningRatio}
+                        );
 
                         signals = dataset[i].spectra.h1PeakList;
                         diaIDsCH = dataset[i].diaIDsCH;
@@ -95,9 +94,8 @@ function start() {
                         }
                         //console.log("Result "+result.length);
                         //Get the unique assigments in the assignment variable.
-                        assignment = null;
+                        assignment = result[0].assignment;
                         if (result.length > 1) {
-                            assignment = result[0].assignment;
                             nSignals = assignment.length;
 
                             for (k = 1; k < result.length - 1; k++) {
@@ -200,5 +198,4 @@ function start() {
         console.log("Fail " + e);
         db.close();
     }
-
 }

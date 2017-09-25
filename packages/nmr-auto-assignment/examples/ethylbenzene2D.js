@@ -1,6 +1,3 @@
-/**
- * Created by acastillo on 5/7/16.
- */
 'use strict';
 
 const SD = require('spectra-data');
