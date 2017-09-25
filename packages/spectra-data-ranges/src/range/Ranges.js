@@ -3,6 +3,7 @@ import peak2Vector from './peak2Vector';
 import * as GUI from '../visualizer/annotations';
 import * as utils from 'spectra-nmr-utilities';
 import {array as arrayUtils} from 'ml-stat';
+import round from 'lodash.round';
 
 export default class Ranges extends Array {
 
@@ -117,7 +118,7 @@ export default class Ranges extends Array {
             factor = nH / sumObserved;
         }
         for (i = 0; i < this.length; i++) {
-            this[i].integral *= factor;
+            this[i].integral = round(this[i].integral * factor, 2);
         }
         return this;
     }
