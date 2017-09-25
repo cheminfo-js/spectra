@@ -21,14 +21,14 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-preset-babili": "^0.1.4",
     "cheminfo-tools": "^1.19.4",
-    "eslint": "^4.0.0",
+    "eslint": "^4.7.2",
     "eslint-config-cheminfo": "^1.8.0",
     "eslint-plugin-no-only-tests": "^2.0.0",
     "jest": "^21.1.0",
-    "lerna": "^2.1.2",
+    "lerna": "^2.2.0",
     "npm-run-all": "^4.0.2",
     "rimraf": "^2.6.2",
-    "should": "^13.0.1"
+    "should": "^13.1.0"
   },
   "dependencies": {}
 }
