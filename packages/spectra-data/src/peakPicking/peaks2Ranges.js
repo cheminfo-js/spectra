@@ -123,9 +123,7 @@ export default function createRanges(spectrum, peakList, options) {
                 peak: signal.peaks,
                 kind: '',
                 remark: ''
-            }],
-            signalID: signal.signalID,
-            _highlight: signal._highlight
+            }]
 
         };
         if (signal.nmrJs) {
