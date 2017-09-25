@@ -780,11 +780,7 @@ export default class SD {
      * @param {object} options - option such as nH for normalization, if it is nH is zero the integral value returned is absolute value
      */
     updateIntegrals(ranges, options = {}) {
-        var sum = 0;
-        ranges.forEach(range => {
-            range.integral = this.getArea(range.from, range.to);
-            sum += range.integral;
-        });
+        ranges.forEach(range => range.integral = this.getArea(range.from, range.to));
         ranges.updateIntegrals({sum: options.nH});
     }
 
