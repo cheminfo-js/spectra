@@ -30,10 +30,10 @@ function ensureRangesHighlight(ranges) {
         for (let range of ranges) {
             if (!range._highlight) {
                 Object.defineProperty(range, '_highlight', {
+                    value: [],
                     enumerable: false,
                     writable: true
                 });
-                range._highlight = [];
             }
             // assignment can only be done at the level of a signal !
             if (range.signal) {
@@ -41,7 +41,7 @@ function ensureRangesHighlight(ranges) {
 
                 for (let signal of range.signal) {
                     if (!signal._highlight) {
-                        Object.defineProperty(range, '_highlight', {
+                        Object.defineProperty(signal, '_highlight', {
                             enumerable: false,
                             writable: true
                         });
