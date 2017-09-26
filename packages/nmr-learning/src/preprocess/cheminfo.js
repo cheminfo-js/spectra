@@ -3,12 +3,12 @@ const FS = require('fs');
 const SD = require('spectra-data');
 
 function loadFile(filename){
-    return FS.readFileSync(__dirname + filename).toString();
+    return FS.readFileSync(filename).toString();
 }
 
 function createSpectraData(filename, label, data) {
     var spectrum = SD.NMR.fromJcamp(
-        FS.readFileSync(__dirname + filename).toString()
+        FS.readFileSync(filename).toString()
     );
     return spectrum;
 };
@@ -67,7 +67,7 @@ function load(path, datasetName, options) {
             );
 
             let sample = {general: {ocl: ocl, molfile: molecule.toMolfile()},
-                             spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")}]}};
+                             spectra: {nmr: [{nucleus: "H", experiment: "1d", range: signals, solvent: spectraData1H.getParamString(".SOLVENT NAME", "unknown")}]}};
                             // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}
 
             result.push(sample);

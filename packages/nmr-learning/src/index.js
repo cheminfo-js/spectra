@@ -7,6 +7,7 @@ const autoassigner = require('../../nmr-auto-assignment/src/index');
 const predictor = require("nmr-predictor");
 const cheminfo = require("./preprocess/cheminfo");
 const maybridge = require("./preprocess/maybridge");
+const compilePredictionTable = require("./compilePredictionTable");
 
 
 function loadFile(filename) {
@@ -21,8 +22,12 @@ function start() {
 
     var testSet = JSON.parse(loadFile("/../data/assigned298.json"));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
 
-    var dataset1 = [];//cheminfo.load("/home/acastillo/Documents/data/cheminfo443/", "cheminfo", {keepMolecule: true});
-    var dataset2 = maybridge.load("/home/acastillo/Documents/data/maybridge/", "maybridge", {keepMolecule: true, keepMolfile: true});
+    var dataset1 = [];//cheminfo.load("/home/acastillo/Documents/data/cheminfo443/", "cheminfo", {keepMolecule: true, OCLE: OCLE});
+    var dataset2 = maybridge.load("/home/acastillo/Documents/data/maybridge/", "maybridge", {
+        keepMolecule: true,
+        keepMolfile: true,
+        OCLE: OCLE
+    });
     var dataset3 = [];//reiner.load("/data/Reiner", "reiner", {keepMolecule: true, keepMolfile: true});
 
     //dataset1 = dataset1.splice(0,2);
@@ -37,7 +42,7 @@ function start() {
     var start, date, prevError = 0, prevCont = 0, dataset, max, ds, i, j, k, l, m;
     var catalogID, datasetName, signals, diaIDsCH, diaID, solvent, nAtoms, asgK, highlight;
     var result, assignment, solutions;
-    var fastDB = null;
+    var fastDB = [];
     console.log("Cheminfo All: " + dataset1.length);
     console.log("MayBridge All: " + dataset2.length);
     //Remove the overlap molecules from train and test
@@ -58,106 +63,117 @@ function start() {
     console.log("MayBridge Final: " + dataset2.length);
     console.log("Overlaped molecules: " + removed + ".  They was removed from training datasets");
 
-    try {
-        //Run the learning process. After each iteration the system has seen every single molecule once
-        //We have to use another stop criteria like convergence
-        var iteration = 0, convergence = false;
-        while (iteration < maxIterations && !convergence) {
+    //try {
+    //Run the learning process. After each iteration the system has seen every single molecule once
+    //We have to use another stop criteria like convergence
+    var iteration = 0, convergence = false;
+    while (iteration < maxIterations && !convergence) {
 
-            date = new Date();
-            start = date.getTime();
-            var count = 0;
-            for (ds = 0; ds < datasets.length; ds++) {
-                dataset = datasets[ds];
-                max = dataset.length;
-                // we could now loop on the sdf to add the int index
-                for (i = 0; i < max; i++) {
-                    try {
-                        predictor.setDb(fastDB, 'proton', 'proton');
-                        result = autoassigner(dataset[i],
-                                        {minScore: 0.8, maxSolutions: 3000, errorCS: -1, predictor: predictor, condensed: true, OCLE: OCLE,
-                                        "levels": [5, 4, 3],
-                                        "ignoreLabile": ignoreLabile,
-                                        "learningRatio": learningRatio}
-                        );
-
-                        solutions = result.getAssignments();
-
-                        if (result.timeoutTerminated || result.nSolutions > solutions.length) {
-                            console.log("Too much solutions");
-                            continue;
-                        }
-                        //console.log("Result "+result.length);
-                        //Get the unique assigments in the assignment variable.
-                        assignment = solutions[0].assignment;
-                        if (solutions.length > 1) {
-                            nAtoms = assignment.length;
-                            for (j = 0; j < nAtoms; j++) {
-                                let signalId = assignment[j];
-                                if(signalId != "*") {
-                                    for (k = 1; k < solutions.length; k++) {
-                                        if(signalId != result[k].assignment[j]){
-                                            assignment[j] = "*";
-                                            break;
-                                        }
+        date = new Date();
+        start = date.getTime();
+        var count = 0;
+        for (ds = 0; ds < datasets.length; ds++) {
+            dataset = datasets[ds];
+            max = dataset.length;
+            // we could now loop on the sdf to add the int index
+            for (i = 0; i < max; i++) {
+                //try {
+                predictor.setDb(fastDB, 'proton', 'proton');
+                result = autoassigner(dataset[i],
+                    {
+                        minScore: 0.8,
+                        maxSolutions: 3000,
+                        errorCS: 0,
+                        predictor: predictor,
+                        condensed: true,
+                        OCLE: OCLE,
+                        levels: [5, 4, 3],
+                        ignoreLabile: ignoreLabile,
+                        learningRatio: learningRatio
+                    }
+                );
+                solutions = result.getAssignments();
+                console.log("x " + solutions.length)
+                if (result.timeoutTerminated || result.nSolutions > solutions.length) {
+                    console.log("Too much solutions");
+                    continue;
+                }
+                //console.log("Result "+result.length);
+                //Get the unique assigments in the assignment variable.
+                let solution = null;
+                if (solutions != null && solutions.length > 0) {
+                    solution = solutions[0];
+                    assignment = solution.assignment;
+                    if (solutions.length > 1) {
+                        nAtoms = assignment.length;
+                        for (j = 0; j < nAtoms; j++) {
+                            let signalId = assignment[j];
+                            if (signalId != "*") {
+                                for (k = 1; k < solutions.length; k++) {
+                                    if (signalId != solutions[k].assignment[j]) {
+                                        assignment[j] = "*";
+                                        break;
                                     }
                                 }
                             }
                         }
-                        //Only save the last state
-                        result.setAssignmentOnRanges(dataset[i], assignment);
-                    }
-                    catch (e) {
-                        console.log("Error in training. dataset: " + ds + " Iteration: " + iteration + " step: " + i + " " + e);
                     }
                 }
-            }
 
-            //Create the fast prediction table. It contains the prediction at last iteration
-            //Becasuse that, the iteration parameter has not effect on the stats
-            fastDB = createPredictionTable(dataset, iteration);
-            //console.log(fastDB);
-            /*date = new Date();
-            //Evalueate the error
-            console.log("Iteration " + iteration);
-            console.log("Time " + (date.getTime() - start));
-            console.log("New entries in the db: " + count);
-            start = date.getTime();
-            //var error = comparePredictors(datasetSim,{"db":db,"dataset":testSet,"iteration":"="+iteration});
-            var histParams = {from: 0, to: 1, nBins: 30};
-            var error = stats.cmp2asg(testSet, nmrShiftDBPred1H, {
-                "db": fastDB,
-                "dataset": testSet,
-                "iterationQuery": "=" + iteration,
-                "ignoreLabile": ignoreLabile,
-                "histParams": histParams,
-                "hoseLevels": [5, 4, 3]
-            });//{error:1,count:1};//comparePredictors({"db":db,"dataset":testSet,"iteration":"="+(iteration-1)});
-            date = new Date();
-            console.log("Error: " + error.error + " count: " + error.count + " min: " + error.min + " max: " + error.max);
-            var data = error.hist;
-            var sumHist = 0
-            for (var i = 0; i < data.length; i++) {
-                sumHist += data[i].y / error.count;
-                console.log(data[i].x + "," + data[i].y + "," + data[i].y / error.count + "," + sumHist);
+                //Only save the last state
+                result.setAssignmentOnSample(dataset[i], solution);
+                //}
+                //catch (e) {
+                //    console.log("Error in training. dataset: " + ds + " Iteration: " + iteration + " step: " + i + " " + e);
+                //}
             }
-            console.log("Time comparing " + (date.getTime() - start));
-
-            if (prevCont == count && prevError <= error) {
-                //convergence = true;
-            }
-            prevCont = count;
-            prevError = error;*/
-
-            iteration++;
         }
-        console.log("Done");
-        //db.close();
 
+        //Create the fast prediction table. It contains the prediction at last iteration
+        //Becasuse that, the iteration parameter has not effect on the stats
+        fastDB = compilePredictionTable(dataset, {iteration, OCLE});
+        //console.log(fastDB);
+        /*date = new Date();
+         //Evalueate the error
+         console.log("Iteration " + iteration);
+         console.log("Time " + (date.getTime() - start));
+         console.log("New entries in the db: " + count);
+         start = date.getTime();
+         //var error = comparePredictors(datasetSim,{"db":db,"dataset":testSet,"iteration":"="+iteration});
+         var histParams = {from: 0, to: 1, nBins: 30};
+         var error = stats.cmp2asg(testSet, nmrShiftDBPred1H, {
+         "db": fastDB,
+         "dataset": testSet,
+         "iterationQuery": "=" + iteration,
+         "ignoreLabile": ignoreLabile,
+         "histParams": histParams,
+         "hoseLevels": [5, 4, 3]
+         });//{error:1,count:1};//comparePredictors({"db":db,"dataset":testSet,"iteration":"="+(iteration-1)});
+         date = new Date();
+         console.log("Error: " + error.error + " count: " + error.count + " min: " + error.min + " max: " + error.max);
+         var data = error.hist;
+         var sumHist = 0
+         for (var i = 0; i < data.length; i++) {
+         sumHist += data[i].y / error.count;
+         console.log(data[i].x + "," + data[i].y + "," + data[i].y / error.count + "," + sumHist);
+         }
+         console.log("Time comparing " + (date.getTime() - start));
+
+         if (prevCont == count && prevError <= error) {
+         //convergence = true;
+         }
+         prevCont = count;
+         prevError = error;*/
+
+        iteration++;
     }
-    catch (e) {
-        console.log("Fail " + e);
-    }
+    console.log("Done");
+    //db.close();
+
+    //}
+    //catch (e) {
+    //    console.log("Fail " + e);
+    //}
 }
 
 start();

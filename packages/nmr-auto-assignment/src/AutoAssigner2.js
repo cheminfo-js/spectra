@@ -128,7 +128,7 @@ class Assignment {
         let solution = null;
         if(typeof index === "number") {
             if(index < this.solutions.length) {
-                let solution = this.solutions.elements[index];
+                solution = this.solutions.elements[index];
             }
         } else {
             if(typeof index === "object") {
@@ -145,7 +145,7 @@ class Assignment {
             });
         }
 
-        if(solutions !== null) {
+        if(solution !== null) {
             solution.assignment.forEach((signalId, diaIndex) => {
                 let range;
                 for(let i = 0; i < ranges.length; i++) {
@@ -154,14 +154,24 @@ class Assignment {
                         break;
                     }
                 }
-                range.signal.forEach(signal => {
-                    signal.diaID.push(this.sourcesIDs[diaIndex]);
-                });
+                if(range) {
+                    range.signal.forEach(signal => {
+                        signal.diaID.push(this.sourcesIDs[diaIndex]);
+                    });
+                }
             });
 
             return solution.score;
         }
         return 0;
+    }
+
+    setAssignmentOnSample(sample, index) {
+        sample.spectra.nmr.forEach(nmr => {
+            if(nmr.experiment === "1d") {
+                this.setAssignmentOnRanges(nmr.range, index);
+            }
+        })
     }
 
     isPlausible(partial, sourceConstrains, sourceID, targetID) {

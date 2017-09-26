@@ -3,38 +3,40 @@ const FS = require('fs');
 const SD = require('spectra-data');
 
 function loadFile(filename) {
-    return FS.readFileSync(__dirname + filename).toString();
+    return FS.readFileSync(filename).toString();
 }
 
 function createSpectraData(filename, label, data) {
     var spectrum = SD.NMR.fromJcamp(
-        FS.readFileSync(__dirname + filename).toString()
+        FS.readFileSync(filename).toString()
     );
     return spectrum;
 };
 
 
 function load(path, datasetName, options) {
+    let OCLE = options.OCLE;
     var keepMolfile = false || options.keepMolfile;
     var keepMolecule = false || options.keepMolecule;
-    var filter = {filter: "jcamp_"};
+    var filter = {filter: ".txt"};
     if (typeof options.filter === "object") {
         filter = options.filter;
     }
 
     var parts = FS.readdirSync(path).filter(line => {
-        return line.endsWith(filter.filter);
+        return line.indexOf(filter.filter) > 0;
     });
 
     var result = [];
-    for (var p = 0; p < parts.length; p++) {
+    for (var p = 0; p < 1; p++) {
         let fileContent = loadFile(path + parts[p]).split("\n");
         var max = fileContent.length - 1;
         // we could now loop on the sdf to add the int index
-        for (var i = 1; i < max; i++) {
-            try {
+        for (var i = 1; i < 10; i++) {
+            let row = fileContent[i].split("\t");
+            //try {
                 //var sdfi = {dataset: datasetName, id: p + "_" + i + "_" + molFiles[i].catalogID};
-                var molfile = fileContent[i][1].replace(/\\n/g, "\n");
+                var molfile = row[1].replace(/\\n/g, "\n");
                 var molecule = OCLE.Molecule.fromMolfile(molfile);
                 molecule.addImplicitHydrogens();
                 var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, "$1") * 1;
@@ -51,7 +53,8 @@ function load(path, datasetName, options) {
                 ocl.diaID = molecule.getIDCode();
                 ocl.nH = nH;
 
-                var spectraData1H = SD.NMR.fromJcamp(fileContent[i][2]);
+                console.log(i / max * 100 );
+                var spectraData1H = SD.NMR.fromJcamp(row[2].replace(/\\n/g, "\n"));
 
                 var signals = spectraData1H.getRanges(
                     {
@@ -77,18 +80,18 @@ function load(path, datasetName, options) {
                         nmr: [{
                             nucleus: "H",
                             experiment: "1d",
-                            range: peakPicking,
-                            solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")
+                            range: signals,
+                            solvent: spectraData1H.getParamString(".SOLVENT NAME", "unknown")
                         }]
                     }
                 };
                 // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}
 
                 result.push(sample);
-            }
-            catch (e) {
-                console.log("Could not load the entry " + p + " " + i + " " + e);
-            }
+            //}
+            //catch (e) {
+            //    console.log("Could not load the entry " + p + " " + i + " " + e);
+            //}
         }
     }
     return result;
