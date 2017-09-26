@@ -22,13 +22,13 @@ function load(path, datasetName, options) {
         filter = options.filter;
     }
 
-    var parts = fs.readdirSync(path).filter(line => {
+    var parts = FS.readdirSync(path).filter(line => {
         return line.endsWith(filter.filter);
     });
 
     var result = [];
     for (var p = 0; p < parts.length; p++) {
-        let fileContent = loadFile(parts[p]).split("\n");
+        let fileContent = loadFile(path + parts[p]).split("\n");
         var max = fileContent.length - 1;
         // we could now loop on the sdf to add the int index
         for (var i = 1; i < max; i++) {

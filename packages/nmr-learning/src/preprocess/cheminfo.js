@@ -24,7 +24,7 @@ function load(path, datasetName, options) {
 
     //var datasetName = "learningDataSet";
     //var path = "/Research/NMR/AutoAssign/data/"+datasetName;
-    var molFiles = fs.readdirSync(path).filter(line => {
+    var molFiles = FS.readdirSync(path).filter(line => {
             return line.endsWith(filter.filter);
         });
 
@@ -33,7 +33,7 @@ function load(path, datasetName, options) {
     // we could now loop on the sdf to add the int index
     for (var i = 0; i < max; i++) {
         try {
-            var molfile = loadFile(molFiles[i]);
+            var molfile = loadFile(path + molFiles[i]);
             var molecule = OCLE.Molecule.fromMolfile(molfile);
             molecule.addImplicitHydrogens();
             var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/,"$1")*1;
@@ -52,7 +52,7 @@ function load(path, datasetName, options) {
 
             //Simulate and process the 1H-NMR spectrum at 400MHz
             var jcampFile = molFiles[i].replace("mol_", "h1_").replace(".mol", ".jdx");
-            var spectraData1H = createSpectraData(jcampFile);
+            var spectraData1H = createSpectraData(path + jcampFile);
 
             var signals = spectraData1H.getRanges(
                 {

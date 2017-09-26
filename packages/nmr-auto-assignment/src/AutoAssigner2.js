@@ -30,7 +30,7 @@ class Assignment {
         this.MAXERRORSCOSY = 1;
         this.condensed = options.condensed;
 
-        this.timeoutTerminated = 0;
+        this.timeoutTerminated = false;
         this.score = 0;
         this.nSolutions = 0;
         this.nSteps = 0;
@@ -125,15 +125,27 @@ class Assignment {
     }
 
     setAssignmentOnRanges(ranges, index) {
-        if(index < this.solutions.length) {
-            //Clean up any previous assignment
-            for(let i = 0; i < ranges.length; i++) {
-                ranges[i].signal.forEach(signal => {
-                    signal.diaID = [];
-                });
+        let solution = null;
+        if(typeof index === "number") {
+            if(index < this.solutions.length) {
+                let solution = this.solutions.elements[index];
             }
+        } else {
+            if(typeof index === "object") {
+                solution = index;
+            }
+        }
+        //if(solutions == null)
+        //    return -1;//Error. Index is not a valid index or assignment
 
-            let solution = this.solutions.elements[index];
+        //Clean up any previous assignment
+        for(let i = 0; i < ranges.length; i++) {
+            ranges[i].signal.forEach(signal => {
+                signal.diaID = [];
+            });
+        }
+
+        if(solutions !== null) {
             solution.assignment.forEach((signalId, diaIndex) => {
                 let range;
                 for(let i = 0; i < ranges.length; i++) {
@@ -146,7 +158,6 @@ class Assignment {
                     signal.diaID.push(this.sourcesIDs[diaIndex]);
                 });
             });
-
 
             return solution.score;
         }

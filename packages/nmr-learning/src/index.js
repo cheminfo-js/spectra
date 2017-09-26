@@ -3,7 +3,7 @@
 const SD = require('spectra-data');
 const FS = require('fs');
 const OCLE = require("openchemlib-extended-minimal");
-const autoassigner = require('../nmr-auto-assignment/src/index');
+const autoassigner = require('../../nmr-auto-assignment/src/index');
 const predictor = require("nmr-predictor");
 const cheminfo = require("./preprocess/cheminfo");
 const maybridge = require("./preprocess/maybridge");
@@ -19,10 +19,10 @@ function start() {
     var ignoreLabile = false;//Set the use of labile protons during training
     var learningRatio = 0.6; //A number between 0 and 1
 
-    var testSet = JSON.parse(loadFile("/data/assigned298.json"));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
+    var testSet = JSON.parse(loadFile("/../data/assigned298.json"));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
 
-    var dataset1 = cheminfo.load("/data/cheminfo443", "cheminfo", {keepMolecule: true});
-    var dataset2 = maybridge.load("/data/maybridge", "maybridge", {keepMolecule: true, keepMolfile: true});
+    var dataset1 = [];//cheminfo.load("/home/acastillo/Documents/data/cheminfo443/", "cheminfo", {keepMolecule: true});
+    var dataset2 = maybridge.load("/home/acastillo/Documents/data/maybridge/", "maybridge", {keepMolecule: true, keepMolfile: true});
     var dataset3 = [];//reiner.load("/data/Reiner", "reiner", {keepMolecule: true, keepMolfile: true});
 
     //dataset1 = dataset1.splice(0,2);
@@ -35,8 +35,8 @@ function start() {
     var db = {};
 
     var start, date, prevError = 0, prevCont = 0, dataset, max, ds, i, j, k, l, m;
-    var catalogID, datasetName, signals, diaIDsCH, diaID, solvent, nSignals, asgK, highlight;
-    var result, assignment, annotations;
+    var catalogID, datasetName, signals, diaIDsCH, diaID, solvent, nAtoms, asgK, highlight;
+    var result, assignment, solutions;
     var fastDB = null;
     console.log("Cheminfo All: " + dataset1.length);
     console.log("MayBridge All: " + dataset2.length);
@@ -74,77 +74,38 @@ function start() {
                 for (i = 0; i < max; i++) {
                     try {
                         predictor.setDb(fastDB, 'proton', 'proton');
-                        result = autoassigner({general: {molfile: molecule.toMolfileV3()},
-                                        spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")},
-                                        {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}]}},
+                        result = autoassigner(dataset[i],
                                         {minScore: 0.8, maxSolutions: 3000, errorCS: -1, predictor: predictor, condensed: true, OCLE: OCLE,
                                         "levels": [5, 4, 3],
                                         "ignoreLabile": ignoreLabile,
                                         "learningRatio": learningRatio}
                         );
 
-                        signals = dataset[i].spectra.h1PeakList;
-                        diaIDsCH = dataset[i].diaIDsCH;
-                        diaID = dataset[i].diaID;
-                        solvent = dataset[i].spectra.solvent;
+                        solutions = result.getAssignments();
 
-                        if (result[result.length - 1].state != "completed" || result[result.length - 1].nSolutions > result.length) {
+                        if (result.timeoutTerminated || result.nSolutions > solutions.length) {
                             console.log("Too much solutions");
                             continue;
                         }
                         //console.log("Result "+result.length);
                         //Get the unique assigments in the assignment variable.
-                        assignment = result[0].assignment;
-                        if (result.length > 1) {
-                            nSignals = assignment.length;
-
-                            for (k = 1; k < result.length - 1; k++) {
-                                asgK = result[k].assignment;
-                                for (j = 0; j < nSignals; j++) {
-                                    for (m = 0; m < assignment[j].length; m++) {
-                                        if (m <= asgK[j].length) {
-                                            if (assignment[j][m] != asgK[j][m])
-                                                assignment[j][m] = -1;
+                        assignment = solutions[0].assignment;
+                        if (solutions.length > 1) {
+                            nAtoms = assignment.length;
+                            for (j = 0; j < nAtoms; j++) {
+                                let signalId = assignment[j];
+                                if(signalId != "*") {
+                                    for (k = 1; k < solutions.length; k++) {
+                                        if(signalId != result[k].assignment[j]){
+                                            assignment[j] = "*";
+                                            break;
                                         }
                                     }
                                 }
                             }
                         }
-                        result = null;
-
-                        if (assignment && assignment.length > 0) {
-                            annotations = new Array();
-                            for (j = 0; j < signals.length; j++) {
-                                //To put the diaIDs
-                                if (assignment[j]) {
-                                    highlight = new Array();
-                                    for (l = assignment[j].length - 1; l >= 0; l--) {
-                                        if (assignment[j][l] != -1) {
-                                            highlight.push(diaIDsCH[assignment[j][l]].id);
-                                        }
-                                    }
-                                    if (highlight.length > 0) {
-                                        annotations.push({
-                                            integralData: signals[j].integralData,
-                                            atomIDs: assignment[j],
-                                            diaIDs: highlight,
-                                            startX: signals[j].startX,
-                                            stopX: signals[j].stopX
-                                        });
-                                    }
-                                }
-                            }
-                            assignment = null;
-                            count += save2db(annotations, db, {
-                                diaID: diaID,
-                                diaIDs: diaIDsCH,
-                                catalogID: catalogID,
-                                datasetName: datasetName,
-                                solvent: solvent,
-                                iteration: iteration
-                            });
-                            annotations = null;
-                        }
+                        //Only save the last state
+                        result.setAssignmentOnRanges(dataset[i], assignment);
                     }
                     catch (e) {
                         console.log("Error in training. dataset: " + ds + " Iteration: " + iteration + " step: " + i + " " + e);
@@ -154,9 +115,9 @@ function start() {
 
             //Create the fast prediction table. It contains the prediction at last iteration
             //Becasuse that, the iteration parameter has not effect on the stats
-            fastDB = createPredictionTable(db, iteration);
+            fastDB = createPredictionTable(dataset, iteration);
             //console.log(fastDB);
-            date = new Date();
+            /*date = new Date();
             //Evalueate the error
             console.log("Iteration " + iteration);
             console.log("Time " + (date.getTime() - start));
@@ -186,7 +147,7 @@ function start() {
                 //convergence = true;
             }
             prevCont = count;
-            prevError = error;
+            prevError = error;*/
 
             iteration++;
         }
@@ -196,6 +157,7 @@ function start() {
     }
     catch (e) {
         console.log("Fail " + e);
-        db.close();
     }
 }
+
+start();
