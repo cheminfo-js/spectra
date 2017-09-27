@@ -25,6 +25,7 @@ export default function removeImpurities(peakList, options = {}) {
     } = options;
     solvent = solvent.toLowerCase();
     if (solvent === '(cd3)2so') solvent = 'dmso';
+    if (solvent === 'meod') solvent = 'cd3od';
     var solventImpurities = impurities[solvent];
     if (solventImpurities) {
         for (let impurity of toCheck) {
