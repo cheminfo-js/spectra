@@ -3,8 +3,13 @@
  */
 function compilePredictionTable(samples, options) {
     let maxLevel = 5;//options.maxLevel;
+    let algorithm = 0;
     let OCLE = options.OCLE;
     let result = {"H":[], "C":[]};
+    for(let i = 0; i <= maxLevel; i++) {
+        result["H"].push({});
+        result["C"].push({});
+    }
 
     samples.forEach(sample => {
         let ocl = sample.general.ocl;
@@ -18,11 +23,17 @@ function compilePredictionTable(samples, options) {
                                 maxSphereSize: maxLevel,
                                 type: algorithm
                             });
-                        })
+                            for(let i = 0; i < hose.length; i++) {
+                                if(!db[i+1][hose[i]]) {
+                                    db[i+1][hose[i]] = [];
+                                }
+                                db[i+1][hose[i]].push(signal.delta);
+                            }
+                        });
                     });
                 });
             }
-        })
+        });
     });
 
     return result;
