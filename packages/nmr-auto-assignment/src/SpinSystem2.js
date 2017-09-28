@@ -53,8 +53,9 @@ class SpinSystem {
 
         this.nSources = 0;
         this.sources = {};
+        //console.log(this.predictions);
         this.predictions.forEach(pred => {
-            if(typeof pred[0].atomLabel === "string") {
+            if(pred.length > 0 && typeof pred[0].atomLabel === "string") {
                 pred.forEach(atomPred => {
                     this.sourcesConstrains[atomPred.diaIDs[0]] = atomPred;
                     if(!this.sources[atomPred.atomLabel])

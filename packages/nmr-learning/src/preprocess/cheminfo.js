@@ -28,7 +28,7 @@ function load(path, datasetName, options) {
             return line.endsWith(filter.filter);
         });
 
-    var max = 20;//molFiles.length;
+    var max = molFiles.length;
     var result = [];//new Array(max);
     // we could now loop on the sdf to add the int index
     for (var i = 0; i < max; i++) {
