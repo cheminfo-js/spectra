@@ -63,7 +63,7 @@ class Assignment {
                 targetIDs.forEach(targetID => {
                     let target = this.spinSystem.targetsConstains[targetID];
                     if (source.nbAtoms - target.integral < 1) {
-                        if (this.errorCS === 0 || source.delta === -9999999) { //Chemical shift is not a restriction
+                        if (this.errorCS === 0 || typeof source.delta === 'undefined') { //Chemical shift is not a restriction
                             this.expandMap[sourceID].push(targetID);
                         } else {
                             let tmp = (target.from + target.to) / 2;
@@ -226,7 +226,7 @@ class Assignment {
                     count++;
                     let source = this.spinSystem.sourcesConstrains[this.sourcesIDs[index]];
                     let target = this.spinSystem.targetsConstains[targetID];
-                    if (this.errorCS === 0 || source.delta === -9999999) { //Chemical shift is not a restriction
+                    if (typeof source.delta === 'undefined') { //Chemical shift is not a restriction
                         chemicalShiftScore += 1;
                     } else {
                         let tmp = (target.from + target.to) / 2;

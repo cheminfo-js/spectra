@@ -28,7 +28,7 @@ function load(path, datasetName, options) {
             return line.endsWith(filter.filter);
         });
 
-    var max = 100;//molFiles.length;
+    var max = 20;//molFiles.length;
     var result = [];//new Array(max);
     // we could now loop on the sdf to add the int index
     for (var i = 0; i < max; i++) {
@@ -65,11 +65,10 @@ function load(path, datasetName, options) {
                     format:"new"
                 }
             );
-
-            let sample = {general: {ocl: ocl, molfile: molecule.toMolfile()},
+            //console.log(JSON.stringify(signals));
+            let sample = {general: {ocl: ocl, molfile: molecule.toMolfileV3()},//{ocl: ocl, molfile: molecule.toMolfileV3()},
                              spectra: {nmr: [{nucleus: "H", experiment: "1d", range: signals, solvent: spectraData1H.getParamString(".SOLVENT NAME", "unknown")}]}};
                             // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}
-
             result.push(sample);
         }
         catch (e) {

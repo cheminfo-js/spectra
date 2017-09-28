@@ -45,7 +45,7 @@ function assignmentFromPeakPicking(entry, options) {
         diaIDs = entry.general.ocl.diaIDs;
     }
 
-   // console.log(diaIDs);
+   //console.log(diaIDs);
 
     let prediction = [];
     entry.spectra.nmr.forEach(nmr => {
@@ -58,8 +58,12 @@ function assignmentFromPeakPicking(entry, options) {
         }
     })
 
+    //console.log(JSON.stringify(entry.spectra.nmr))
 
     const spinSystem = new SpinSystem(spectra, prediction, options);
+
+    //console.log(JSON.stringify(spinSystem))
+
     const autoAssigner = new AutoAssigner(spinSystem, options);
     autoAssigner.buildAssignments();
     return autoAssigner;

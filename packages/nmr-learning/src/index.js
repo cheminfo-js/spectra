@@ -16,18 +16,18 @@ function loadFile(filename) {
 
 function start() {
 
-    var maxIterations = 10; // Set the number of interations for training
+    var maxIterations = 1; // Set the number of interations for training
     var ignoreLabile = false;//Set the use of labile protons during training
     var learningRatio = 0.6; //A number between 0 and 1
 
     var testSet = JSON.parse(loadFile("/../data/assigned298.json"));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
 
-    var dataset1 = [];//cheminfo.load("/home/acastillo/Documents/data/cheminfo443/", "cheminfo", {keepMolecule: true, OCLE: OCLE});
-    var dataset2 = maybridge.load("/home/acastillo/Documents/data/maybridge/", "maybridge", {
+    var dataset1 = cheminfo.load("/home/acastillo/Documents/data/cheminfo443/", "cheminfo", {keepMolecule: true, OCLE: OCLE});
+    var dataset2 = [];/*maybridge.load("/home/acastillo/Documents/data/maybridge/", "maybridge", {
         keepMolecule: true,
         keepMolfile: true,
         OCLE: OCLE
-    });
+    });*/
     var dataset3 = [];//reiner.load("/data/Reiner", "reiner", {keepMolecule: true, keepMolfile: true});
 
     //dataset1 = dataset1.splice(0,2);
@@ -41,12 +41,13 @@ function start() {
 
     var start, date, prevError = 0, prevCont = 0, dataset, max, ds, i, j, k, l, m;
     var catalogID, datasetName, signals, diaIDsCH, diaID, solvent, nAtoms, asgK, highlight;
-    var result, assignment, solutions;
+    var result, solutions;
     var fastDB = [];
     console.log("Cheminfo All: " + dataset1.length);
     console.log("MayBridge All: " + dataset2.length);
     //Remove the overlap molecules from train and test
     var removed = 0;
+    var trainDataset = [];
     for (i = 0; i < testSet.length; i++) {
         for (ds = 0; ds < datasets.length; ds++) {
             dataset = datasets[ds];
@@ -59,9 +60,15 @@ function start() {
             }
         }
     }
+    for (ds = 0; ds < datasets.length; ds++) {
+        dataset = datasets[ds];
+        for (j = 0; j < dataset.length; j++) {
+            trainDataset.push(dataset[j]);
+        }
+    }
     console.log("Cheminfo Final: " + dataset1.length);
     console.log("MayBridge Final: " + dataset2.length);
-    console.log("Overlaped molecules: " + removed + ".  They was removed from training datasets");
+    console.log("Overlaped molecules: " + removed + ".  They were removed from training datasets");
 
     //try {
     //Run the learning process. After each iteration the system has seen every single molecule once
@@ -72,16 +79,17 @@ function start() {
         date = new Date();
         start = date.getTime();
         var count = 0;
-        for (ds = 0; ds < datasets.length; ds++) {
-            dataset = datasets[ds];
+        //for (ds = 0; ds < datasets.length; ds++) {
+            dataset = trainDataset;//datasets[ds];
             max = dataset.length;
+            console.log(max);
             // we could now loop on the sdf to add the int index
             for (i = 0; i < max; i++) {
                 //try {
                 predictor.setDb(fastDB, 'proton', 'proton');
                 result = autoassigner(dataset[i],
                     {
-                        minScore: 0.8,
+                        minScore: 1,
                         maxSolutions: 3000,
                         errorCS: 0,
                         predictor: predictor,
@@ -93,7 +101,6 @@ function start() {
                     }
                 );
                 solutions = result.getAssignments();
-                console.log("x " + solutions.length)
                 if (result.timeoutTerminated || result.nSolutions > solutions.length) {
                     console.log("Too much solutions");
                     continue;
@@ -103,7 +110,7 @@ function start() {
                 let solution = null;
                 if (solutions != null && solutions.length > 0) {
                     solution = solutions[0];
-                    assignment = solution.assignment;
+                    let assignment = solution.assignment;
                     if (solutions.length > 1) {
                         nAtoms = assignment.length;
                         for (j = 0; j < nAtoms; j++) {
@@ -119,20 +126,23 @@ function start() {
                         }
                     }
                 }
-
+                //if(solutions.length == 1)
+                //    console.log(solutions);
+                //console.log(solutions.length + " " + JSON.stringify(solution));
                 //Only save the last state
                 result.setAssignmentOnSample(dataset[i], solution);
                 //}
                 //catch (e) {
                 //    console.log("Error in training. dataset: " + ds + " Iteration: " + iteration + " step: " + i + " " + e);
                 //}
+
             }
-        }
+        //}
 
         //Create the fast prediction table. It contains the prediction at last iteration
         //Becasuse that, the iteration parameter has not effect on the stats
-        fastDB = compilePredictionTable(dataset, {iteration, OCLE});
-        //console.log(fastDB);
+        fastDB = compilePredictionTable(dataset, {iteration, OCLE})["H"];
+        console.log("New Iteration");
         /*date = new Date();
          //Evalueate the error
          console.log("Iteration " + iteration);

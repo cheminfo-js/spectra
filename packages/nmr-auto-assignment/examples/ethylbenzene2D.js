@@ -29,7 +29,7 @@ molecule.addImplicitHydrogens();
 //if(molecule instanceof Molecule)
 var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/,"$1")*1;
 
-const db = JSON.parse(loadFile("/../src/h1_database.json"));
+const db = [];//JSON.parse(loadFile("/../src/h1_database.json"));
 predictor.setDb(db, 'proton', 'proton');
 
 var spectrum = createSpectraData("/../../../data-test/ethylbenzene/h1_0.jdx");
@@ -47,16 +47,16 @@ var peakPicking = spectrum.getRanges({
 
 var cosyZones = cosy.getZones({thresholdFactor:1.5});
 
-console.log(JSON.stringify(peakPicking));
+//console.log(JSON.stringify(peakPicking));
 
 //The input structure should fit the ELN JSON format.
-
+/*
 var result = autoassigner({general: {molfile: molecule.toMolfileV3()},
         spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")},
                        {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}]}},
-    {minScore: 0.8, maxSolutions: 3000, errorCS: 1, predictor: predictor, condensed: true, OCLE: OCLE}
+    {minScore: 0.8, maxSolutions: 3000, errorCS: 0, predictor: predictor, condensed: true, OCLE: OCLE}
 );
-
+/*
 console.log(result.getAssignments().length);
 console.log(result.getAssignments()[0]);
 console.log(result.getAssignments()[1]);
@@ -72,10 +72,10 @@ var result = autoassigner({general: {molfile: molecule.toMolfileV3()},
 console.log(result.length);
 console.log(result[0]);
 console.log(result[result.length-1]);
-
+*/
 var result = autoassigner({general: {molfile: molecule.toMolfileV3()},
         spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")}]}},
-    {minScore: 1, maxSolutions: 3000, errorCS: 0, predictor: predictor, condensed: true, OCLE: OCLE}
+    {minScore: 1, maxSolutions: 3000, errorCS: 0, predictor: predictor, condensed: true, OCLE: OCLE, levels: [5, 4, 3]}
 ).getAssignments();
 console.log(result.length);
 console.log(result[0]);
