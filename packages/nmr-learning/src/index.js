@@ -16,13 +16,13 @@ function loadFile(filename) {
 
 function start() {
     var maxIterations = 10; // Set the number of interations for training
-    var ignoreLabile = false;//Set the use of labile protons during training
-    var learningRatio = 0.6; //A number between 0 and 1
+    var ignoreLabile = true;//Set the use of labile protons during training
+    var learningRatio = 0.3; //A number between 0 and 1
 
     var testSet = JSON.parse(loadFile("/../data/assigned298.json"));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
     //console.log(JSON.stringify(testSet[0]));
-    var dataset1 = cheminfo.load("/home/acastillo/Documents/data/cheminfo443/", "cheminfo", {keepMolecule: true, OCLE: OCLE});
-    var dataset2 = [];/*maybridge.load("/home/acastillo/Documents/data/maybridge/", "maybridge", {keepMolecule: true, keepMolfile: true, OCLE: OCLE});*/
+    var dataset1 = [];//cheminfo.load("/home/acastillo/Documents/data/cheminfo443/", "cheminfo", {keepMolecule: true, OCLE: OCLE});
+    var dataset2 = maybridge.load("/home/acastillo/Documents/data/maybridge/", "maybridge", {keepMolecule: true, keepMolfile: true, OCLE: OCLE});
     var dataset3 = [];//reiner.load("/data/Reiner", "reiner", {keepMolecule: true, keepMolfile: true});
 
     var datasets = [dataset1, dataset2, dataset3];
@@ -73,18 +73,18 @@ function start() {
         max = dataset.length;
         // we could now loop on the sdf to add the int index
         for (i = 0; i < max; i++) {
-            //console.log(dataset[i]);
+            //console.log(i);
             //try {
             predictor.setDb(fastDB, 'proton', 'proton');
             result = autoassigner(dataset[i],
                 {
                     minScore: 1,
                     maxSolutions: 3000,
-                    errorCS: 0,
+                    errorCS: 1,
                     predictor: predictor,
                     condensed: true,
                     OCLE: OCLE,
-                    levels: [5, 4, 3],
+                    levels: [5, 4, 3, 2],
                     ignoreLabile: ignoreLabile,
                     learningRatio: learningRatio
                 }
@@ -121,7 +121,8 @@ function start() {
         //Create the fast prediction table. It contains the prediction at last iteration
         //Becasuse that, the iteration parameter has not effect on the stats
         fastDB = compilePredictionTable(dataset, {iteration, OCLE})["H"];
-        console.log(JSON.stringify(fastDB));
+        predictor.setDb(fastDB, 'proton', 'proton');
+        //console.log(JSON.stringify(fastDB));
         date = new Date();
         //Evalueate the error
         console.log("Iteration " + iteration);
@@ -135,7 +136,7 @@ function start() {
             "dataset": testSet,
             "ignoreLabile": ignoreLabile,
             "histParams": histParams,
-            "hoseLevels": [5, 4, 3],
+            "hoseLevels": [5, 4, 3, 2],
             "OCLE": OCLE
         });
         date = new Date();

@@ -4,7 +4,7 @@
  */
 const TreeSet = require("ml-tree-set");
 
-const defaultOptions = {minScore: 1, maxSolutions: 100, errorCS: -1, onlyCount: false, timeout: 20000, condensed: true};
+const defaultOptions = {minScore: 1, maxSolutions: 100, errorCS: -1, onlyCount: false, timeout: 7000, condensed: true};
 
 const DEBUG = false;
 
@@ -60,19 +60,21 @@ class Assignment {
                 let source = this.spinSystem.sourcesConstrains[sourceID];
                 source.error = Math.abs(source.error);
                 this.expandMap[sourceID] = [];
-                targetIDs.forEach(targetID => {
-                    let target = this.spinSystem.targetsConstains[targetID];
-                    if (source.nbAtoms - target.integral < 1) {
-                        if (this.errorCS === 0 || typeof source.delta === 'undefined') { //Chemical shift is not a restriction
-                            this.expandMap[sourceID].push(targetID);
-                        } else {
-                            let tmp = (target.from + target.to) / 2;
-                            if (Math.abs(source.delta - tmp) < (source.error
-                                + Math.abs(target.from - target.to)) / 2 + errorAbs)
+                if(targetIDs) {
+                    targetIDs.forEach(targetID => {
+                        let target = this.spinSystem.targetsConstains[targetID];
+                        if (source.nbAtoms - target.integral < 1) {
+                            if (this.errorCS === 0 || typeof source.delta === 'undefined') { //Chemical shift is not a restriction
                                 this.expandMap[sourceID].push(targetID);
+                            } else {
+                                let tmp = (target.from + target.to) / 2;
+                                if (Math.abs(source.delta - tmp) < (source.error
+                                    + Math.abs(target.from - target.to)) / 2 + errorAbs)
+                                    this.expandMap[sourceID].push(targetID);
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 this.expandMap[sourceID].push("*");
             });
         });
