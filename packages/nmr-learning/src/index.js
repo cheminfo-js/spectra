@@ -17,11 +17,11 @@ function loadFile(filename) {
 function start() {
     var maxIterations = 10; // Set the number of interations for training
     var ignoreLabile = true;//Set the use of labile protons during training
-    var learningRatio = 0.3; //A number between 0 and 1
+    var learningRatio = 0.8; //A number between 0 and 1
 
     var testSet = JSON.parse(loadFile("/../data/assigned298.json"));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
     //console.log(JSON.stringify(testSet[0]));
-    var dataset1 = [];//cheminfo.load("/home/acastillo/Documents/data/cheminfo443/", "cheminfo", {keepMolecule: true, OCLE: OCLE});
+    var dataset1 = cheminfo.load("/home/acastillo/Documents/data/cheminfo443/", "cheminfo", {keepMolecule: true, OCLE: OCLE});
     var dataset2 = maybridge.load("/home/acastillo/Documents/data/maybridge/", "maybridge", {keepMolecule: true, keepMolfile: true, OCLE: OCLE});
     var dataset3 = [];//reiner.load("/data/Reiner", "reiner", {keepMolecule: true, keepMolfile: true});
 
@@ -43,7 +43,7 @@ function start() {
         for (ds = 0; ds < datasets.length; ds++) {
             dataset = datasets[ds];
             for (j = dataset.length - 1; j >= 0; j--) {
-                if (testSet[i].diaID == dataset[j].diaID) {
+                if (testSet[i].diaID == dataset[j].general.ocl.diaID) {
                     dataset.splice(j, 1);
                     removed++;
                     break;
@@ -80,18 +80,19 @@ function start() {
                 {
                     minScore: 1,
                     maxSolutions: 3000,
-                    errorCS: 1,
+                    errorCS: -1.5,
                     predictor: predictor,
                     condensed: true,
                     OCLE: OCLE,
-                    levels: [5, 4, 3, 2],
+                    levels: [5, 4],
                     ignoreLabile: ignoreLabile,
-                    learningRatio: learningRatio
+                    learningRatio: learningRatio,
+                    iteration: iteration
                 }
             );
             solutions = result.getAssignments();
             if (result.timeoutTerminated || result.nSolutions > solutions.length) {
-                console.log("Too much solutions");
+                //console.log("Too much solutions");
                 continue;
             }
             //Get the unique assigments in the assignment variable.
@@ -121,6 +122,10 @@ function start() {
         //Create the fast prediction table. It contains the prediction at last iteration
         //Becasuse that, the iteration parameter has not effect on the stats
         fastDB = compilePredictionTable(dataset, {iteration, OCLE})["H"];
+        console.log(JSON.stringify(fastDB));
+        console.log(Object.keys(fastDB[1]).length + " " +Object.keys(fastDB[2]).length);
+        console.log(Object.keys(fastDB[3]).length + " " +Object.keys(fastDB[4]).length + " " + Object.keys(fastDB[5]).length);
+
         predictor.setDb(fastDB, 'proton', 'proton');
         //console.log(JSON.stringify(fastDB));
         date = new Date();

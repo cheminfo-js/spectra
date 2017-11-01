@@ -43,14 +43,17 @@ Actelion Java MolfileCreator 1.0
 M  END
 `;
 
-predictor.spinus(molfile).then(prediction => {
+predictor.spinus(molfile, {group: false}).then(prediction => {
+    console.log(JSON.stringify(prediction))
     //var a = simule2DNmrSpectrum(prediction, {nbPointsX: 100, nbPointsY: 100});
     //console.log(prediction)
     //API.createData("data", a.to2DArray());
 }).catch(reason => {return new Error(reason)});
 
 predictor.fetchProton().then(value => {
-    const prediction = predictor.proton(molfile, {group: true});
+    const prediction = predictor.proton(molfile, {group: false});
     console.log(prediction.length);
+    console.log(JSON.stringify(prediction))
+
 });
 

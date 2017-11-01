@@ -109,7 +109,7 @@ function predictByExperiment(molecule, nmr, options) {
 function getError(prediction, param) {
     //console.log(prediction)
     //Never use predictions with less than 3 votes
-    if (prediction.std === 0 || prediction.ncs < 3) {
+    if (prediction.std === 0 || prediction.ncs < 5) {
         return 20;
     }
     else {
@@ -117,7 +117,7 @@ function getError(prediction, param) {
         //console.log(prediction.ncs+" "+(param.iteration+1)+" "+param.learningRatio);
         var factor = 3 * prediction.std /
             (Math.pow(prediction.ncs, (param.iteration + 1) * param.learningRatio));//(param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
-        return 3 * prediction.std + factor;
+        return 2 * prediction.std + factor;
     }
     return 20;
 }

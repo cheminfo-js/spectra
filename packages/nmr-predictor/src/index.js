@@ -35,7 +35,7 @@ function fetch(url, dbName, type) {
     };
     databases[dbName] = database;
     const fetching = superagent.get(url).then((res) => {
-        const db = res.body ? res.body : JSON.parse(res.text);
+        const db = res.body && Object.keys(res.body).length > 0 ? res.body : JSON.parse(res.text);
         database.db = db;
         database.fetching = false;
         return db;
