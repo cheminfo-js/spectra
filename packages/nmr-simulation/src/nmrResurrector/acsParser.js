@@ -107,6 +107,8 @@ module.exports.ACSParser = function (totalString, options = {}) {
             ppmValueB = parseFloat(delta);
             ppmValueA = ppmValueB;
         }
+
+        var toReturn = [{}]
         allSignals.push(createNmrSignal1D(multString, ppmValueA, ppmValueB, couplings, intensity, assignment,
             frequency, nucleus));
     }
