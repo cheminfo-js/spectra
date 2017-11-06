@@ -1,4 +1,2 @@
-'use strict';
-
-module.exports.GUI = require('./visualizer/annotations');
-module.exports.Ranges = require('./range/Ranges');
+export {default as Ranges} from './range/Ranges';
+export {default as getACS} from './acs/acs.js';

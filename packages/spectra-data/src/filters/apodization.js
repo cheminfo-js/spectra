@@ -1,6 +1,4 @@
-'use strict';
-
-function apodization(spectraData, parameters) {
+export default function apodization(spectraData, parameters) {
     let params = Object.assign({}, parameters);
     if (!params) {
         return spectraData;
@@ -27,5 +25,3 @@ function apodization(spectraData, parameters) {
      }
      }*/
 }
-
-module.exports = apodization;

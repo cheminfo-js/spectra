@@ -1,12 +1,10 @@
-'use strict';
+import acs from '../acs/acs';
+import peak2Vector from './peak2Vector';
+import * as utils from 'spectra-nmr-utilities';
+import {array as arrayUtils} from 'ml-stat';
+import round from 'lodash.round';
 
-const acs = require('../acs/acs');
-const peak2Vector = require('./peak2Vector');
-const GUI = require('../visualizer/annotations');
-const utils = require('spectra-nmr-utilities');
-const arrayUtils = require('ml-stat').array;
-
-class Ranges extends Array {
+export default class Ranges extends Array {
 
     constructor(ranges) {
         if (Array.isArray(ranges)) {
@@ -63,7 +61,6 @@ class Ranges extends Array {
 
         //2. Merge the overlaping ranges
         for (i = 0; i < result.length; i++) {
-            result[i]._highlight = result[i].signal[0].diaIDs;
             center = (result[i].from + result[i].to) / 2;
             width = Math.abs(result[i].from - result[i].to);
             for (j = result.length - 1; j > i; j--) {
@@ -73,7 +70,6 @@ class Ranges extends Array {
                     result[i].from = Math.min(result[i].from, result[j].from);
                     result[i].to = Math.max(result[i].to, result[j].to);
                     result[i].integral += result[j].integral;
-                    result[i]._highlight.push(result[j].signal[0].diaIDs[0]);
                     result[j].signal.forEach(a => {
                         result[i].signal.push(a);
                     });
@@ -121,7 +117,7 @@ class Ranges extends Array {
             factor = nH / sumObserved;
         }
         for (i = 0; i < this.length; i++) {
-            this[i].integral *= factor;
+            this[i].integral = round(this[i].integral * factor, 5);
         }
         return this;
     }
@@ -166,11 +162,6 @@ class Ranges extends Array {
     getACS(options) {
         return acs(this, options);
     }
-
-    getAnnotations(options) {
-        return GUI.annotations1D(this, options);
-    }
-
 
     toIndex(options = {}) {
         var index = [];
@@ -232,5 +223,3 @@ class Ranges extends Array {
         return new Ranges(newRanges);
     }
 }
-
-module.exports = Ranges;

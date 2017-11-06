@@ -1,6 +1,4 @@
-'use strict';
-
-function getSignals(pdata, maxShiftDiference) {
+export default function getSignals(pdata, maxShiftDiference) {
     var signals = [];
     var signalsTemp = [];
     if (maxShiftDiference === undefined) maxShiftDiference = 0.06;
@@ -30,5 +28,3 @@ function getSignals(pdata, maxShiftDiference) {
     }
     return signals;
 }
-
-module.exports = getSignals;

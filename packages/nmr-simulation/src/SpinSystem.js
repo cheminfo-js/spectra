@@ -1,11 +1,9 @@
-'use strict';
+import Matrix from 'ml-matrix';
+import newArray from 'new-array';
+import simpleClustering from 'ml-simple-clustering';
+import hlClust from 'ml-hclust';
 
-const Matrix = require('ml-matrix');
-const newArray = require('new-array');
-const simpleClustering = require('ml-simple-clustering');
-const hlClust = require('ml-hclust');
-
-class SpinSystem {
+export default class SpinSystem {
     constructor(chemicalShifts, couplingConstants, multiplicity) {
         this.chemicalShifts = chemicalShifts;
         this.couplingConstants = couplingConstants;
@@ -278,5 +276,3 @@ class SpinSystem {
         return list;
     }
 }
-
-module.exports = SpinSystem;

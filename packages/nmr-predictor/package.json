@@ -1,9 +1,10 @@
 {
   "name": "nmr-predictor",
-  "version": "1.1.1",
+  "version": "1.1.4",
   "description": "NMR chemical shift predictor",
   "keywords": [],
   "files": [
+    "lib",
     "src"
   ],
   "author": "andcastillo",
@@ -13,12 +14,13 @@
   },
   "homepage": "https://github.com/cheminfo-js/spectra/packages/nmr-predictor",
   "license": "MIT",
-  "main": "./src/index.js",
+  "main": "./lib/index.js",
+  "module": "./src/index.js",
   "dependencies": {
     "new-array": "^1.0.0",
     "num-sort": "^1.0.0",
     "openchemlib-extended-minimal": "^2.0.0",
-    "spectra-nmr-utilities": "^0.0.5",
+    "spectra-nmr-utilities": "^1.0.1",
     "superagent": "^3.5.0"
   },
   "devDependencies": {

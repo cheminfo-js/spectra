@@ -1,4 +1,3 @@
-'use strict';
 
 require('should');
 const FS = require('fs');
@@ -13,7 +12,7 @@ function createSpectraData(filename) {
 
 
 describe('spectra-data examples peak picking in ACS format', function () {
-    var spectrum = createSpectraData('/../../../../../data-__tests__/ethylbenzene/h1_0.jdx');
+    var spectrum = createSpectraData('/../../../../../data-test/ethylbenzene/h1_0.jdx');
 
     it('format ACS new input format', function () {
         var peakPicking2 = spectrum.createRanges({nH: 10,

@@ -1,16 +1,13 @@
-'use strict';
+import SD from './SD';
+import peakPicking2D from './peakPicking/peakPicking2D';
+import PeakOptimizer from './peakPicking/peakOptimizer';
+import Brukerconverter from 'brukerconverter';
+import Filters from './filters/Filters.js';
+import min from 'ml-array-min';
+import max from 'ml-array-max';
+import {simulate2D as simule2DNmrSpectrum} from 'nmr-simulation';
 
-const SD = require('./SD');
-const peakPicking2D = require('./peakPicking/peakPicking2D');
-const PeakOptimizer = require('./peakPicking/peakOptimizer');
-const Brukerconverter = require('brukerconverter');
-const Filters = require('./filters/Filters.js');
-// const StatArray = require('ml-stat').array;
-const min = require('ml-array-min');
-const max = require('ml-array-max');
-const simule2DNmrSpectrum = require('nmr-simulation').simulate2D;
-
-class NMR2D extends SD {
+export default class NMR2D extends SD {
 
     constructor(sd) {
         super(sd);
@@ -373,6 +370,3 @@ class NMR2D extends SD {
         return Filters.phaseCorrection(0, ph1corr);
     }
 }
-
-
-module.exports = NMR2D;

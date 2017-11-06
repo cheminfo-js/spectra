@@ -1,12 +1,13 @@
 {
   "name": "spectra-data",
-  "version": "3.1.12",
+  "version": "3.1.19",
   "description": "spectra-data project - manipulate spectra",
   "keywords": [
     "spectra-data",
     "project"
   ],
   "files": [
+    "lib",
     "src"
   ],
   "author": "Andres Castillo",
@@ -20,16 +21,18 @@
   },
   "homepage": "https://github.com/cheminfo-js/spectra/packages/spectra-data",
   "license": "MIT",
-  "main": "./src/index.js",
+  "main": "./lib/index.js",
+  "module": "./src/index.js",
   "jest": {
     "testEnvironment": "node"
   },
   "devDependencies": {
-    "nmr-predictor": "^1.1.1"
+    "nmr-predictor": "^1.1.4"
   },
   "dependencies": {
     "brukerconverter": "^1.0.1",
     "jcampconverter": "^2.4.5",
+    "lodash.round": "^4.0.4",
     "ml-array-max": "^1.0.1",
     "ml-array-median": "^1.0.0",
     "ml-array-min": "^1.0.1",
@@ -40,8 +43,8 @@
     "ml-gsd": "^2.0.1",
     "ml-matrix-peaks-finder": "^0.2.1",
     "ml-simple-clustering": "^0.1.0",
-    "nmr-simulation": "^1.0.8",
-    "spectra-data-ranges": "^0.0.7",
-    "spectra-nmr-utilities": "^0.0.5"
+    "nmr-simulation": "^1.0.11",
+    "spectra-data-ranges": "^1.0.5",
+    "spectra-nmr-utilities": "^1.0.1"
   }
 }

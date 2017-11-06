@@ -1,4 +1,3 @@
-'use strict';
 
 require('should');
 
@@ -10,8 +9,8 @@ require('should');
  *
  */
 var FS = require('fs');
-var ACS = require('../acs');
-const Ranges = require('../../range/Ranges');
+import ACS from '../acs';
+import Ranges from '../../range/Ranges';
 
 var ranges = JSON.parse(FS.readFileSync(__dirname + '/ranges.json'));
 //

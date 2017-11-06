@@ -1,17 +1,15 @@
-'use strict';
-
-const SD = require('./SD');
-const Filters = require('./filters/Filters.js');
-const Brukerconverter = require('brukerconverter');
-const peaks2Ranges = require('./peakPicking/peaks2Ranges');
-const simulator = require('nmr-simulation');
-const impurities = require('./peakPicking/impurities.json');
+import SD from './SD';
+import * as Filters from './filters/Filters.js';
+import Brukerconverter from 'brukerconverter';
+import peaks2Ranges from './peakPicking/peaks2Ranges';
+import {SpinSystem, simulate1D} from 'nmr-simulation';
+import impurities from './peakPicking/impurities.js';
 
 /**
  * @class NMR
  * @extends SD
  */
-class NMR extends SD {
+export default class NMR extends SD {
 
     constructor(sd) {
         super(sd);
@@ -32,10 +30,10 @@ class NMR extends SD {
             output: 'xy'
         }, options);
 
-        const spinSystem = simulator.SpinSystem.fromPrediction(prediction);
+        const spinSystem = SpinSystem.fromPrediction(prediction);
 
         spinSystem.ensureClusterSize(options);
-        var data = simulator.simulate1D(spinSystem, options);
+        var data = simulate1D(spinSystem, options);
         return NMR.fromXY(data.x, data.y, options);
     }
 
@@ -419,7 +417,7 @@ class NMR extends SD {
      * @return {object}
      */
     getImpurities(solvent) {
-        return this.getImpurity(solvent, null);
+        return this.getImpurity(solvent);
     }
 
     /**
@@ -428,7 +426,7 @@ class NMR extends SD {
      * @param {string} impurity - impurity name
      * @return {object}
      */
-    getImpurity(solvent, impurity) {
+    getImpurity(solvent, impurity = null) {
         solvent = solvent.toLowerCase();
         if (solvent === '(cd3)2so') solvent = 'dmso';
         var result = impurities[solvent];
@@ -438,6 +436,38 @@ class NMR extends SD {
         return result;
     }
 
-}
+    /**
+     * Change the intensities of a respective impurities signals based on peak picking and solvent impurities
+     * @param {string} solvent - solvent name
+     * @param {object} [options = {}] - object may have the peak picking options if this.peaks does not exist.
+     * @param {string} [options.impurity = null] - options to fill a particular impurity of the solvent some thing like 'solvent_residual_peak'
+     * @param {number} [options.value = 0] - value to fill
+     * @param {number} [options.error = 0.025] - tolerance to find the chemical shift of the impurities.
+     */
+    fillImpurity(solvent, options = {}) {
+        const {
+            impurity = null,
+            value = 0,
+            error = 0.025
+        } = options;
 
-module.exports = NMR;
+        const solventImpurities = this.getImpurities(solvent, impurity);
+        if (!solventImpurities) {
+            throw Error('The solvent does not mach with a impurities into the list');
+        }
+
+        let peaks = this.getPeaks(options);
+
+        peaks.forEach((peak) => {
+            for (let impurity in solventImpurities) {
+                for (let signal of impurity) {
+                    if (peak.width + error > Math.abs(signal.shift - peak.x)) {
+                        let from = peak.x + peak.width;
+                        let to = peak.x - peak.width;
+                        this.fill(from, to, value);
+                    }
+                }
+            }
+        });
+    }
+}

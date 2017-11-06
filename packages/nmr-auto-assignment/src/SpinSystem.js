@@ -1,7 +1,7 @@
 /**
  * Created by acastillo on 9/2/16.
  */
-'use strict'
+
 const DEBUG = false;
 class SpinSystem {
     constructor(diaIDsArray, signalsArray, opt) {
@@ -27,7 +27,9 @@ class SpinSystem {
         var windowC = [];
 
         var signals1D = this.signalsArray;
-        var nH = 0, nC = 0, i = 0;
+        var nH = 0,
+            nC = 0,
+            i = 0;
         //try {
         this.chemicalShiftsT = new Array(nDiaIds);
         this.chemicalShiftsTError = new Array(nDiaIds);
@@ -38,8 +40,7 @@ class SpinSystem {
             if (diaIDByAtomLabel[dia.atomLabel]) {
                 diaIDByAtomLabel[dia.atomLabel].push(dia.diaIDs[0]);
                 indexByAtomLabel[dia.atomLabel].push(i);
-            }
-            else {
+            } else {
                 diaIDByAtomLabel[dia.atomLabel] = [dia.diaIDs[0]];
                 indexByAtomLabel[dia.atomLabel] = [i];
             }
@@ -47,7 +48,7 @@ class SpinSystem {
             this.chemicalShiftsT[i] = dia.delta;
             this.chemicalShiftsTError[i] = dia.error || 0;
         }
-        nH = diaIDByAtomLabel["H"].length;
+        nH = diaIDByAtomLabel.H.length;
         // We can't have more signals than different protons in the molecule if the integral
         // matches the nH
         this.signals = new Array(nSignals);
@@ -69,28 +70,32 @@ class SpinSystem {
 
         if (this.cosy && this.cosy.length > 0 && this.cosyPaths.length > 0) {
             this.cosyT = new Array(nH);
-            for(let i = 0; i < nH; i++)
+            for (let i = 0; i < nH; i++) {
                 this.cosyT[i] = new Array(nH);
+            }
 
             //To parse the theoretical COSY
             for (var pair of this.cosyPaths) {
-                let row = diaIDByAtomLabel["H"].indexOf(pair.fromDiaID);
-                let col = diaIDByAtomLabel["H"].indexOf(pair.toDiaID);
+                let row = diaIDByAtomLabel.H.indexOf(pair.fromDiaID);
+                let col = diaIDByAtomLabel.H.indexOf(pair.toDiaID);
 
                 if (row >= 0 && col >= 0) {
                     this.cosyT[row][col] = 4;
-                    if (pair.pathLength === 4)
+                    if (pair.pathLength === 4) {
                         this.cosyT[row][col] = 2;
+                    }
                 }
             }
             this.cosyE = new Array(nSignals);
-            for(let i = 0; i < nSignals; i++)
+            for (let i = 0; i < nSignals; i++) {
                 this.cosyE[i] = new Array(nSignals);
+            }
 
 
             let resolutionX = Number.MAX_VALUE / 6;//((JSONObject)hmbc.get(0)).getDouble("resolutionX");
-            if (this.cosy[0].resolutionX)
+            if (this.cosy[0].resolutionX) {
                 resolutionX = this.cosy[0].resolutionX;
+            }
 
             for (let i = this.cosy.length - 1; i >= 0; i--) {
                 let x = this.cosy[i].shiftX;
@@ -98,12 +103,14 @@ class SpinSystem {
 
                 let row = this._getIndex(x, shiftsH, windowH, resolutionX);
                 let col = this._getIndex(y, shiftsH, windowH, resolutionX);
-                if (row >= 0 && col >= 0)
+                if (row >= 0 && col >= 0) {
                     this.cosyE[row][col] = 1;
+                }
             }
             //To complete the missing diagonal signals
-            for (let i = 0; i < this.cosyE.length; i++)
+            for (let i = 0; i < this.cosyE.length; i++) {
                 this.cosyE[i][i] = 1;
+            }
         }
         /*
          if(hmbc.length()>0&&connHmbc.length()>0){
@@ -192,11 +199,13 @@ class SpinSystem {
             }
         }
         if (windows) {
-            if (minDiff <= windows[index] / 2)
+            if (minDiff <= windows[index] / 2) {
                 return index;
+            }
         }
-        if (minDiff <= Math.abs(resolution * 4))
+        if (minDiff <= Math.abs(resolution * 4)) {
             return index;
+        }
 
         return -1;
     }

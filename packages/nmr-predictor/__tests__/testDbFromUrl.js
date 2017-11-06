@@ -1,4 +1,3 @@
-'use strict';
 
 require('should');
 const predictor = require('..');

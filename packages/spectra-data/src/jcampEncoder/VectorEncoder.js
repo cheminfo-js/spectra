@@ -1,4 +1,3 @@
-'use strict';
 
 /**
  * class encodes a integer vector as a String in order to store it in a text file.

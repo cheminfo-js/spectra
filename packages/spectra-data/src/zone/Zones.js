@@ -1,4 +1,3 @@
-'use strict';
 
 //const JAnalyzer = require('./../peakPicking/JAnalyzer');
 const peakPicking2D = require('./../peakPicking/peakPicking2D');

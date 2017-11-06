@@ -1,4 +1,4 @@
-const predictor = require('../src/index.js');
+const Predictor = require('../src/index.js');
 
 var molfile = `
 Actelion Java MolfileCreator 1.0

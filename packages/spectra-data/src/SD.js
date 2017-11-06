@@ -1,15 +1,15 @@
-'use strict';
+
 // small note on the best way to define array
 // http://jsperf.com/lp-array-and-loops/2
 
-const ArrayUtils = require('ml-array-utils');
-const min = require('ml-array-min');
-const max = require('ml-array-max');
-const getMedian = require('ml-array-median');
-const rescale = require('ml-array-rescale');
-const JcampConverter = require('jcampconverter');
-const JcampCreator = require('./jcampEncoder/JcampCreator');
-const peakPicking = require('./peakPicking/peakPicking');
+import ArrayUtils from 'ml-array-utils';
+import min from 'ml-array-min';
+import max from 'ml-array-max';
+import getMedian from 'ml-array-median';
+import rescale from 'ml-array-rescale';
+import JcampConverter from 'jcampconverter';
+import JcampCreator from './jcampEncoder/JcampCreator';
+import peakPicking from './peakPicking/peakPicking';
 
 const DATACLASS_XY = 1;
 const DATACLASS_PEAK = 2;
@@ -20,7 +20,7 @@ const DATACLASS_PEAK = 2;
  * @param {SD} sd
  * @constructor
  */
-class SD {
+export default class SD {
     constructor(sd) {
         this.sd = sd;
         this.activeElement = 0;
@@ -780,17 +780,8 @@ class SD {
      * @param {object} options - option such as nH for normalization, if it is nH is zero the integral value returned is absolute value
      */
     updateIntegrals(ranges, options = {}) {
-        var sum = 0;
-        ranges.forEach(range => {
-            range.integral = this.getArea(range.from, range.to);
-            sum += range.integral;
-        });
-        if (options.nH !== 0) {
-            var factor = options.nH / sum;
-            ranges.forEach(range => {
-                range.integral *= factor;
-            });
-        }
+        ranges.forEach(range => range.integral = this.getArea(range.from, range.to));
+        ranges.updateIntegrals({sum: options.nH});
     }
 
     /**
@@ -990,5 +981,3 @@ class SD {
         return creator.convert(this, Object.assign({}, {yFactor: 1, encode: 'DIFDUP', type: 'SIMPLE'}, options));
     }
 }
-
-module.exports = SD;

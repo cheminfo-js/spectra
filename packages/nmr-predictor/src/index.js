@@ -1,11 +1,10 @@
-'use strict';
 
-const superagent = require('superagent');
+import superagent from 'superagent';
 
-const normalizeOptions = require('./normalizeOptions');
-const queryByHose = require('./queryByHose');
-const spinus = require('./spinus');
-const twoD = require('./twoD');
+import normalizeOptions from './normalizeOptions';
+import queryByHose from './queryByHose';
+import spinus from './spinus';
+import twoD from './twoD';
 
 const defaultProtonUrl = 'https://raw.githubusercontent.com/cheminfo-js/spectra/master/packages/nmr-predictor/data/h1.json';
 const defaultCarbonUrl = 'https://raw.githubusercontent.com/cheminfo-js/spectra/master/packages/nmr-predictor/data/nmrshiftdb2-13c.json';
@@ -47,15 +46,6 @@ function fetch(url, dbName, type) {
     return fetching;
 }
 
-function setDb(db, dbName, type) {
-    const database = {
-        type,
-        db: db,
-        fetching: null
-    };
-    databases[dbName] = database;
-}
-
 function proton(molecule, options) {
     options.atomLabel = 'H';
     [molecule, options] = normalizeOptions(molecule, options);
@@ -80,10 +70,9 @@ function getDb(option, type) {
     return db.db;
 }
 
-module.exports = {
+export {
     fetchProton,
     fetchCarbon,
-    setDb,
     proton,
     carbon,
     spinus,

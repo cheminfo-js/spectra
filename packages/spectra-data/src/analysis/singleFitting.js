@@ -1,10 +1,8 @@
-'use strict';
-
-const ML = require('ml-curve-fitting');
+import ML from 'ml-curve-fitting';
 const LM = ML.LM;
 const math = ML.algebra;
 
-function singleFitting(data, pInit, opts) {
+export default function singleFitting(data, pInit, opts) {
 
     var y = (data.y === undefined) ? data.data.y : data.data[0].y;
     var x = (data.x === undefined) ? data.data.x : data.data[0].x;
@@ -97,5 +95,3 @@ function zGenerator(x, g, gamma) {
     var z = math.multiply(x, math.inv(g * gamma));
     return z;
 }
-
-module.exports = singleFitting;

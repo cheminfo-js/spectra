@@ -1,7 +1,6 @@
-'use strict';
 
 require('should');
-const NMR = require('../../NMR.js');
+import NMR from '../../NMR';
 
 var NbPoints = 101;
 var cs1 = 2;

@@ -1,8 +1,8 @@
-'use strict'
+
 /**
  * Created by acastillo on 9/2/16.
  */
-const TreeSet = require("ml-tree-set");
+const TreeSet = require('ml-tree-set');
 
 const defaultOptions = {minScore: 1, maxSolutions: 100, errorCS: -1, onlyCount: false, timeout: 20000, condensed: true};
 
@@ -31,7 +31,7 @@ class Assignment {
 
         this.comparator = function (a, b) {
             return b.score - a.score;
-        }
+        };
     }
 
     getAssignments() {
@@ -47,10 +47,12 @@ class Assignment {
             this.nSteps = 0;
             this.solutions = new TreeSet(this.comparator);
 
-            if (this.spinSystem.hmbcE != null)
+            if (this.spinSystem.hmbcE != null) {
                 this.spinSystem.hmbcLines = {};
-            if (this.spinSystem.cosyE != null)
+            }
+            if (this.spinSystem.cosyE != null) {
                 this.spinSystem.cosyLines = {};
+            }
 
             nSignals = this.spinSystem.signals.length;
             nDiaIDs = this.spinSystem.diaList.length;
@@ -64,15 +66,16 @@ class Assignment {
 
             var diaMask = new Array(nDiaIDs);
 
-            for (i = diaMask.length - 1; i >= 0; i--)
+            for (i = diaMask.length - 1; i >= 0; i--) {
                 diaMask[i] = true;
+            }
 
 
             this.exploreTreeRec(this.spinSystem.signals,
                 this.spinSystem.diaList, nSignals - 1, nDiaIDs - 1, diaMask, partial);
 
             this.lowerBound -= 0.1;
-            if (DEBUG) console.log("Decreasing lowerBound: " + this.lowerBound);
+            if (DEBUG) console.log('Decreasing lowerBound: ' + this.lowerBound);
         } while (this.solutions.isEmpty() && this.lowerBound >= 0.4);
 
         //Format the result
@@ -88,7 +91,7 @@ class Assignment {
         var nSolutions = this.solutions.length;
         for (i = 0; i < nSolutions; i++) {
             var assignment = this.solutions.elements[i].assignment;
-            this.solutions.elements[i].index = i + "";
+            this.solutions.elements[i].index = i + '';
             var assignmentNew = {};
             for (j = 0; j < nSignals; j++) {
                 var diaIDs = assignment[j];
@@ -96,18 +99,19 @@ class Assignment {
                 for (k = 0; k < diaIDs.length; k++) {
                     tmp[k] = this.spinSystem.diaIDsArray[diaIDs[k]].diaIDs[0];
                 }
-                if (this.condensed)
+                if (this.condensed) {
                     assignmentNew[this.spinSystem.signalsArray[j].signalID] = tmp;
-                else {
+                } else {
                     assignment[j] = {
                         signalID: this.spinSystem.signalsArray[j].signalID,
                         delta: Math.round(this.spinSystem.signalsArray[j].signal[0].delta * 100) / 100,
                         diaID: tmp
-                    }
+                    };
                 }
             }
-            if (this.condensed)
+            if (this.condensed) {
                 this.solutions.elements[i].assignment = assignmentNew;
+            }
         }
     }
 
@@ -131,11 +135,11 @@ class Assignment {
                 //If this signal is completely assigned, we have to verify all the restrictions
                 if (signals[indexSignal] == 0) {
                     let keySum = this._accomplishCounts(indexSignal, partial);
-                    if (DEBUG) console.log("Accomplish count: " + keySum);
+                    if (DEBUG) console.log('Accomplish count: ' + keySum);
                     if (keySum != 0) {
                         //Verify the restrictions. A good solution should give a high score
                         this.score = this._solutionScore(partial, indexSignal, keySum);
-                        if (DEBUG) console.log(this.score + " " + partial);
+                        if (DEBUG) console.log(this.score + ' ' + partial);
                         //This is a solution
                         if (this.score > 0) {
                             if (indexSignal == 0) {//We found a new solution
@@ -149,8 +153,7 @@ class Assignment {
                                 } else {
                                     this.solutions.add(solution);
                                 }
-                            }
-                            else {
+                            } else {
                                 //Each new signal that we assign will produce a new level on the tree.
                                 indexSignal--;//Lets go forward with the next signal
                                 indexDia = diaList.length;
@@ -162,13 +165,13 @@ class Assignment {
                         }
                     }
 
-                }
-                else {
+                } else {
                     //It says that the signal should be assigned by combining 2 or more signals
                     const previousIndexDia = indexDia;
                     while (indexDia > 0 && !diaMask[--indexDia]);
-                    if (indexDia >= 0)
+                    if (indexDia >= 0) {
                         this.exploreTreeRec(signals, diaList, indexSignal, indexDia, diaMask, partial);
+                    }
                     indexDia = previousIndexDia;
                 }
                 //Deallocate this atom group to try the next one.
@@ -187,22 +190,26 @@ class Assignment {
 
     _isWithinCSRange(indexSignal, indexDia) {
         if (this.spinSystem.chemicalShiftsE != null && this.spinSystem.chemicalShiftsT != null) {
-            if (this.errorCS == 0)
+            if (this.errorCS == 0) {
                 return true;
+            }
             var cfAtoms = this.spinSystem.chemicalShiftsT[indexDia];
 
-            if (cfAtoms == -9999999)
+            if (cfAtoms == -9999999) {
                 return true;
+            }
             var cfSignal = this.spinSystem.chemicalShiftsE[indexSignal];
             var error = this.spinSystem.chemicalShiftsTError[indexDia];
-            if (error < Math.abs(this.errorCS))
+            if (error < Math.abs(this.errorCS)) {
                 error = this.errorCS;
+            }
 
             var csError = Math.abs(this.spinSystem.signalsWidth[indexSignal] / 2.0 + Math.abs(error));
-            if (Math.abs(cfSignal - cfAtoms) <= csError)
+            if (Math.abs(cfSignal - cfAtoms) <= csError) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         }
         return true;
     }
@@ -256,20 +263,22 @@ class Assignment {
         // int nRows = theoretical.length;
         let nCols = theoretical[0].length;
         let freedom = maxErrors;// Ideally 0, but actually it is difficult to
-                                // detect the 1 bond links in the HMBC
+        // detect the 1 bond links in the HMBC
         // If this operation has been already done
         if (hashMap[key]) {
             joint = hashMap[key];
         } else {
             // Join the given columns in ss.cosyT using the mask signal
             joint = new Array(nCols);
-            if (!isSymmetryc)
+            if (!isSymmetryc) {
                 freedom += nCols - experimental[0].length;
+            }
             // long tmp = signal;
             // TODO Get the parent combination from the tree map
             for (let i = signals.length - 1; i >= 0; i--) {
-                if (isSymmetryc)
+                if (isSymmetryc) {
                     joint[signals[i]] = 2;
+                }
 
                 for (let j = nCols - 1; j >= 0; j--) {
                     // System.out.print(theoretical[signals.getInt(i)][j]+"
@@ -282,19 +291,24 @@ class Assignment {
             hashMap[key] = joint;
         }
 
-        let n0 = 0, n1 = 0, e0 = 0, e1 = 0;
+        let n0 = 0,
+            n1 = 0,
+            e0 = 0,
+            e1 = 0;
         for (let i = nCols - 1; i >= 0; i--) {
-            if (joint[i] != 0)
+            if (joint[i] != 0) {
                 n1++;
-            else
+            } else {
                 n0++;
+            }
         }
 
         for (let i = experimental[0].length - 1; i >= 0; i--) {
-            if (experimental[index][i] == 1)
+            if (experimental[index][i] == 1) {
                 e1++;
-            else
+            } else {
                 e0++;
+            }
         }
         // System.out.println(index+" "+signals+" "+n0+" "+e0+" "+n1+" "+e1+"
         // "+freedom);
@@ -343,8 +357,9 @@ class Assignment {
             }
         }
 
-        if (sumLh < this.scores.length * this.lowerBound)
+        if (sumLh < this.scores.length * this.lowerBound) {
             return -sumLh / count;
+        }
         return sumLh / count;
     }
 
@@ -357,8 +372,9 @@ class Assignment {
      */
     _chemicalShiftScore(partial, current, keySingalAsg) {
 
-        if (this.errorCS <= 0)
+        if (this.errorCS <= 0) {
             return 1;
+        }
 
         var csSignal = this.spinSystem.chemicalShiftsE[current];
         var widthSignal = this.spinSystem.signalsWidth[current] / 2.0;
@@ -374,19 +390,20 @@ class Assignment {
                 if (csGroup != -9999999) {
                     nbGroups++;
                     diff = Math.abs(csSignal - csGroup);
-                    if (diff <= widthSignal)
+                    if (diff <= widthSignal) {
                         score += 1;
-                    else {
+                    } else {
                         diff = Math.abs(diff - widthSignal);
                         score += (-0.25 / this.errorCS) * diff + 1;
                     }
                 }
             }
-            if (nbGroups == 0)
+            if (nbGroups == 0) {
                 return 1.0;
+            }
             return score / nbGroups;
         } catch (e) {
-            console.log("Exception in chemical shift score function " + e);
+            console.log('Exception in chemical shift score function ' + e);
         }
 
         return 1;
@@ -419,31 +436,37 @@ class Assignment {
                             key |= 1 << signal2[j];
                         }
                     } catch (ex) {
-                        console.log("Exception in cosy score function " + ex);
+                        console.log('Exception in cosy score function ' + ex);
                     }
 
                     var cosyLine2 = this.spinSystem.cosyLines[key];
                     var crossPeak = false;
                     for (var j = size; j >= 0; j--) {
-                        if (cosyLine[j] == 6 && cosyLine2[j] != 0)
+                        if (cosyLine[j] == 6 && cosyLine2[j] != 0) {
                             crossPeak = true;
+                        }
                     }
-                    if (crossPeak)
+                    if (crossPeak) {
                         count1++;
-                    else
+                    } else {
                         count0++;
+                    }
 
-                    if (this.spinSystem.cosyE[current][i] == 0 && crossPeak)
+                    if (this.spinSystem.cosyE[current][i] == 0 && crossPeak) {
                         goodness -= 0.5;
-                    if (this.spinSystem.cosyE[current][i] == 1 && !crossPeak)
+                    }
+                    if (this.spinSystem.cosyE[current][i] == 1 && !crossPeak) {
                         goodness -= 0.5;
-                    if (this.spinSystem.cosyE[current][i] == 1 && crossPeak)
+                    }
+                    if (this.spinSystem.cosyE[current][i] == 1 && crossPeak) {
                         goodness += 1;
-                    if (this.spinSystem.cosyE[current][i] == 0 && !crossPeak)
+                    }
+                    if (this.spinSystem.cosyE[current][i] == 0 && !crossPeak) {
                         goodness += 0.5;
+                    }
                 }
             } catch (e1) {
-                console.log("Exception in cosy score function " + e1);
+                console.log('Exception in cosy score function ' + e1);
             }
         }
         return Math.exp(-Math.abs((count1 + count0 / 2.0) - goodness) / 2.0);
@@ -463,16 +486,19 @@ class Assignment {
         var freedom = sizeT - sizeE + this.MAXERRORSHMBC;
         var crossPeaks = 0;
         for (var j = sizeT; j >= 0; j--) {
-            if (hmbcLine[j] == 1)
+            if (hmbcLine[j] == 1) {
                 crossPeaks++;
+            }
         }
         for (var j = sizeE; j >= 0; j--) {
-            if (this.spinSystem.hmbcE[current][j] == 1)
+            if (this.spinSystem.hmbcE[current][j] == 1) {
                 crossPeaks--;
+            }
         }
 
-        if (crossPeaks < freedom)
+        if (crossPeaks < freedom) {
             crossPeaks = freedom;
+        }
 
         return Math.exp(-Math.abs(crossPeaks - freedom) / (sizeT + 1));
     }

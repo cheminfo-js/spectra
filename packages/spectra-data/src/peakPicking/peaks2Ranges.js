@@ -1,18 +1,17 @@
-'use strict';
-
-const JAnalyzer = require('./jAnalyzer');
-const Ranges = require('spectra-data-ranges').Ranges;
-const impurityRemover = require('./ImpurityRemover');
+import JAnalyzer from './jAnalyzer';
+import impurityRemover from './ImpurityRemover';
+import {Ranges} from 'spectra-data-ranges';
+import round from 'lodash.round';
 
 const defaultOptions = {
     nH: 100,
-    idPrefix: '',
     clean: 0.5,
     thresholdFactor: 1,
     compile: true,
     integralType: 'sum',
     optimize: true,
     frequencyCluster: 16,
+    keepPeaks: false
 };
 
 /**
@@ -25,11 +24,11 @@ const defaultOptions = {
  * @param {number} [options.frequencyCluster = 16] - distance limit to clustering peaks.
  * @param {number} [options.clean] - If exits it remove all the signals with integral < clean value
  * @param {boolean} [options.compile = true] - If true, the Janalyzer function is run over signals to compile the patterns.
- * @param {string} [options.idPrefix = ''] - prefix for signal ID
+ * @param {boolean} [options.keepPeaks = false] - If true each signal will contain an array of peaks.
  * @returns {Array}
  */
 
-function createRanges(spectrum, peakList, options) {
+export default function createRanges(spectrum, peakList, options) {
     options = Object.assign({}, defaultOptions, options);
     var i, j;
     var nH = options.nH;
@@ -111,39 +110,30 @@ function createRanges(spectrum, peakList, options) {
         }
     }
 
-    for (i = 0; i < signals.length; i++) {
-        if (options.idPrefix && options.idPrefix.length > 0) {
-            signals[i].signalID = options.idPrefix + '_' + (i + 1);
-        } else {
-            signals[i].signalID = (i + 1) + '';
-        }
-        signals[i]._highlight = [signals[i].signalID];
-    }
-
     let ranges = new Array(signals.length);
     for (i = 0; i < signals.length; i++) {
         var signal = signals[i];
         ranges[i] = {
-            from: signal.integralData.from,
-            to: signal.integralData.to,
-            integral: signal.integralData.value,
+            from: round(signal.integralData.from, 5),
+            to: round(signal.integralData.to, 5),
+            integral: round(signal.integralData.value, 5),
             signal: [{
                 nbAtoms: 0,
                 diaID: [],
                 multiplicity: signal.multiplicity,
-                peak: signal.peaks,
                 kind: '',
                 remark: ''
-            }],
-            signalID: signal.signalID,
-            _highlight: signal._highlight
+            }]
 
         };
+        if (options.keepPeaks) {
+            ranges[i].signal[0].peak = signal.peaks;
+        }
         if (signal.nmrJs) {
             ranges[i].signal[0].j = signal.nmrJs;
         }
         if (!signal.asymmetric || signal.multiplicity === 'm') {
-            ranges[i].signal[0].delta = signal.delta1;
+            ranges[i].signal[0].delta = round(signal.delta1, 5);
         }
     }
 
@@ -244,5 +234,3 @@ function detectSignals(spectrum, peakList, options = {}) {
 function computeArea(peak) {
     return Math.abs(peak.intensity * peak.width * 1.57); // todo add an option with this value: 1.772453851
 }
-
-module.exports = createRanges;

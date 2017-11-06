@@ -1,4 +1,3 @@
-'use strict';
 
 require('should');
 const spectraData = require('..');

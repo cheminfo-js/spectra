@@ -1,16 +1,14 @@
-'use strict';
+import numSort from 'num-sort';
 
-const numSort = require('num-sort');
+import getOcleFromOptions from './getOcleFromOptions';
 
-const getOcleFromOptions = require('./getOcleFromOptions');
-
-module.exports = function queryByHose(molecule, db, options) {
+export default function queryByHose(molecule, db, options) {
     const {Util} = getOcleFromOptions(options);
     const {
         atomLabel = 'H',
-        use = 'median',
+        use = null,
         algorithm = 0,
-        levels = [5, 4, 3, 2, 1, 0]
+        levels = [4, 3, 2, 1, 0]
     } = options;
 
     levels.sort(numSort.desc);
@@ -18,20 +16,20 @@ module.exports = function queryByHose(molecule, db, options) {
     const diaIds = molecule.getGroupedDiastereotopicAtomIDs({atomLabel});
     const atoms = {};
     const atomNumbers = [];
-    for (const diaId of diaIds) {
-        const atom = {
-            diaIDs: [diaId.oclID]
-        };
 
-        atom.hose = Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
+    for (const diaId of diaIds) {
+        const hoseCodes = Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
             maxSphereSize: levels[0],
             type: algorithm
         });
-        /*for (const level of levels) {
+        const atom = {
+            diaIDs: [diaId.oclID]
+        };
+        for (const level of levels) {
             if (hoseCodes[level]) {
                 atom['hose' + level] = hoseCodes[level];
             }
-        }*/
+        }
         for (const diaIdAtom of diaId.atoms) {
             atoms[diaIdAtom] = JSON.parse(JSON.stringify(atom));
             atomNumbers.push(diaIdAtom);
@@ -45,7 +43,7 @@ module.exports = function queryByHose(molecule, db, options) {
         let k = 0;
         while (!res && k < levels.length) {
             if (db[levels[k]]) {
-               res = db[levels[k]][atom['hose'][levels[k] - 1]];
+                res = db[levels[k]][atom['hose' + levels[k]]];
             }
             k++;
         }
@@ -59,8 +57,8 @@ module.exports = function queryByHose(molecule, db, options) {
         } else if (use === 'mean') {
             atom.delta = res.mean;
         }
-        atom.nbAtoms = 1;
-        atom.atomIDs = [atomNumber + ''];
+        atom.integral = 1;
+        atom.atomIDs = [atomNumber];
         atom.ncs = res.ncs;
         atom.std = res.std;
         atom.min = res.min;
@@ -101,4 +99,4 @@ module.exports = function queryByHose(molecule, db, options) {
         }
     }
     return toReturn;
-};
+}
