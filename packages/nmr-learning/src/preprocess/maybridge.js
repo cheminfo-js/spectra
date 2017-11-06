@@ -1,4 +1,4 @@
-'use strict';
+
 const FS = require('fs');
 const SD = require('spectra-data');
 
@@ -11,15 +11,15 @@ function createSpectraData(filename, label, data) {
         FS.readFileSync(filename).toString()
     );
     return spectrum;
-};
+}
 
 
 function load(path, datasetName, options) {
     let OCLE = options.OCLE;
     var keepMolfile = false || options.keepMolfile;
     var keepMolecule = false || options.keepMolecule;
-    var filter = {filter: ".txt"};
-    if (typeof options.filter === "object") {
+    var filter = {filter: '.txt'};
+    if (typeof options.filter === 'object') {
         filter = options.filter;
     }
 
@@ -29,20 +29,20 @@ function load(path, datasetName, options) {
 
     var result = [];
     for (var p = 0; p < parts.length; p++) {
-        let fileContent = loadFile(path + parts[p]).split("\n");
+        let fileContent = loadFile(path + parts[p]).split('\n');
         var max = fileContent.length - 1;
         // we could now loop on the sdf to add the int index
         for (var i = 1; i < max; i++) {
-            let row = fileContent[i].split("\t");
-            result.push(row)
+            let row = fileContent[i].split('\t');
+            result.push(row);
             //try {
             //var sdfi = {dataset: datasetName, id: p + "_" + i + "_" + molFiles[i].catalogID};
-            var molfile = row[1].replace(/\\n/g, "\n");
+            var molfile = row[1].replace(/\\n/g, '\n');
             var molecule = OCLE.Molecule.fromMolfile(molfile);
             //let ocl = {value: molecule};
 
             molecule.addImplicitHydrogens();
-            var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, "$1") * 1;
+            var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') * 1;
             var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
             diaIDs.sort(function (a, b) {
                 if (a.atomLabel === b.atomLabel) {
@@ -57,17 +57,17 @@ function load(path, datasetName, options) {
             ocl.nH = nH;
 
             //console.log(i / max * 100 );
-            var spectraData1H = SD.NMR.fromJcamp(row[2].replace(/\\n/g, "\n"));
+            var spectraData1H = SD.NMR.fromJcamp(row[2].replace(/\\n/g, '\n'));
 
             var signals = spectraData1H.getRanges(
                 {
-                    "nH": nH,
+                    nH: nH,
                     realTop: true,
                     thresholdFactor: 1,
                     clean: true,
                     compile: true,
-                    idPrefix: "1H",
-                    format: "new"
+                    idPrefix: '1H',
+                    format: 'new'
                 }
             );
 
@@ -81,10 +81,10 @@ function load(path, datasetName, options) {
                 general: {ocl: ocl, molfile: molecule.toMolfile()},
                 spectra: {
                     nmr: [{
-                        nucleus: "H",
-                        experiment: "1d",
+                        nucleus: 'H',
+                        experiment: '1d',
                         range: signals,
-                        solvent: spectraData1H.getParamString(".SOLVENT NAME", "unknown")
+                        solvent: spectraData1H.getParamString('.SOLVENT NAME', 'unknown')
                     }]
                 }
             };
@@ -100,4 +100,4 @@ function load(path, datasetName, options) {
     return result;
 }
 
-module.exports = {"load": load};
+module.exports = {load: load};

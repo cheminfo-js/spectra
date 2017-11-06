@@ -70,35 +70,35 @@ function histogram(opts) {
         if (!arguments.length) return valuer;
         valuer = x;
         return histogram;
-    };
+    }
 
     function range(x) {
         if (!arguments.length) return ranger;
         ranger = hist_functor(x);
         return histogram;
-    };
+    }
 
     function hist_functor(v) {
-        return typeof v === "function" ? v : function () {
-                return v;
-            };
-    };
+        return typeof v === 'function' ? v : function () {
+            return v;
+        };
+    }
 
     function bins(x) {
         if (!arguments.length) return binner;
-        binner = typeof x === "number"
+        binner = typeof x === 'number'
             ? function (range) {
                 return hist_layout_histogramBinFixed(range, x);
             }
             : hist_functor(x);
         return histogram;
-    };
+    }
 
     function frequency(x) {
         if (!arguments.length) return frequency;
         frequency = !!x;
         return histogram;
-    };
+    }
 
     function hist_layout_histogramBinSturges(range, values) {
         return hist_layout_histogramBinFixed(range, Math.ceil(Math.log(values.length) / Math.LN2 + 1));
@@ -122,7 +122,7 @@ function histogram(opts) {
         ranger = hist_layout_histogramRange,
         binner = hist_layout_histogramBinSturges;
 
-    bins(bins_temp)
+    bins(bins_temp);
 
     var bins = [],
         values = data.map(valuer, this),

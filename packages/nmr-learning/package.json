@@ -33,6 +33,6 @@
     "nmr-predictor": "^1.1.1",
     "spectra-data": "^3.1.12",
     "ml-tree-set": "0.1.1",
-    "spectra-nmr-utilities": "^0.0.5"
+    "spectra-nmr-utilities": "^1.0.1"
   }
 }

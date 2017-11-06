@@ -1,8 +1,8 @@
-'use strict'
+
 /**
  * Created by acastillo on 9/2/16.
  */
-const TreeSet = require("ml-tree-set");
+const treeSet = require('ml-tree-set');
 
 const defaultOptions = {minScore: 1, maxSolutions: 100, errorCS: -1, onlyCount: false, timeout: 7000, condensed: true};
 
@@ -40,7 +40,7 @@ class Assignment {
 
         this.comparator = function (a, b) {
             return b.score - a.score;
-        }
+        };
         this.generateExpandMap();
 
     }
@@ -60,7 +60,7 @@ class Assignment {
                 let source = this.spinSystem.sourcesConstrains[sourceID];
                 source.error = Math.abs(source.error);
                 this.expandMap[sourceID] = [];
-                if(targetIDs) {
+                if (targetIDs) {
                     targetIDs.forEach(targetID => {
                         let target = this.spinSystem.targetsConstains[targetID];
                         if (source.nbAtoms - target.integral < 1) {
@@ -69,17 +69,17 @@ class Assignment {
                             } else {
                                 let tmp = (target.from + target.to) / 2;
                                 if (Math.abs(source.delta - tmp) < (source.error
-                                    + Math.abs(target.from - target.to)) / 2 + errorAbs)
+                                    + Math.abs(target.from - target.to)) / 2 + errorAbs) {
                                     this.expandMap[sourceID].push(targetID);
+                                }
                             }
                         }
                     });
                 }
-                this.expandMap[sourceID].push("*");
+                this.expandMap[sourceID].push('*');
             });
         });
     }
-
 
 
     buildAssignments() {
@@ -91,7 +91,7 @@ class Assignment {
         do {
             this.nSolutions = 0;
             this.nSteps = 0;
-            this.solutions = new TreeSet(this.comparator);
+            this.solutions = new treeSet(this.comparator);
 
             nTargets = this.spinSystem.nTargets;
             nSources = this.spinSystem.nSources;
@@ -113,7 +113,7 @@ class Assignment {
             this.exploreTreeRec(this.spinSystem, 0, partial);
 
             this.lowerBound -= 0.1;
-            if (DEBUG) console.log("Decreasing lowerBound: " + this.lowerBound);
+            if (DEBUG) console.log('Decreasing lowerBound: ' + this.lowerBound);
         } while (this.solutions.isEmpty() && this.lowerBound >= 0.4);
 
         //Format the result
@@ -128,12 +128,12 @@ class Assignment {
 
     setAssignmentOnRanges(ranges, index) {
         let solution = null;
-        if(typeof index === "number") {
-            if(index < this.solutions.length) {
+        if (typeof index === 'number') {
+            if (index < this.solutions.length) {
                 solution = this.solutions.elements[index];
             }
         } else {
-            if(typeof index === "object") {
+            if (typeof index === 'object') {
                 solution = index;
             }
         }
@@ -141,22 +141,22 @@ class Assignment {
         //    return -1;//Error. Index is not a valid index or assignment
 
         //Clean up any previous assignment
-        for(let i = 0; i < ranges.length; i++) {
+        for (let i = 0; i < ranges.length; i++) {
             ranges[i].signal.forEach(signal => {
                 signal.diaID = [];
             });
         }
 
-        if(solution !== null) {
+        if (solution !== null) {
             solution.assignment.forEach((signalId, diaIndex) => {
                 let range;
-                for(let i = 0; i < ranges.length; i++) {
-                    if(ranges[i].signalID == signalId) {
+                for (let i = 0; i < ranges.length; i++) {
+                    if (ranges[i].signalID == signalId) {
                         range = ranges[i];
                         break;
                     }
                 }
-                if(range) {
+                if (range) {
                     range.signal.forEach(signal => {
                         signal.diaID.push(this.sourcesIDs[diaIndex]);
                     });
@@ -170,16 +170,17 @@ class Assignment {
 
     setAssignmentOnSample(sample, index) {
         sample.spectra.nmr.forEach(nmr => {
-            if(nmr.experiment === "1d") {
+            if (nmr.experiment === '1d') {
                 this.setAssignmentOnRanges(nmr.range, index);
             }
-        })
+        });
     }
 
     isPlausible(partial, sourceConstrains, sourceID, targetID) {
-        if (targetID === "*")
+        if (targetID === '*') {
             return true;
-        return this.partialScore(partial, sourceConstrains, sourceID, targetID) > 0 ? true: false;
+        }
+        return this.partialScore(partial, sourceConstrains, sourceID, targetID) > 0 ? true : false;
     }
 
     partialScore(partial, sourceConstrains, sourceID, targetID) {
@@ -189,17 +190,16 @@ class Assignment {
         let countStars = 0;
 
         partial.forEach((targetID, index) => {
-            if(targetID && targetID !== "*") {
+            if (targetID && targetID !== '*') {
                 activeDomainOnSource.push(index);
-                if(!partialInverse[targetID]) {
+                if (!partialInverse[targetID]) {
                     partialInverse[targetID] = [this.sourcesIDs[index]];
-                }
-                else {
+                } else {
                     partialInverse[targetID].push(this.sourcesIDs[index]);
                 }
             }
-            if(targetID === "*") {
-               countStars++;
+            if (targetID === '*') {
+                countStars++;
             }
         });
 
@@ -207,12 +207,12 @@ class Assignment {
 
 
         //Integration score. Actually we just
-        for(let key in partialInverse) {
+        for (let key in partialInverse) {
             let targetToSource = partialInverse[key];
             let total = targetToSource.reduce((sum, value) => {
                 return sum + this.spinSystem.sourcesConstrains[value].nbAtoms;
             }, 0);
-            if(Math.abs(total  - this.spinSystem.targetsConstains[key].integral) >= 1) {
+            if (Math.abs(total - this.spinSystem.targetsConstains[key].integral) >= 1) {
                 return 0;
             }
         }
@@ -220,11 +220,11 @@ class Assignment {
         //Chemical shift score
         let chemicalShiftScore = 1;
         let count = 1;
-        if(this.errorCS > 0) {
+        if (this.errorCS > 0) {
             chemicalShiftScore = 0;
             count = 0;
             partial.forEach((targetID, index) => {
-                if(targetID && targetID !== "*") {
+                if (targetID && targetID !== '*') {
                     count++;
                     let source = this.spinSystem.sourcesConstrains[this.sourcesIDs[index]];
                     let target = this.spinSystem.targetsConstains[targetID];
@@ -234,44 +234,45 @@ class Assignment {
                         let tmp = (target.from + target.to) / 2;
                         let widthSignal = Math.abs(target.from - target.to) / 2;
                         let diff = Math.abs(source.delta - tmp);
-                        if (diff < widthSignal ) {
+                        if (diff < widthSignal) {
                             chemicalShiftScore += 1;
-                        }
-                        else {
+                        } else {
                             diff = Math.abs(diff - widthSignal);
                             chemicalShiftScore += (-0.25 / this.errorCS) * diff + 1;
                         }
                     }
                 }
             });
-            if(count > 0)
+            if (count > 0) {
                 chemicalShiftScore /= count;
+            }
         }
 
         //Verify the 2D constrains
         let activeDomainOnTarget = Object.keys(partialInverse);
         let scoreOn2D = 0;
-        if(activeDomainOnTarget.length > 1) {
+        if (activeDomainOnTarget.length > 1) {
             var andConstrains = {};
-            for(let i = 0; i < activeDomainOnSource.length; i++) {
+            for (let i = 0; i < activeDomainOnSource.length; i++) {
                 let sourceI = this.sourcesIDs[activeDomainOnSource[i]];
-                for(let j = i + 1; j < activeDomainOnSource.length; j++) {
+                for (let j = i + 1; j < activeDomainOnSource.length; j++) {
                     let sourceJ = this.sourcesIDs[activeDomainOnSource[j]];
-                    let sourceConstrain = this.spinSystem.sourcesConstrains[sourceI + " " + sourceJ];
+                    let sourceConstrain = this.spinSystem.sourcesConstrains[sourceI + ' ' + sourceJ];
                     let partialI = partial[activeDomainOnSource[i]];
                     let partialJ = partial[activeDomainOnSource[j]];
-                    if(partialI !== partialJ) {
-                        let keyOnTargerMap = partialI + " " + partialJ;
-                        if(partialI > partialJ)
-                            keyOnTargerMap = partialJ + " " + partialI;
+                    if (partialI !== partialJ) {
+                        let keyOnTargerMap = partialI + ' ' + partialJ;
+                        if (partialI > partialJ) {
+                            keyOnTargerMap = partialJ + ' ' + partialI;
+                        }
 
                         let targetConstrain = this.spinSystem.targetsConstains[keyOnTargerMap];
                         let value = this.verifyConstrains(sourceConstrain, targetConstrain);
 
-                        if(! andConstrains[keyOnTargerMap]) {
-                             andConstrains[keyOnTargerMap] = value;
+                        if (!andConstrains[keyOnTargerMap]) {
+                            andConstrains[keyOnTargerMap] = value;
                         } else {
-                             andConstrains[keyOnTargerMap] = Math.max( andConstrains[keyOnTargerMap], value);
+                            andConstrains[keyOnTargerMap] = Math.max(andConstrains[keyOnTargerMap], value);
                         }
                     }
                 }
@@ -283,28 +284,31 @@ class Assignment {
                 sumAnd += andConstrains[key];
             });
 
-            scoreOn2D = sumAnd / (activeDomainOnTarget.length * (activeDomainOnTarget.length - 1 ) / 2);
-            if(chemicalShiftScore === 0)
+            scoreOn2D = sumAnd / (activeDomainOnTarget.length * (activeDomainOnTarget.length - 1) / 2);
+            if (chemicalShiftScore === 0) {
                 return scoreOn2D - penaltyByStarts;
+            }
         }
-        if(scoreOn2D === 0)
-            return chemicalShiftScore - penaltyByStarts ;
-        return (chemicalShiftScore + scoreOn2D) / 2 - penaltyByStarts ;
+        if (scoreOn2D === 0) {
+            return chemicalShiftScore - penaltyByStarts;
+        }
+        return (chemicalShiftScore + scoreOn2D) / 2 - penaltyByStarts;
 
     }
 
     verifyConstrains(source, target) {
-        if(!source && !target ) {
+        if (!source && !target) {
             return 1;
         }
-        if(source && target)
+        if (source && target) {
             return 1;
+        }
         return 0;
     }
 
     scoreIntegration(partial, sourceConstrains, sourceID, targetID) {
         partial.forEach((targetID, index) => {
-            if(targetID !== null) {
+            if (targetID !== null) {
                 let source = this.spinSystem.sourcesConstrains[this.sourcesIDs[index]];
                 let target = this.spinSystem.targetsConstains[targetID];
             }
@@ -343,8 +347,7 @@ class Assignment {
                             } else {
                                 this.solutions.add(solution);
                             }
-                        }
-                        else {
+                        } else {
                             this.exploreTreeRec(system, sourceAddress + 1, partial);
                         }
                     }

@@ -84,9 +84,10 @@ export function joinCoupling(signal, tolerance = 0.05) {
 
 export function group(signals, options = {}) {
     var i, k;
+    console.log('startG');
     for (i = 0; i < signals.length; i++) {
         var j = signals[i].j;
-        if (j && j.lengthpublish > 0) {
+        if (j && j.length > 0) {
             for (k = j.length - 2; k >= 0; k--) {
                 for (var m = j.length - 1; m > k; m--) {
                     if (j[k].diaID === j[m].diaID &&
@@ -112,12 +113,15 @@ export function group(signals, options = {}) {
             signals.splice(i + 1, 1);
         }
     }
+
     for (i = 0; i < signals.length; i++) {
         j = signals[i].j;
-        for (k = 0; k < j.length; k++) {
-            j[k].multiplicity = patterns[j[k].assignment.length];
+        if (j) {
+            for (k = 0; k < j.length; k++) {
+                j[k].multiplicity = patterns[j[k].assignment.length];
+            }
+            signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
         }
-        signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
     }
     return signals;
 }

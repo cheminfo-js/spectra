@@ -7,15 +7,15 @@ function compilePredictionTable(samples, options) {
     let maxLevel = 5;//options.maxLevel;
     let algorithm = 0;
     let Util = options.OCLE.Util;
-    let result = {"H":[], "C":[]};
-    for(let i = 0; i <= maxLevel; i++) {
-        result["H"].push({});
-        result["C"].push({});
+    let result = {H: [], C: []};
+    for (let i = 0; i <= maxLevel; i++) {
+        result.H.push({});
+        result.C.push({});
     }
     samples.forEach(sample => {
         let ocl = sample.general.ocl;
         sample.spectra.nmr.forEach(nmr => {
-            if(nmr.experiment === "1d") {
+            if (nmr.experiment === '1d') {
                 let db = result[nmr.nucleus];
                 nmr.range.forEach(range => {
                     range.signal.forEach(signal => {
@@ -24,11 +24,11 @@ function compilePredictionTable(samples, options) {
                                 maxSphereSize: maxLevel,
                                 type: algorithm
                             });
-                            for(let i = 0; i < hose.length; i++) {
-                                if(!db[i+1][hose[i]]) {
-                                    db[i+1][hose[i]] = [];
+                            for (let i = 0; i < hose.length; i++) {
+                                if (!db[i + 1][hose[i]]) {
+                                    db[i + 1][hose[i]] = [];
                                 }
-                                db[i+1][hose[i]].push(signal.delta);
+                                db[i + 1][hose[i]].push(signal.delta);
                             }
                         });
                     });
@@ -37,7 +37,7 @@ function compilePredictionTable(samples, options) {
         });
     });
 
-    [result["C"], result["H"]].forEach((db) => {
+    [result.C, result.H].forEach((db) => {
         db.forEach((hoseMap) => {
             for (const hose of Object.keys(hoseMap)) {
                 hoseMap[hose] = getStats(hoseMap[hose]);
