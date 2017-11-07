@@ -6,18 +6,10 @@ function loadFile(filename) {
     return FS.readFileSync(filename).toString();
 }
 
-function createSpectraData(filename, label, data) {
-    var spectrum = SD.NMR.fromJcamp(
-        FS.readFileSync(filename).toString()
-    );
-    return spectrum;
-}
-
-
 function load(path, datasetName, options) {
     let OCLE = options.OCLE;
-    var keepMolfile = false || options.keepMolfile;
-    var keepMolecule = false || options.keepMolecule;
+    //var keepMolfile = false || options.keepMolfile;
+    //var keepMolecule = false || options.keepMolecule;
     var filter = {filter: '.txt'};
     if (typeof options.filter === 'object') {
         filter = options.filter;

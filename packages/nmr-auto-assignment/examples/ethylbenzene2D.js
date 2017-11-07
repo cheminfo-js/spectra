@@ -2,7 +2,8 @@ const SD = require('spectra-data');
 const FS = require('fs');
 const OCLE = require("openchemlib-extended-minimal");
 const autoassigner = require('../src/index');
-const predictor = require("nmr-predictor");
+const predictor = require('../../nmr-predictor/src/index');
+
 function createSpectraData(filename, label, data) {
     var spectrum = SD.NMR.fromJcamp(
         FS.readFileSync(__dirname + filename).toString()

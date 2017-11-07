@@ -1,11 +1,9 @@
 /**
  * Created by acastillo on 9/2/16.
  */
-
-const DEBUG = false;
 class SpinSystem {
-    constructor(spectra, predictions, opt) {
-        var options = Object.assign({}, opt);
+    constructor(spectra, predictions) {
+        //var options = Object.assign({}, opt);
         this.spectra = spectra;
         this.predictions = predictions;
         this.init();
@@ -19,6 +17,7 @@ class SpinSystem {
         if (Math.abs(midA - midB) <= wA + wB) {
             return true;
         }
+        return false;
     }
 
     include2DConstrains(region, targetConstains, targets, nucleus) {

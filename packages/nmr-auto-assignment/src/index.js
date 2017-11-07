@@ -17,11 +17,15 @@ function autoAssign(entry, options) {
 
 function assignmentFromRaw(entry, options) {
     //TODO Implement this method
+    if (entry !== null && options !== null) {
+        return null;
+    }
+    return null;
 }
 
 function assignmentFromPeakPicking(entry, options) {
-    const predictor = options.predictor;
-    var molecule, diaIDs, molfile;
+    //const predictor = options.predictor;
+    var molecule, diaIDs;
     OCLE = getOcleFromOptions(options);
     var spectra = entry.spectra;
     if (!entry.general.ocl) {
@@ -58,7 +62,7 @@ function assignmentFromPeakPicking(entry, options) {
 
     const spinSystem = new SpinSystem(spectra, prediction, options);
 
-    //console.log(JSON.stringify(spinSystem))
+    //console.log(JSON.stringify(spinSystem));
 
     const autoAssigner = new AutoAssigner(spinSystem, options);
     autoAssigner.buildAssignments();
@@ -75,8 +79,9 @@ function predictByExperiment(molecule, nmr, options) {
         if (nmr.nucleus === 'C') {
             pred = options.predictor.carbon(molecule, Object.assign({}, options, {ignoreLabile: false}));
         }
-        // console.log(pred)
+        //console.log(pred.length)
         pred = nmrUtilities.group(pred);
+        //console.log(pred.length)
 
         var optionsError = {iteration: options.iteration || 1, learningRatio: options.learningRatio || 1};
 
@@ -86,7 +91,7 @@ function predictByExperiment(molecule, nmr, options) {
 
         pred.sort(function (a, b) {
             if (a.atomLabel === b.atomLabel) {
-                return b.nbAtoms - a.nbAtoms;
+                return b.atomIDs.length - a.atomIDs.length;
             }
             return a.atomLabel < b.atomLabel ? 1 : -1;
         });
@@ -96,6 +101,7 @@ function predictByExperiment(molecule, nmr, options) {
         if (nmr.experiment === 'cosy') {
             return molecule.getAllPaths({fromLabel: 'H', toLabel: 'H', minLength: 0, maxLength: 3});
         }
+        return null;
         //TODO Add other 2D experiments
     }
 }
@@ -112,7 +118,6 @@ function getError(prediction, param) {
             (Math.pow(prediction.ncs, (param.iteration + 1) * param.learningRatio));//(param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
         return 2 * prediction.std + factor;
     }
-    return 20;
 }
 
 module.exports = autoAssign;

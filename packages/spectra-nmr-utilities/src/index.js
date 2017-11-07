@@ -84,7 +84,6 @@ export function joinCoupling(signal, tolerance = 0.05) {
 
 export function group(signals, options = {}) {
     var i, k;
-    console.log('startG');
     for (i = 0; i < signals.length; i++) {
         var j = signals[i].j;
         if (j && j.length > 0) {

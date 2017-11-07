@@ -6,7 +6,7 @@ function loadFile(filename) {
     return FS.readFileSync(filename).toString();
 }
 
-function createSpectraData(filename, label, data) {
+function createSpectraData(filename) {
     var spectrum = SD.NMR.fromJcamp(
         FS.readFileSync(filename).toString()
     );
@@ -15,8 +15,8 @@ function createSpectraData(filename, label, data) {
 
 function load(path, datasetName, options) {
     let OCLE = options.OCLE;
-    var keepMolfile = false || options.keepMolfile;
-    var keepMolecule = false || options.keepMolecule;
+    //var keepMolfile = false || options.keepMolfile;
+    //var keepMolecule = false || options.keepMolecule;
     var filter = {filter: '.mol'};
     if (typeof options.filter === 'object') {
         filter = options.filter;
@@ -71,7 +71,7 @@ function load(path, datasetName, options) {
             // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}
             result.push(sample);
         } catch (e) {
-            console.log('Could not load the entry ' + i + ' ' + e);
+            //console.log('Could not load the entry ' + i + ' ' + e);
         }
     }
     return result;

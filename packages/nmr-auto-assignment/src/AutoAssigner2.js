@@ -6,8 +6,6 @@ const treeSet = require('ml-tree-set');
 
 const defaultOptions = {minScore: 1, maxSolutions: 100, errorCS: -1, onlyCount: false, timeout: 7000, condensed: true};
 
-const DEBUG = false;
-
 class Assignment {
     constructor(spinSystem, opt) {
         var options = Object.assign({}, defaultOptions, opt);
@@ -63,7 +61,7 @@ class Assignment {
                 if (targetIDs) {
                     targetIDs.forEach(targetID => {
                         let target = this.spinSystem.targetsConstains[targetID];
-                        if (source.nbAtoms - target.integral < 1) {
+                        if (source.atomIDs.length - target.integral < 1) {
                             if (this.errorCS === 0 || typeof source.delta === 'undefined') { //Chemical shift is not a restriction
                                 this.expandMap[sourceID].push(targetID);
                             } else {
@@ -85,7 +83,7 @@ class Assignment {
     buildAssignments() {
         var date = new Date();
         this.timeStart = date.getTime();
-        var i, j, k, nTargets, nSources;
+        var nSources;
         this.lowerBound = this.minScore;
 
         do {
@@ -93,7 +91,7 @@ class Assignment {
             this.nSteps = 0;
             this.solutions = new treeSet(this.comparator);
 
-            nTargets = this.spinSystem.nTargets;
+            //nTargets = this.spinSystem.nTargets;
             nSources = this.spinSystem.nSources;
             this.scores = new Array(nSources);
             let partial = new Array(nSources);
@@ -103,17 +101,17 @@ class Assignment {
             }
             /*
             console.log(this.sourcesIDs.map(value => {
-                return this.spinSystem.sourcesConstrains[value].nbAtoms + " " + this.spinSystem.sourcesConstrains[value].delta
+                return this.spinSystem.sourcesConstrains[value].atomIDs.length + ' ' + this.spinSystem.sourcesConstrains[value].delta;
             }));
 
             console.log(this.targetIDs.map(value => {
-                return this.spinSystem.targetsConstains[value].signalID + " "+this.spinSystem.targetsConstains[value].integral + " " + this.spinSystem.targetsConstains[value].from
+                return this.spinSystem.targetsConstains[value].signalID + ' ' + this.spinSystem.targetsConstains[value].integral + ' ' + this.spinSystem.targetsConstains[value].from;
             }));*/
 
             this.exploreTreeRec(this.spinSystem, 0, partial);
 
             this.lowerBound -= 0.1;
-            if (DEBUG) console.log('Decreasing lowerBound: ' + this.lowerBound);
+            // if (DEBUG) console.log('Decreasing lowerBound: ' + this.lowerBound);
         } while (this.solutions.isEmpty() && this.lowerBound >= 0.4);
 
         //Format the result
@@ -137,7 +135,7 @@ class Assignment {
                 solution = index;
             }
         }
-        //if(solutions == null)
+        //if(solutions === null)
         //    return -1;//Error. Index is not a valid index or assignment
 
         //Clean up any previous assignment
@@ -151,7 +149,7 @@ class Assignment {
             solution.assignment.forEach((signalId, diaIndex) => {
                 let range;
                 for (let i = 0; i < ranges.length; i++) {
-                    if (ranges[i].signalID == signalId) {
+                    if (ranges[i].signalID === signalId) {
                         range = ranges[i];
                         break;
                     }
@@ -183,7 +181,7 @@ class Assignment {
         return this.partialScore(partial, sourceConstrains, sourceID, targetID) > 0 ? true : false;
     }
 
-    partialScore(partial, sourceConstrains, sourceID, targetID) {
+    partialScore(partial) {
         let partialInverse = {};
         //Get the inverse of the assignment function
         let activeDomainOnSource = [];
@@ -210,7 +208,7 @@ class Assignment {
         for (let key in partialInverse) {
             let targetToSource = partialInverse[key];
             let total = targetToSource.reduce((sum, value) => {
-                return sum + this.spinSystem.sourcesConstrains[value].nbAtoms;
+                return sum + this.spinSystem.sourcesConstrains[value].atomIDs.length;
             }, 0);
             if (Math.abs(total - this.spinSystem.targetsConstains[key].integral) >= 1) {
                 return 0;
@@ -306,11 +304,11 @@ class Assignment {
         return 0;
     }
 
-    scoreIntegration(partial, sourceConstrains, sourceID, targetID) {
-        partial.forEach((targetID, index) => {
+    scoreIntegration(partial) {
+        partial.forEach((targetID) => {
             if (targetID !== null) {
-                let source = this.spinSystem.sourcesConstrains[this.sourcesIDs[index]];
-                let target = this.spinSystem.targetsConstains[targetID];
+                //let source = this.spinSystem.sourcesConstrains[this.sourcesIDs[index]];
+                //let target = this.spinSystem.targetsConstains[targetID];
             }
         });
     }
@@ -326,7 +324,7 @@ class Assignment {
             }
 
             let sourceID = this.sourcesIDs[sourceAddress];
-            let source = system.sourcesConstrains[sourceID];//The 1D prediction to be assigned
+            //let source = system.sourcesConstrains[sourceID];//The 1D prediction to be assigned
             let expand = this.expandMap[sourceID];
             //console.log(expand);
             expand.forEach(targetID => {
@@ -336,7 +334,7 @@ class Assignment {
                     if (this.score > 0) {
                         //If there is no more sources or targets available, we have a solution for the assignment problem
                         if (sourceAddress === system.nSources - 1 && this.score >= this.minScore) {
-                            //console.log(this.score + " Found " + JSON.stringify(partial));
+                            //console.log(this.score + ' Found ' + JSON.stringify(partial));
                             this.nSolutions++;
                             var solution = {assignment: this._cloneArray(partial), score: this.score};
                             if (this.solutions.length >= this.maxSolutions) {

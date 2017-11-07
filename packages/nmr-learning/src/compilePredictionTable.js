@@ -13,7 +13,7 @@ function compilePredictionTable(samples, options) {
         result.C.push({});
     }
     samples.forEach(sample => {
-        let ocl = sample.general.ocl;
+        //let ocl = sample.general.ocl;
         sample.spectra.nmr.forEach(nmr => {
             if (nmr.experiment === '1d') {
                 let db = result[nmr.nucleus];
