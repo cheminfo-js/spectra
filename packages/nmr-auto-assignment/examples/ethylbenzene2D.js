@@ -34,7 +34,7 @@ async function start() {
         "nH": nH,
         realTop: true,
         thresholdFactor: 1,
-        clean: true,
+        clean: 0.5,
         compile: true,
         idPrefix: "1H",
         format: "new"
