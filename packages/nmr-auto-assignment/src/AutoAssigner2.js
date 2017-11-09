@@ -204,7 +204,6 @@ class Assignment {
         let penaltyByStarts = countStars / partial.length;
 
 
-        //Integration score. Actually we just
         for (let key in partialInverse) {
             let targetToSource = partialInverse[key];
             let total = targetToSource.reduce((sum, value) => {
