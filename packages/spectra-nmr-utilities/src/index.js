@@ -150,3 +150,78 @@ export function compilePattern(signal, tolerance = 0.05) {
     }
     return pattern;
 }
+
+export function bestMatch (experimentalRanges, predictedRanges) {
+    let finalCandidate = new Array(experimentalRanges.length);
+    for (let i = 0; i < experimentalRanges.length; i++) {
+        r = experimentalRanges[i];
+        let candidate = [];
+        let sum = 0;
+        let possibleCandidate = [];
+        for (let j = 0; j < predictedRanges.length; j++) {
+            pR = predictedRanges[j];
+            if (r.integral === pR.nbAtoms) {
+                if (!finalCandidate[i]) finalCandidate[i] = [];
+                finalCandidate[i].push([j, Math.abs(r.signal[0].delta - pR.delta)]);
+            } else if (r.integral >= pR.nbAtoms + sum) {
+                sum += pR.nbAtoms;
+                possibleCandidate.push([j]);
+                if (r.integral === sum) {
+                    possibleCandidate.forEach((a) => {
+                        let eDelta = experimentalRanges[i].signal[0].delta;
+                        let pDelta = predictedRanges[a[0]].delta;
+                        a.push(Math.abs(eDelta -pDelta));
+                        return a;
+                    });
+                    j = possibleCandidate[possibleCandidate.length - 1][0] - 1;
+                    if (!finalCandidate[i]) finalCandidate[i] = [];
+                    finalCandidate[i].push(possibleCandidate);
+                    possibleCandidate = [];
+                    sum = 0;
+                }
+            } else if (r.integral < pR.nbAtoms + sum) {
+                sum = 0;
+                possibleCandidate = [];
+            }
+        }
+    }
+    return getCombinations(finalCandidate);
+}
+
+function getCombinations(possibleAssigments) {
+    let l = possibleAssigments.length;
+    let assignments = [];
+    let plausible = false;
+    let indexes = new Array(l).fill(0);
+    while (indexes[0] < l - 1) {
+        let temp = new Array(l);
+        let index = indexes[0];
+        temp[0] = possibleAssigments[0][index];
+        for (let i = 1; i < l; i++) {
+            index = indexes[i];
+            plausible = isPlausible(temp, possibleAssigments[i][index]);
+            if (plausible) {
+                temp[i] = possibleAssigments[i][index];
+            } else {
+                i = l;
+            }
+        }
+        if (plausible) {
+            let score = temp.reduce((acc, val) => val.score + acc, 0);
+            assignments.push({score, assignment: possibleAssigments});
+        }
+        for (let i = l - 1; i >= 0; i--) {
+            if (indexes[i] < possibleAssigments[i].length - 1) {
+                indexes[i] += 1;
+                i = -1;
+            } else {
+                indexes[i] = 0;
+            }
+        }
+    }
+    return assignments;
+}
+
+function isPlausible(a, b) {
+
+}
