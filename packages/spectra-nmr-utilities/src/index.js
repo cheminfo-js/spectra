@@ -154,12 +154,12 @@ export function compilePattern(signal, tolerance = 0.05) {
 export function bestMatch (experimentalRanges, predictedRanges) {
     let finalCandidate = new Array(experimentalRanges.length);
     for (let i = 0; i < experimentalRanges.length; i++) {
-        r = experimentalRanges[i];
+        let r = experimentalRanges[i];
         let candidate = [];
         let sum = 0;
         let possibleCandidate = [];
         for (let j = 0; j < predictedRanges.length; j++) {
-            pR = predictedRanges[j];
+            let pR = predictedRanges[j];
             if (r.integral === pR.nbAtoms) {
                 if (!finalCandidate[i]) finalCandidate[i] = [];
                 finalCandidate[i].push([j, Math.abs(r.signal[0].delta - pR.delta)]);
@@ -185,10 +185,10 @@ export function bestMatch (experimentalRanges, predictedRanges) {
             }
         }
     }
-    return getCombinations(finalCandidate);
+    return getCombinations(finalCandidate, predictedRanges);
 }
 
-function getCombinations(possibleAssigments) {
+function getCombinations(possibleAssigments, predictedRanges) {
     let l = possibleAssigments.length;
     let assignments = [];
     let plausible = false;
@@ -207,8 +207,23 @@ function getCombinations(possibleAssigments) {
             }
         }
         if (plausible) {
-            let score = temp.reduce((acc, val) => val.score + acc, 0);
-            assignments.push({score, assignment: possibleAssigments});
+            // let score = temp.reduce((acc, val) => val[0] + acc, 0);
+            temp.forEach((assig) => {
+                return assig.reduce((a,b) => {
+                    if (Array.isArray(b[0])) {
+                        a = b.reduce((c, d) => {
+                            c.score += d[0];
+                            c.diaID = c.diaID.concat(predictedRanges[d[i]].diaIDs)
+                            return c;
+                        }, {score: 0, diaID: []});
+                    } else {
+                        a.score = b[0];
+                        a.diaID = predictedRanges[b[0]].diaIDs;
+                    }
+                    return a;
+                }, {});
+            }
+            // assignments.push({score, assignment: 1});
         }
         for (let i = l - 1; i >= 0; i--) {
             if (indexes[i] < possibleAssigments[i].length - 1) {
@@ -220,8 +235,4 @@ function getCombinations(possibleAssigments) {
         }
     }
     return assignments;
-}
-
-function isPlausible(a, b) {
-
 }
