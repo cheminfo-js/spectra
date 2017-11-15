@@ -261,26 +261,6 @@ export default class NMR extends SD {
     }
 
     /**
-     * Apodization of a spectraData object that should be of type NMR_FID.
-     * @param {string} functionName - Valid values for functionsName are
-     *  Exponential, exp
-     *  Hamming, hamming
-     *  Gaussian, gauss
-     *  TRAF, traf
-     *  Sine Bell, sb
-     *  Sine Bell Squared, sb2
-     * @param {number} lineBroadening - The parameter LB should either be a line broadening factor in Hz
-     * or alternatively an angle given by degrees for sine bell functions and the like.
-     * @example SD.apodization('exp', lineBroadening)
-     * @return {NMR} this object
-     */
-    apodization(functionName, lineBroadening) {
-        return Filters.apodization(this, {functionName: functionName,
-            lineBroadening: lineBroadening});
-
-    }
-
-    /**
      * That decodes an Echo-Antiecho 2D spectrum.
      * @return {NMR} this object
      */
