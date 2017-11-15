@@ -42,6 +42,7 @@ export default function fourierTransform(spectraData) {
     //TODO For Alejandro
     //Now we can try to apply the FFt on the second dimension
     if (spectraData.is2D()) {
+        throw new Error('FT of 2D is not implemented');
         //var mode = spectraData.getParam('.ACQUISITION SCHEME');
         /*switch (mode) {
             case 1://"State-TPP"
