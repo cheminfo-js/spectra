@@ -64,6 +64,7 @@ export default class NMR extends SD {
         return new NMR(spectraData.sd);
     }
 
+
     /**
      * This function returns a NMR instance from Array of folders or zip file with folders
      * @param {Array | zipFile} brukerFile - spectra data in two possible input

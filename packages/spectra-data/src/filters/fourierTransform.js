@@ -28,7 +28,7 @@ export default function fourierTransform(spectraData) {
         im[0] *= fcor;
 
         FFT.fft(re, im);
-        re = re.concat(re.slice(0, (nbPoints + 1) / 2));
+        re = re.concat(re.slice(0, (nbPoints + 1) / 2)); // TODO why +1 ???
         re.splice(0, (nbPoints + 1) / 2);
         im = im.concat(im.slice(0, (nbPoints + 1) / 2));
         im.splice(0, (nbPoints + 1) / 2);
