@@ -92,6 +92,14 @@ export default class NMR extends SD {
     }
 
     /**
+     * create a SD instance with the magnitude mode spectra for 1D data.
+     * @return {NMR} absolute value spectra-data instance.
+     */
+    absoluteValue() {
+        return Filters.absoluteValue(this);
+    }
+
+    /**
      * @private
      * Returns the observed nucleus. A dimension parameter is accepted for compatibility with 2DNMR
      * @param {number} dim
