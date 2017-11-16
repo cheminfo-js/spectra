@@ -95,7 +95,7 @@ export default class NMR extends SD {
      * create a SD instance with the magnitude mode spectra for 1D data.
      * @return {NMR} absolute value spectra-data instance.
      */
-    absoluteValue() {
+    getMagnitude() {
         return Filters.absoluteValue(this);
     }
 
