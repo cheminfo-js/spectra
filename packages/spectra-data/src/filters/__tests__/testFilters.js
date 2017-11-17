@@ -25,5 +25,14 @@ describe('spectra-data examples Filters', function () {
         spectrum.zeroFilling(10).getNbPoints().should.equal(10);
         spectrum.zeroFilling(20).getNbPoints().should.equal(20);
     });
+    it('absoluteValue', function () {
+        var spectrum = createSpectraData('/../../../../../data-test/ethylvinylether/1h.jdx');
+        let absValue = spectrum.getMagnitude();
+        absValue.sd.spectra.length.should.equal(1);
+        let re = Math.pow(spectrum.getY(10), 2);
+        spectrum.setActiveElement(1);
+        let im = Math.pow(spectrum.getY(10), 2);
+        absValue.getY(10).should.equal(Math.sqrt(re + im));
+    });
 });
 
