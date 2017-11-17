@@ -27,7 +27,7 @@ describe('spectra-data examples Filters', function () {
     });
     it('absoluteValue', function () {
         var spectrum = createSpectraData('/../../../../../data-test/ethylvinylether/1h.jdx');
-        let absValue = spectrum.absoluteValue();
+        let absValue = spectrum.getMagnitude();
         absValue.sd.spectra.length.should.equal(1);
         let re = Math.pow(spectrum.getY(10), 2);
         spectrum.setActiveElement(1);
