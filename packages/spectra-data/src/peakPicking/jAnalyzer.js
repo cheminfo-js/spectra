@@ -33,7 +33,7 @@ export default {
                 //1.2 Normalize. It makes a deep copy of the peaks before to modify them.
                 var peaks = normalize(signal, n);
                 //signal.peaksCompX = peaks;
-                var validPattern = false;//It will change to true, when we find the good patter
+                var validPattern = false;//It will change to true, when we find the good pattern
                 //Lets check if the signal could be a singulet.
                 if (peaks.length === 1 && n === 0) {
                     validPattern = true;

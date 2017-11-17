@@ -76,10 +76,10 @@ export default function createRanges(spectrum, peakList, options) {
                         peaks1.push(peaksO[j]);
                     }
                     options.nH = nHi;
-                    let ranges = detectSignals(spectrum, peaks1, options);
+                    let newSignal = detectSignals(spectrum, peaks1, options);
 
-                    for (j = 0; j < ranges.length; j++) {
-                        signals.push(ranges[j]);
+                    for (j = 0; j < newSignal.length; j++) {
+                        signals.push(newSignal[j]);
                     }
                 }
             }

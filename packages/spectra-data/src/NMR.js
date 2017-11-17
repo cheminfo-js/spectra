@@ -1,9 +1,8 @@
 import SD from './SD';
 import * as Filters from './filters/Filters.js';
 import Brukerconverter from 'brukerconverter';
-import peaks2Ranges from './peakPicking/peaks2Ranges';
 import {SpinSystem, simulate1D} from 'nmr-simulation';
-import impurities from './peakPicking/impurities.js';
+import {impurities, peaks2Ranges, getSignalFromRange} from './peakPicking/peakPicking';
 
 /**
  * @class NMR
@@ -98,39 +97,7 @@ export default class NMR extends SD {
      * @return {Array} signals
      */
     getSignals(range, options = {}) {
-        let {
-            from,
-            to,
-            signal
-        } = range;
-
-        options = Object.assign({}, options, {from, to});
-
-        let peaks = signal ?
-            signal[0].peak ? signal[0].peak : this.getPeaks(options)
-            : this.getPeaks(options);
-
-        peaks = normalizePeaks(peaks);
-
-        options.compile = false;
-        options.keepPeaks = true;
-        //TODO create a independent method to create signals.
-        let signals = peaks2Ranges(this, peaks, options).map((r) => r.signal[0]);
-        options.compile = true;
-        let result = [];
-        for (let s of signals) {
-            peaks = normalizePeaks(s.peak);
-            let newSignals = peaks2Ranges(this, peaks, options).map((r) => r.signal[0]);
-            let index = choiceIndex(newSignals);
-            if (index === -1) {
-                s.multiplicity = 'm';
-                result = result.concat(s);
-            } else {
-                delete newSignals[index].peak;
-                result = result.concat(newSignals[index]);
-            }
-        }
-        return result;
+        return getSignalFromRange(this, range, options);
     }
 
     /**
@@ -493,33 +460,4 @@ export default class NMR extends SD {
             }
         });
     }
-}
-
-function choiceIndex(signals) {
-    let index;
-    if (signals.length > 3) {
-        index = -1;
-    } else {
-        let max = 0;
-        index = signals.reduce((a, b, c) => {
-            if (max < b.peak.length) {
-                max = b.peak.length;
-                a = c;
-            }
-            return a;
-        }, 0);
-        if (signals[index].multiplicity === 'd') {
-            let peak1 = signals[index].peak[0].intensity;
-            let peak2 = signals[index].peak[1].intensity;
-            if ((Math.abs(peak2 - peak1) * 100 / peak1) > 10) index = -1;
-        }
-    }
-    return index;
-}
-
-function normalizePeaks(peaks) {
-    if (!peaks[0].y) {
-        peaks.forEach((p) => p.y = p.intensity);
-    }
-    return peaks;
 }
