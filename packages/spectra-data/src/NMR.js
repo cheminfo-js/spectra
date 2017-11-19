@@ -1,9 +1,8 @@
 import SD from './SD';
 import * as Filters from './filters/Filters.js';
 import Brukerconverter from 'brukerconverter';
-import peaks2Ranges from './peakPicking/peaks2Ranges';
 import {SpinSystem, simulate1D} from 'nmr-simulation';
-import impurities from './peakPicking/impurities.js';
+import {impurities, peaks2Ranges, getSignalFromRange} from './peakPicking/peakPicking';
 
 /**
  * @class NMR
@@ -97,6 +96,16 @@ export default class NMR extends SD {
      */
     getMagnitude() {
         return Filters.absoluteValue(this);
+    }
+    
+    /**
+     * get the signals from a range.
+     * @param {object} range - range object.
+     * @param {object} options - options for automatic peak picking.
+     * @return {Array} signals
+     */
+    getSignals(range, options = {}) {
+        return getSignalFromRange(this, range, options);
     }
 
     /**

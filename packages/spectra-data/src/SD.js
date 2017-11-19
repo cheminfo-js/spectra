@@ -9,7 +9,7 @@ import getMedian from 'ml-array-median';
 import rescale from 'ml-array-rescale';
 import JcampConverter from 'jcampconverter';
 import JcampCreator from './jcampEncoder/JcampCreator';
-import peakPicking from './peakPicking/peakPicking';
+import {peakPicking} from './peakPicking/peakPicking';
 
 const DATACLASS_XY = 1;
 const DATACLASS_PEAK = 2;
