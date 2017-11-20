@@ -140,10 +140,6 @@ function updateSignal(signal, Jc) {
     signal.maskPattern = signal.mask2;
     signal.multiplicity = abstractPattern(signal, Jc);
     signal.pattern = signal.multiplicity;//Our library depends on this parameter, but it is old
-    //console.log(signal);
-    /*if (DEBUG)        {
-        console.log('Final j-couplings: ' + JSON.stringify(Jc));
-    }*/
 }
 
 /**

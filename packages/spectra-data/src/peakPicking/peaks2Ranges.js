@@ -15,7 +15,8 @@ const defaultOptions = {
     integralType: 'sum',
     optimize: true,
     frequencyCluster: 16,
-    keepPeaks: false
+    keepPeaks: false,
+    keepNbSignals: true
 };
 
 /**
@@ -29,6 +30,7 @@ const defaultOptions = {
  * @param {number} [options.clean] - If exits it remove all the signals with integral < clean value
  * @param {boolean} [options.compile = true] - If true, the Janalyzer function is run over signals to compile the patterns.
  * @param {boolean} [options.keepPeaks = false] - If true each signal will contain an array of peaks.
+ * @param {boolean} [options.keepNbSignals = true] - If false and compile is true, the compile could generate more signals, see getSignalPattern.
  * @returns {Array}
  */
 
@@ -46,13 +48,15 @@ export default function createRanges(spectrum, peakList, options) {
     }
 
     if (options.compile) {
-        signals = compile(spectrum, signals, options);
+        for (let i = 0; i < signals.length; i++) {
+            signals[i] = compile(spectrum, signals[i], options);
+        }
     }
 
     signals.sort(function (a, b) {
         return b.delta1 - a.delta1;
     });
-
+    
     if (options.clean) {
         for (let i = signals.length - 1; i >= 0; i--) {
             if (signals[i].integralData.value < options.clean) {
