@@ -11,10 +11,22 @@ const defaultCarbonUrl = 'https://raw.githubusercontent.com/cheminfo-js/spectra/
 
 const databases = {};
 
+/**
+ * Fetch the data base from a url.
+ * @param {string} url - url of data base.
+ * @param {string} dbName - name of data base.
+ * @return {promise} 
+ */
 function fetchProton(url = defaultProtonUrl, dbName = 'proton') {
     return fetch(url, dbName, 'proton');
 }
 
+/**
+ * Fetch the data base from a url.
+ * @param {string} url - url of data base.
+ * @param {string} dbName - name of data base.
+ * @return {promise} 
+ */
 function fetchCarbon(url = defaultCarbonUrl, dbName = 'carbon') {
     return fetch(url, dbName, 'carbon');
 }
@@ -46,6 +58,13 @@ function fetch(url, dbName, type) {
     return fetching;
 }
 
+/**
+ * Predict a 1D NMR proton spectrum by Hose code method 
+ * @param {string|Molecule} molecule - could be a string of molfile, smile or Molecule instance.
+ * @param {object} options
+ * @param {Array} options.levels - contain the levels for hose code query.
+ * @return {promise}
+ */
 function proton(molecule, options) {
     options.atomLabel = 'H';
     [molecule, options] = normalizeOptions(molecule, options);
@@ -53,6 +72,14 @@ function proton(molecule, options) {
     return queryByHose(molecule, db, options);
 }
 
+/**
+ * Predict a 1D NMR proton spectrum by Hose code method 
+ * @param {string|Molecule} molecule - could be a string of molfile, smile or Molecule instance.
+ * @param {object} options
+ * @param {Array} options.levels - contain the levels for hose code query.
+ * @param {string} options.db - name of data base to be used.
+ * @return {promise}
+ */
 function carbon(molecule, options) {
     options.atomLabel = 'C';
     [molecule, options] = normalizeOptions(molecule, options);

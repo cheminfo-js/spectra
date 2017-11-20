@@ -6,8 +6,9 @@ import normalizeOptions from './normalizeOptions';
 
 /**
  * Makes a prediction using spinus
- * @param {string|Molecule} molecule
- * @param {object} [options]
+ * @param {string|Molecule} molecule - could be a string of molfile, smile or Molecule instance.
+ * @param {object} options
+ * @param {object} options.OCLE - to recicle the OCLE object for prediction.
  * @return {Promise<Array>}
  */
 export default function spinus(molecule, options) {
