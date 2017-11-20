@@ -1,12 +1,3 @@
-/**
- * nbDecimalsDelta : default depends nucleus H, F: 2 otherwise 1
- * nbDecimalsJ : default depends nucleus H, F: 1, otherwise 0
- * ascending : true / false
- * format : default "AIMJ" or when 2D data is collected the default format may be "IMJA"
- * deltaSeparator : ', '
- * detailSeparator : ', '
- */
-
 import {joinCoupling} from 'spectra-nmr-utilities';
 const globalOptions = {
     h: {
@@ -30,7 +21,6 @@ const globalOptions = {
 };
 
 export default function toAcs(ranges, options = {}) {
-    options = Object.assign({}, options);
     if (!options.nucleus) options.nucleus = '1H';
     var nucleus = options.nucleus.toLowerCase().replace(/[0-9]/g, '');
     var defaultOptions = globalOptions[nucleus];
