@@ -80,6 +80,7 @@ export default {
      * This function maps the corresponding 2D signals to the given set of 1D signals
      * @param {Array} signals2D
      * @param {Array} references
+     * @private
      */
     alignDimensions: function (signals2D, references) {
         //For each reference dimension
