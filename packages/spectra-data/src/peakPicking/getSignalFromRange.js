@@ -3,6 +3,7 @@ import {
     compilePatternFromExperimentalSignal as compile,
     detectSignals
 } from 'spectra-nmr-utilities';
+import updateSignalIntegral from '../../../spectra-nmr-utilities/src/updateSignalIntegral';
 
 export default function getSignals(spectrum, range, options = {}) {
     let {
@@ -21,11 +22,14 @@ export default function getSignals(spectrum, range, options = {}) {
 
     let signals = detectSignals(spectrum, peaks, options);
 
-    let result = [];
-    for (let s of signals) {
-        result = result.concat(compile(spectrum, s, options));
+    if (option.compile) {
+        signals = compile(spectrum, signals, options);
     }
-    return result;
+    
+
+    // signals = updateSignalIntegral(spectrum, signals, options);
+
+    return signals;
 }
 
 function reciclePeaks(peaks) {

@@ -7,7 +7,7 @@
     "convert-nmrshiftdb": "node packages/nmr-predictor/scripts/nmrshiftdb2ToJson.js",
     "eslint": "eslint packages *.js --cache",
     "eslint-fix": "npm run eslint -- --fix",
-    "local-build": "node_modules/.bin/cheminfo build --entry builder/SD.js --root SD --out-name 'SD'",
+    "local-build": "node_modules/.bin/cheminfo build --entry builder/SD.js --root SD -u --out-name 'SD'",
     "prepare": "npm run bootstrap",
     "test": "run-s build test-only eslint",
     "test-only": "jest",

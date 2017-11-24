@@ -6,3 +6,4 @@ export {default as jAnalyzer} from './jAnalyzer';
 export {default as compilePatternFromExperimentalSignal} from './getSignalPattern';
 export {default as computeArea} from './computeArea';
 export {default as detectSignals} from './detectSignals';
+export {default as updateSignalIntegral} from './updateSignalIntegral';

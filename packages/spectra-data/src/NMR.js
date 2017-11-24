@@ -97,7 +97,7 @@ export default class NMR extends SD {
     getMagnitude() {
         return Filters.absoluteValue(this);
     }
-    
+
     /**
      * get the signals from a range.
      * @param {object} range - range object.
@@ -432,7 +432,7 @@ export default class NMR extends SD {
     /*correlationFilter(func) {
         //@TODO Implement correlationFilter filter
     }*/
-     /**
+    /**
      * That decodes an Echo-Antiecho 2D spectrum.
      * @return {NMR} this object
      */

@@ -561,6 +561,7 @@ export default class SD {
         this.setFirstX(x[0]);
         this.setLastX(x[x.length - 1]);
     }
+
     /**
      * Fills a zone of the spectrum with the given value.
      * If value is undefined it will suppress the elements

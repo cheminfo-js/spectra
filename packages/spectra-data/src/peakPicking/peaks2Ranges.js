@@ -1,5 +1,6 @@
 import {
     compilePatternFromExperimentalSignal as compile,
+    updateSignalIntegral,
     detectSignals
 } from 'spectra-nmr-utilities';
 import impurityRemover from './ImpurityRemover';
@@ -39,24 +40,16 @@ export default function createRanges(spectrum, peakList, options) {
     peakList = impurityRemover(peakList, options.removeImpurity);
     var signals = detectSignals(spectrum, peakList, options);
 
-    if (options.clean) {
-        for (let i = 0; i < signals.length; i++) {
-            if (signals[i].integralData.value < options.clean) {
-                signals.splice(i, 1);
-            }
-        }
-    }
-
     if (options.compile) {
-        for (let i = 0; i < signals.length; i++) {
-            signals[i] = compile(spectrum, signals[i], options);
-        }
+        signals = compile(spectrum, signals, options);
     }
 
     signals.sort(function (a, b) {
         return b.delta1 - a.delta1;
     });
-    
+
+    signals = updateSignalIntegral(signals, options.nH);
+
     if (options.clean) {
         for (let i = signals.length - 1; i >= 0; i--) {
             if (signals[i].integralData.value < options.clean) {
