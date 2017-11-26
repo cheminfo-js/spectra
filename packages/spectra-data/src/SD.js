@@ -570,6 +570,7 @@ export default class SD {
      */
     fill(from, to, value) {
         var start, end, x, y;
+        var currentActiveElement = this.getActiveElement();
         for (var i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
 
@@ -592,6 +593,7 @@ export default class SD {
                 }
             }
         }
+        this.setActiveElement(currentActiveElement);
     }
 
     /**
@@ -791,12 +793,19 @@ export default class SD {
      * @param {number} nPoints - number of points to return(!!!sometimes it is not possible to return exactly the required nbPoints)
      * @return {Array}
      */
-    getVector(from, to, nPoints) {
-        if (nPoints) {
+    getVector(options = {}) {
+        let {
+            from, 
+            to, 
+            nbPoints,
+            variant
+        } = options;
+
+        if (nbPoints) {
             return ArrayUtils.getEquallySpacedData(this.getSpectraDataX(), this.getSpectraDataY(),
-                {from: from, to: to, numberOfPoints: nPoints});
+                {from, to, numberOfPoints: nbPoints, variant});
         } else {
-            return this.getPointsInWindow(from, to);
+            return this.getPointsInWindow(from, to, options);
         }
     }
 
@@ -857,14 +866,17 @@ export default class SD {
      * @param {number} from - index of a limit of the desired window.
      * @param {number} to - index of a limit of the desired window
      * @param {object} options
-     * @param {boolean} options.withoutX
+     * @param {boolean} [options.outputX = false] - if true the output will be a XYArray
      * @return {Array} XYarray/Yarray data of the desired window.
+     * @private
      */
     getPointsInWindow(from, to, options = {}) {
         if (!this.isDataClassXY()) {
             throw Error('getPointsInWindow can only apply on equidistant data');
         }
-
+        var {
+            outputX = false
+        } = options;
         var indexOfFrom = this.unitsToArrayPoint(from);
         var indexOfTo = this.unitsToArrayPoint(to);
 
@@ -873,7 +885,7 @@ export default class SD {
         }
         if (indexOfFrom >= 0 && indexOfTo <= this.getNbPoints() - 2) {
             var data = this.getSpectraDataY().slice(indexOfFrom, indexOfTo + 1);
-            if (!options.withoutX) {
+            if (outputX) {
                 var x = this.getSpectraDataX().slice(indexOfFrom, indexOfTo + 1);
                 data = [x, data];
             }
