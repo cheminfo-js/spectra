@@ -393,13 +393,9 @@ export default class SD {
      * @return {number}
      */
     getNoiseLevel(options = {}) {
-        let data;
-        if (options.from && options.to) {
-            data = this.getVector(options.from, options.to);
-        } else {
-            data = this.getYData();
-        }
-        var median = getMedian(data);
+        let {from, to} = options;
+        let data = (from !== undefined && to !== undefined) ? this.getVector({from, to, outputX: false}) : this.getYData();
+        let median = getMedian(data);
         return median * this.getNMRPeakThreshold(this.getNucleus(1));
     }
 
@@ -792,12 +788,19 @@ export default class SD {
      * @param {number} nPoints - number of points to return(!!!sometimes it is not possible to return exactly the required nbPoints)
      * @return {Array}
      */
-    getVector(from, to, nPoints) {
-        if (nPoints) {
+    getVector(options = {}) {
+        let {
+            from, 
+            to, 
+            nbPoints,
+            variant
+        } = options;
+
+        if (nbPoints) {
             return ArrayUtils.getEquallySpacedData(this.getSpectraDataX(), this.getSpectraDataY(),
-                {from: from, to: to, numberOfPoints: nPoints});
+                {from, to, numberOfPoints: nbPoints, variant});
         } else {
-            return this.getPointsInWindow(from, to);
+            return this.getPointsInWindow(from, to, options);
         }
     }
 
@@ -865,6 +868,9 @@ export default class SD {
         if (!this.isDataClassXY()) {
             throw Error('getPointsInWindow can only apply on equidistant data');
         }
+        var {
+            outputX = false
+        } = options;
 
         var indexOfFrom = this.unitsToArrayPoint(from);
         var indexOfTo = this.unitsToArrayPoint(to);
@@ -874,7 +880,7 @@ export default class SD {
         }
         if (indexOfFrom >= 0 && indexOfTo <= this.getNbPoints() - 2) {
             var data = this.getSpectraDataY().slice(indexOfFrom, indexOfTo + 1);
-            if (!options.withoutX) {
+            if (outputX) {
                 var x = this.getSpectraDataX().slice(indexOfFrom, indexOfTo + 1);
                 data = [x, data];
             }
@@ -883,6 +889,7 @@ export default class SD {
             throw Error('values outside this in range');
         }
     }
+
 
     /**
      * Is it a 2D spectrum?
