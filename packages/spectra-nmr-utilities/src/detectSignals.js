@@ -13,7 +13,6 @@ import computeArea from './computeArea';
  */
 export default function detectSignals(spectrum, peakList, options = {}) {
     var {
-        nH = 0,
         integralType = 'sum',
         frequencyCluster = 16,
         frequency = spectrum.observeFrequencyX()
@@ -22,7 +21,6 @@ export default function detectSignals(spectrum, peakList, options = {}) {
     var i, j, signal1D, peaks;
     var signals = [];
     var prevPeak = {x: 100000};
-    var spectrumIntegral = 0;
     frequencyCluster /= frequency;
     for (i = 0; i < peakList.length; i++) {
         if (Math.abs(peakList[i].x - prevPeak.x) > frequencyCluster) {
@@ -69,16 +67,7 @@ export default function detectSignals(spectrum, peakList, options = {}) {
         } else {
             integral.value = integralPeaks;
         }
-        spectrumIntegral += integral.value;
     }
-
-    // if (nH > 0) {
-    //     let integralFactor = nH / spectrumIntegral;
-    //     for (i = 0; i < signals.length; i++) {
-    //         let integral = signals[i].integralData;
-    //         integral.value *= integralFactor;
-    //     }
-    // }
 
     return signals;
 }

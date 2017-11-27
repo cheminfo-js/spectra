@@ -1,9 +1,7 @@
-import peaks2Ranges from './peaks2Ranges';
 import {
     compilePatternFromExperimentalSignal as compile,
     detectSignals
 } from 'spectra-nmr-utilities';
-import updateSignalIntegral from '../../../spectra-nmr-utilities/src/updateSignalIntegral';
 
 export default function getSignals(spectrum, range, options = {}) {
     let {
@@ -22,10 +20,10 @@ export default function getSignals(spectrum, range, options = {}) {
 
     let signals = detectSignals(spectrum, peaks, options);
 
-    if (option.compile) {
+    if (options.compile) {
         signals = compile(spectrum, signals, options);
     }
-    
+
 
     // signals = updateSignalIntegral(spectrum, signals, options);
 

@@ -794,8 +794,8 @@ export default class SD {
      */
     getVector(options = {}) {
         let {
-            from, 
-            to, 
+            from,
+            to,
             nbPoints,
             variant
         } = options;

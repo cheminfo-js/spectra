@@ -1,4 +1,3 @@
-
 require('should');
 var spectraData = require('spectra-data');
 var FS = require('fs');
@@ -9,7 +8,6 @@ function createSpectraData(filename) {
     );
     return spectrum;
 }
-
 
 describe('spectra-data examples peak picking ', function () {
     var nH = 8;
@@ -46,4 +44,3 @@ describe('spectra-data examples peak picking ', function () {
         peakPicking[4].to.should.greaterThan(1.325);
     });
 });
-

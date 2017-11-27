@@ -69,13 +69,12 @@ describe('spectra-data examples ethylvinylether/1h.jdx', () => {
     });
 
     it('Check peak-picking', () => {
-        var peakPicking = spectrum.getRanges({nH: 8, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H', keepPeaks: false, keepNbSignals: true});
+        var peakPicking = spectrum.getRanges({nH: 8, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H', keepPeaks: true, keepNbSignals: true});
         peakPicking[0].signal[0].peak.length.should.equal(4);
     });
 
     it('Check peak-picking in zone', () => {
         var peakPicking = spectrum.getRanges({nH: 8, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H', from: 1, to: 2, keepNbSignals: true});
-        peakPicking.forEach(p => console.log(p.signal[0].delta));
         peakPicking.length.should.eql(1);
         peakPicking[0].signal[0].multiplicity.should.eql('t');
     });
