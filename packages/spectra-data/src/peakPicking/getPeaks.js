@@ -37,37 +37,23 @@ export default function extractPeaks(spectrum, options = {}) {
     options = Object.assign({}, defaultOptions, options, {optimize: false, broadWidth: false});
 
     let {
+        from,
+        to,
         broadWidth,
         optimize,
         noiseLevel = Math.abs(spectrum.getNoiseLevel(options)) * (options.thresholdFactor)
     } = options;
 
-    var data = (options.hasOwnProperty('from') && options.hasOwnProperty('to')) ? spectrum.getVector(options) : spectrum.getXYData();
+    var data = (from !== undefined && to !== undefined) ? spectrum.getVector({from, to, outputX: true}) : spectrum.getSpectrumData();
 
-    var peakList = GSD.gsd(data[0], data[1], options);
+    var peakList = GSD.gsd(data.x, data.y, options);
 
     if (broadWidth) {
         peakList = GSD.post.joinBroadPeaks(peakList, {width: options.broadWidth});
     }
     if (optimize) {
-        peakList = GSD.post.optimizePeaks(peakList, data[0], data[1], options);
+        peakList = GSD.post.optimizePeaks(peakList, data.x, data.y, options);
     }
-    
-    return clearList(peakList, noiseLevel);
-}
 
-/**
- * this function remove the peaks with an intensity lower to threshold
- * @param {object} peakList - peaks
- * @param {number} threshold
- * @return {object} the clean peakList
- * @private
- */
-function clearList(peakList, threshold) {
-    for (var i = 0, l = peakList.length; i < l; i++) {
-        if (Math.abs(peakList[i].y) < threshold) {
-            peakList.splice(i, 1);
-        }
-    }
-    return peakList;
+    return peakList.filter((p) => p.y >= noiseLevel);
 }
