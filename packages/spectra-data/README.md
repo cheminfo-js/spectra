@@ -7,7 +7,7 @@
 
 spectra-data project
 
-## [Documentation](https://cheminfo-js.github.com/spectra-data/)
+## [Documentation](https://cheminfo-js.github.io/spectra/packages/spectra-data/docs/)
 
 ## Development
 

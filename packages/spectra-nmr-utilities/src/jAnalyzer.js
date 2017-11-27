@@ -126,6 +126,12 @@ export default {
     }
 };
 
+/**
+ * @private
+ * update the signal
+ * @param {*} signal 
+ * @param {*} Jc 
+ */
 function updateSignal(signal, Jc) {
     //Update the limits of the signal
     var peaks = signal.peaksComp;//Always in Hz
@@ -273,6 +279,7 @@ function getNextCombination(ranges, value) {
  * to the multiplet.
  * @param {Array} peaks Array of objects with peaks information {intensity}
  * @return {{values: Array, currentIndex: Array, active: number}}
+ * @private
  */
 function getRanges(peaks) {
     var ranges = new Array(peaks.length);
@@ -483,6 +490,7 @@ function error(value) {
     return maxError;
 }
 /**
+ * @private
  * 2 stages normalizarion of the peaks heights to Math.pow(2,n).
  * Creates a new mask with the peaks that could contribute to the multiplete
  * @param {object} signal
@@ -522,6 +530,7 @@ function normalize(signal, n) {
 }
 
 /**
+ * @private
  * Calculates the chemical shift as the weighted sum of the peaks
  * @param {Array} peaks
  * @param {Array} mask

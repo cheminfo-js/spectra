@@ -1,4 +1,14 @@
 import normalizeOptions from './normalizeOptions';
+/**
+ * construct a bidimensional spectrum from 1D predictions.
+ * @param {Array} dim1 - 1D prediction 
+ * @param {Array} dim2 - 1D prediction
+ * @param {string|Molecule} molecule - could be a string of molfile, smile or Molecule instance.
+ * @param {object} options - object options for getAllpPaths function from {@link https://github.com/cheminfo-js/openchemlib-extended OCLE}.
+ * @param {object=} [options.OCLE] - to recicle the OCLE object for prediction.
+ * @return {Array<object>} paths - the path information of the bidimensional spectrum.
+ */
+
 
 export default function twoD(dim1, dim2, molecule, options) {
     [molecule, options] = normalizeOptions(molecule, options);

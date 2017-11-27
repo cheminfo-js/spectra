@@ -335,7 +335,7 @@ export default class SD {
      * @param {number} i sub-spectrum Default:activeSpectrum
      * @return {*[]}
      */
-    getXYData(i) {
+    getXYData(i = this.activeElement) {
         return [this.getXData(i), this.getYData(i)];
     }
 
@@ -388,13 +388,13 @@ export default class SD {
     /**
      * Get the noise threshold level of the current spectrum. It uses median instead of the mean
      * @param {object} options
-     * @param {number} options.from - lower limit in ppm to compute noise level
-     * @param {number} options.to - upper limit in ppm to compute noise level
+     * @param {number} [options.from] - lower limit in ppm to compute noise level
+     * @param {number} [options.to] - upper limit in ppm to compute noise level
      * @return {number}
      */
     getNoiseLevel(options = {}) {
         let {from, to} = options;
-        let data = (from !== undefined && to !== undefined) ? this.getVector({from, to, outputX: false}) : this.getYData();
+        let data = (from !== undefined && to !== undefined) ? this.getVector({from, to}) : this.getYData();
         let median = getMedian(data);
         return median * this.getNMRPeakThreshold(this.getNucleus(1));
     }
@@ -567,6 +567,7 @@ export default class SD {
      */
     fill(from, to, value) {
         var start, end, x, y;
+        var currentActiveElement = this.getActiveElement();
         for (var i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
 
@@ -584,11 +585,12 @@ export default class SD {
                 y.splice(start, end - start);
                 x.splice(start, end - start);
             } else {
-                for (i = start; i <= end; i++) {
-                    y[i] = value;
+                for (let j = start; j <= end; j++) {
+                    y[j] = value;
                 }
             }
         }
+        this.setActiveElement(currentActiveElement);
     }
 
     /**
@@ -783,9 +785,11 @@ export default class SD {
 
     /**
      * Returns a equally spaced vector within the given window.
-     * @param {number} from - one limit in spectrum units
-     * @param {number} to - one limit in spectrum units
-     * @param {number} nPoints - number of points to return(!!!sometimes it is not possible to return exactly the required nbPoints)
+     * @param {object} options
+     * @param {number} [options.from = firstX] - one limit in spectrum units
+     * @param {number} [options.to = lastX] - one limit in spectrum units
+     * @param {number} [options.nbPoints] - number of points to return(!!!sometimes it is not possible to return exactly the required nbPoints)
+     * @param {string} [options.variant = 'slot'] - variant of the algorithm to get equally spaced data if nbPoints is an entry.
      * @return {Array}
      */
     getVector(options = {}) {
@@ -807,17 +811,25 @@ export default class SD {
     /**
      * In place modification of the data to usually reduce the size
      * This will convert the data in equally spaces X.
-     * @param {number} from - one limit in spectrum units
-     * @param {number} to - one limit in spectrum units
      * @param {object} options
-     * @param {number} options.nbPoints - number of points to return(!!!sometimes it is not possible to return exactly the required nbPoints)
+     * @param {number} [options.from] - one limit in spectrum units
+     * @param {number} [options.to] - one limit in spectrum units
+     * @param {number} [options.nbPoints] - number of points to return(!!!sometimes it is not possible to return exactly the required nbPoints)
      * @return {this}
      */
-    reduceData(from, to, options = {}) {
+    reduceData(options = {}) {
+
         if (!this.isDataClassXY()) {
             throw Error('reduceData can only apply on equidistant data');
         }
 
+        let {
+            from,
+            to,
+            nbPoints
+        } = options;
+
+        let currentActiveElement = this.activeElement;
         for (let i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
             if (this.getXUnits().toLowerCase() !== 'hz') {
@@ -830,9 +842,11 @@ export default class SD {
                     } else if (from > to) {
                         [from, to] = [to, from];
                     }
-                    y = ArrayUtils.getEquallySpacedData(x, y, {from: from, to: to, numberOfPoints: options.nbPoints});
+
+                    y = ArrayUtils.getEquallySpacedData(x, y, {from, to, numberOfPoints: nbPoints});
 
                     let step = (to - from) / (y.length - 1);
+
                     x = new Array(y.length).fill(from);
                     for (let j = 0; j < y.length; j++) {
                         x[j] += step * j;
@@ -843,15 +857,14 @@ export default class SD {
                     this.setFirstX(x[0]); this.setLastX(x[x.length - 1]);
                     this.sd.spectra[i].nbPoints = y.length;
                 } else {
-                    var xyData = this.getPointsInWindow(from, to);
-                    this.sd.spectra[i].data[0].x = xyData[0];
-                    this.sd.spectra[i].data[0].y = xyData[1];
-                    this.setFirstX(xyData[0][0]); this.setLastX(xyData[0][xyData[0].length - 1]);
-                    this.sd.spectra[i].nbPoints = xyData[1].length;
+                    var xyData = this.getPointsInWindow(from, to, {outputX: true});
+                    this.sd.spectra[i].data[0] = xyData;
+                    this.setFirstX(xyData.x[0]); this.setLastX(xyData.x[xyData.x.length - 1]);
+                    this.sd.spectra[i].nbPoints = xyData.y.length;
                 }
             }
         }
-        this.setActiveElement(0);
+        this.setActiveElement(currentActiveElement);
         return this;
     }
 
@@ -861,8 +874,9 @@ export default class SD {
      * @param {number} from - index of a limit of the desired window.
      * @param {number} to - index of a limit of the desired window
      * @param {object} options
-     * @param {boolean} options.withoutX
-     * @return {Array} XYarray/Yarray data of the desired window.
+     * @param {boolean} [options.outputX = false] - if true the output will be {x, y}.
+     * @return {Array | object} - Array / {x, y} data of the desired window.
+     * @private
      */
     getPointsInWindow(from, to, options = {}) {
         if (!this.isDataClassXY()) {
@@ -882,7 +896,7 @@ export default class SD {
             var data = this.getSpectraDataY().slice(indexOfFrom, indexOfTo + 1);
             if (outputX) {
                 var x = this.getSpectraDataX().slice(indexOfFrom, indexOfTo + 1);
-                data = [x, data];
+                data = {x, y: data};
             }
             return data;
         } else {

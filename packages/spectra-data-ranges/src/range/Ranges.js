@@ -20,11 +20,11 @@ export default class Ranges extends Array {
     }
 
     /**
-     * This function return a Range instance from predictions
-     * @param {object} signals - predictions of a spin system
-     * @param {object} options - options object
-     * @param {number} [options.lineWidth] - spectral line width
-     * @param {number} [options.frequency] - frequency to determine the [from, to] of a range
+     * This function return a Range instance from predictions.
+     * @param {object} signals - predictions from a spin system.
+     * @param {object} options - options object.
+     * @param {number} [options.lineWidth] - spectral line width.
+     * @param {number} [options.frequency] - frequency to determine the [from, to] of a range.
      * @return {Ranges}
      */
     static fromSignals(signals, options) {
@@ -98,12 +98,12 @@ export default class Ranges extends Array {
 
 
     /**
-     * TODO it is the same code that updateIntegrals in Range class
      * This function normalize or scale the integral data
      * @param {object} options - object with the options
      * @param {boolean} [options.sum] - anything factor to normalize the integrals, Similar to the number of proton in the molecule for a nmr spectrum
      * @param {number} [options.factor] - Factor that multiply the intensities, if [options.sum] is defined it is override
      * @return {Ranges}
+     * * TODO it is the same code that updateIntegrals in Range class
      */
     updateIntegrals(options = {}) {
         var factor = options.factor || 1;
@@ -136,7 +136,7 @@ export default class Ranges extends Array {
     }
 
     /**
-     * This function return the peaks of a Ranges instance into an array
+     * This function return an Array of peaks.
      * @return {Array}
      */
     getPeakList() {
@@ -155,14 +155,23 @@ export default class Ranges extends Array {
     }
 
     /**
-     * This function return format for each range
-     * @param {object} options - options object for toAcs function
-     * @return {*}
+     * This function return ACS format for each range.
+     * @param {object} options - options object for toAcs function.
+     * @param {boolean} [options.ascending = true] - order to sort the chemical shift.
+     * @param {string} [options.format = 'AIMJ'] or when 2D data is collected the default format may be "IMJA"
+     * @param {string} [options.deltaSeparator = ', ']
+     * @param {string} [options.detailSeparator = ', ']
+     * @return {string}
      */
     getACS(options) {
         return acs(this, options);
     }
 
+    /**
+     * Makes a array of object with multiplicity, delta and integral
+     * @param {object} [options = {}] - options for joinCouplings function.
+     * @return {Array<object>}
+     */
     toIndex(options = {}) {
         var index = [];
         if (options.joinCouplings) {
@@ -194,19 +203,24 @@ export default class Ranges extends Array {
 
     /**
      * Joins coupling constants
-     * @param {object} [options]
-     * @param {number} [options.tolerance=0.05]
+     * @param {object} [options = {}]
+     * @param {number} [options.tolerance=0.05] - tolerance to join a coupling
      */
     joinCouplings(options = {}) {
-        this.forEach(range => {
+        this.forEach((range) => {
             range.signal.forEach(signal => {
                 signal.multiplicity = utils.joinCoupling(signal, options.tolerance);
             });
         });
     }
 
+    /**
+     * Update the multiplicity of the signals from J couplings.
+     * @param {object} [options = {}]
+     * @param {number} [options.tolerance = 0.05] - tolerance to join a coupling
+     */
     updateMultiplicity(options = {}) {
-        this.forEach(range => {
+        this.forEach((range) => {
             if (range.signal) {
                 let signal = range.signal;
                 if (signal.length === 1) {
@@ -218,6 +232,10 @@ export default class Ranges extends Array {
         });
     }
 
+    /**
+     * Return a copy of the current Ranges.
+     * @return {Range}
+     */
     clone() {
         let newRanges = JSON.parse(JSON.stringify(this));
         return new Ranges(newRanges);

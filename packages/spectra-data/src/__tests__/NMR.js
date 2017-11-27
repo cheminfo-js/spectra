@@ -80,9 +80,9 @@ describe('spectra-data examples ethylvinylether/1h.jdx', () => {
         peakPicking[0].signal[0].multiplicity.should.eql('t');
     });
 
-    // it('getVector', () => {
-    //     spectrum.getVector({from: 0, to: 10, nbPoints: 4 * 1024).length.should.equal(4 * 1024);
-    // });
+    it('getVector', () => {
+        spectrum.getVector({from: 0, to: 10, nbPoints: 4 * 1024}).length.should.equal(4 * 1024);
+    });
 
     it('updateIntegrals', () => {
         var nH = 8;
