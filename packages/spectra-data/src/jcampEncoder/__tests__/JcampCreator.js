@@ -21,8 +21,8 @@ describe('toJcamp spectra-data examples', function () {
     var spectrum1 = Data.NMR.fromJcamp(createdJcamp1, {fastParse: false});
 
     it('getVector', function () {
-        spectrum0.getVector(0.0, 10, 4 * 1024).length.should.equal(4 * 1024);
-        spectrum1.getVector(0.0, 10, 4 * 1024).length.should.equal(4 * 1024);
+        spectrum0.getVector({from: 0.0, to: 10, nbPoints: 4 * 1024}).length.should.equal(4 * 1024);
+        spectrum1.getVector({from: 0.0, to: 10, nbPoints: 4 * 1024}).length.should.equal(4 * 1024);
     });
 
     it('getNucleus', function () {

@@ -36,25 +36,26 @@ const defaultOptions = {
 export default function extractPeaks(spectrum, options = {}) {
     options = Object.assign({}, defaultOptions, options, {optimize: false, broadWidth: false});
 
-    if (!options.noiseLevel) {
-        options.noiseLevel = Math.abs(spectrum.getNoiseLevel()) * (options.thresholdFactor);
-    }
+    let {
+        from,
+        to,
+        broadWidth,
+        optimize,
+        noiseLevel = Math.abs(spectrum.getNoiseLevel(options)) * (options.thresholdFactor)
+    } = options;
 
-    var data = spectrum.getXYData();
+    var data = (from !== undefined && to !== undefined) ? spectrum.getVector({from, to}) : spectrum.getSpectrumData();
 
-    if (options.from && options.to) {
-        data = spectrum.getVector(options.from, options.to);
-    }
-    var peakList = GSD.gsd(data[0], data[1], options);
+    var peakList = GSD.gsd(data.x, data.y, options);
 
-    if (options.broadWidth) {
+    if (broadWidth) {
         peakList = GSD.post.joinBroadPeaks(peakList, {width: options.broadWidth});
     }
-    if (options.optimize) {
-        peakList = GSD.post.optimizePeaks(peakList, data[0], data[1], options);
+    if (optimize) {
+        peakList = GSD.post.optimizePeaks(peakList, data.x, data.y, options);
     }
 
-    return clearList(peakList, options.noiseLevel);
+    return clearList(peakList, noiseLevel);
 }
 
 /**
