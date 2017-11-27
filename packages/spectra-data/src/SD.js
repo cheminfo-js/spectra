@@ -394,7 +394,7 @@ export default class SD {
      */
     getNoiseLevel(options = {}) {
         let {from, to} = options;
-        let data = (from !== undefined && to !== undefined) ? this.getVector({from, to, withoutX: true}) : this.getYData();
+        let data = (from !== undefined && to !== undefined) ? this.getVector({from, to}) : this.getYData();
         let median = getMedian(data);
         return median * this.getNMRPeakThreshold(this.getNucleus(1));
     }
@@ -566,7 +566,7 @@ export default class SD {
      */
     fill(from, to, value) {
         var start, end, x, y;
-        let activeElement = this.getActiveElement();
+        var currentActiveElement = this.getActiveElement();
         for (var i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
 
@@ -589,7 +589,7 @@ export default class SD {
                 }
             }
         }
-        this.setActiveElement(activeElement);
+        this.setActiveElement(currentActiveElement);
     }
 
     /**
@@ -856,7 +856,7 @@ export default class SD {
                     this.setFirstX(x[0]); this.setLastX(x[x.length - 1]);
                     this.sd.spectra[i].nbPoints = y.length;
                 } else {
-                    var xyData = this.getPointsInWindow(from, to, options);
+                    var xyData = this.getPointsInWindow(from, to, {outputX: true});
                     this.sd.spectra[i].data[0] = xyData;
                     this.setFirstX(xyData.x[0]); this.setLastX(xyData.x[xyData.x.length - 1]);
                     this.sd.spectra[i].nbPoints = xyData.y.length;
@@ -873,13 +873,17 @@ export default class SD {
      * @param {number} from - index of a limit of the desired window.
      * @param {number} to - index of a limit of the desired window
      * @param {object} options
-     * @param {boolean} options.withoutX
-     * @return {Array} XYarray/Yarray data of the desired window.
+     * @param {boolean} [options.outputX = false] - if true the output will be {x, y}.
+     * @return {Array | object} - Array / {x, y} data of the desired window.
+     * @private
      */
     getPointsInWindow(from, to, options = {}) {
         if (!this.isDataClassXY()) {
             throw Error('getPointsInWindow can only apply on equidistant data');
         }
+        var {
+            outputX = false
+        } = options;
 
         var indexOfFrom = this.unitsToArrayPoint(from);
         var indexOfTo = this.unitsToArrayPoint(to);
@@ -889,7 +893,7 @@ export default class SD {
         }
         if (indexOfFrom >= 0 && indexOfTo <= this.getNbPoints() - 2) {
             var data = this.getSpectraDataY().slice(indexOfFrom, indexOfTo + 1);
-            if (!options.withoutX) {
+            if (outputX) {
                 var x = this.getSpectraDataX().slice(indexOfFrom, indexOfTo + 1);
                 data = {x, y: data};
             }

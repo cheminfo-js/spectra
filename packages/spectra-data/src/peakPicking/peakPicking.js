@@ -44,7 +44,7 @@ export default function extractPeaks(spectrum, options = {}) {
         noiseLevel = Math.abs(spectrum.getNoiseLevel(options)) * (options.thresholdFactor)
     } = options;
 
-    var data = (from !== undefined && to !== undefined) ? spectrum.getVector({from, to}) : spectrum.getSpectrumData();
+    var data = (from !== undefined && to !== undefined) ? spectrum.getVector({from, to, outputX: true}) : spectrum.getSpectrumData();
 
     var peakList = GSD.gsd(data.x, data.y, options);
 
