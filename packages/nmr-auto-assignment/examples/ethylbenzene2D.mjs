@@ -29,7 +29,10 @@ async function start() {
     //if(molecule instanceof Molecule)
     var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, "$1") * 1;
     console.log(molecule.getMolecularFormula().formula )
-    await predictor.fetchProton();
+    const db = JSON.parse(loadFile('/packages/nmr-predictor/data/h1.json'));
+    //console.log(db)
+    predictor.setDb(db, 'proton', 'proton');
+    //await predictor.fetchProton();
     var spectrum = createSpectraData("/data-test/ethylvinylether/1h.jdx");
     //var spectrum = createSpectraData("/data-test/ethylbenzene/h1_0.jdx");
     //var cosy = createSpectraData2D("/data-test/ethylbenzene/cosy_0.jdx");
@@ -48,34 +51,6 @@ async function start() {
         range.signalID = "1H_" + index;
     })
 
-    //var cosyZones = cosy.getZones({thresholdFactor: 1.5});
-
-//console.log(JSON.stringify(peakPicking));
-
-//The input structure should fit the ELN JSON format.
-    /*
-     var result = autoassigner({general: {molfile: molecule.toMolfileV3()},
-     spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")},
-     {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}]}},
-     {minScore: 0.8, maxSolutions: 3000, errorCS: 0, predictor: predictor, condensed: true, OCLE: OCLE}
-     );
-     /*
-     console.log(result.getAssignments().length);
-     console.log(result.getAssignments()[0]);
-     console.log(result.getAssignments()[1]);
-
-     result.setAssignmentOnRanges(peakPicking, 0);
-     //console.log(JSON.stringify(peakPicking));
-
-     var result = autoassigner({general: {molfile: molecule.toMolfileV3()},
-     spectra: {nmr: [{nucleus: "H", experiment: "1d", range: peakPicking, solvent: spectrum.getParamString(".SOLVENT NAME", "unknown")},
-     {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}]}},
-     {minScore: 0.9, maxSolutions: 3000, errorCS: 0, predictor: predictor, condensed: true, OCLE: OCLE}
-     ).getAssignments();
-     console.log(result.length);
-     console.log(result[0]);
-     console.log(result[result.length-1]);
-     */
     console.log('start assignment');
     var result = autoassigner({
             general: {molfile: molecule.toMolfileV3()},
@@ -89,15 +64,16 @@ async function start() {
             }
         },
         {
-            minScore: 1,
+            minScore: 0.8,
             maxSolutions: 3000,
-            errorCS: 0,
+            errorCS: 1,
             predictor: predictor,
             condensed: true,
             OCLE: OCLE,
-            levels: [5, 4, 3]
+            levels: [6, 5, 4, 3, 2]
         }
     );
+    console.log(result.getAssignments())
     console.log(result.getAssignments().length)
 }
 start();

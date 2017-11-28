@@ -8,7 +8,7 @@ export default function queryByHose(molecule, db, options) {
         atomLabel = 'H',
         use = null,
         algorithm = 0,
-        levels = [4, 3, 2, 1, 0]
+        levels = [5, 4, 3, 2, 1, 0]
     } = options;
 
     levels.sort(numSort.desc);
@@ -57,7 +57,7 @@ export default function queryByHose(molecule, db, options) {
         } else if (use === 'mean') {
             atom.delta = res.mean;
         }
-        atom.integral = 1;
+        //atom.integral = 1;
         atom.atomIDs = [atomNumber];
         atom.ncs = res.ncs;
         atom.std = res.std;
@@ -97,6 +97,10 @@ export default function queryByHose(molecule, db, options) {
                 }
             }
         }
+    }
+
+    for (let j = toReturn.length - 1; j >= 0; j--) {
+        toReturn[j].nbAtoms =  toReturn[j].atomIDs.length;
     }
     return toReturn;
 }

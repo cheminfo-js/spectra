@@ -59,7 +59,7 @@ function assignmentFromPeakPicking(entry, options) {
         }
     });
 
-
+    //console.log(JSON.stringify(prediction))
     const spinSystem = new SpinSystem(spectra, prediction, options);
 
     //console.log(JSON.stringify(spinSystem));
@@ -104,6 +104,7 @@ function predictByExperiment(molecule, nmr, options) {
         return null;
         //TODO Add other 2D experiments
     }
+
 }
 
 function getError(prediction, param) {
