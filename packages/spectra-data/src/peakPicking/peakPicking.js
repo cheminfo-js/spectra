@@ -21,7 +21,6 @@ import GSD from 'ml-gsd';
 
 const defaultOptions = {
     thresholdFactor: 1,
-    optimize: false,
     minMaxRatio: 0.01,
     broadRatio: 0.00025,
     smoothY: true,
@@ -55,21 +54,5 @@ export default function extractPeaks(spectrum, options = {}) {
         peakList = GSD.post.optimizePeaks(peakList, data.x, data.y, options);
     }
 
-    return clearList(peakList, noiseLevel);
-}
-
-/**
- * this function remove the peaks with an intensity lower to threshold
- * @param {object} peakList - peaks
- * @param {number} threshold
- * @return {object} the clean peakList
- * @private
- */
-function clearList(peakList, threshold) {
-    for (var i = 0, l = peakList.length; i < l; i++) {
-        if (Math.abs(peakList[i].y) < threshold) {
-            peakList.splice(i, 1);
-        }
-    }
-    return peakList;
+    return peakList.filter((p) => p.y >= noiseLevel);
 }
