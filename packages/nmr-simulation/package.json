@@ -1,6 +1,6 @@
 {
   "name": "nmr-simulation",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Simulate NMR spectra from spin systems",
   "main": "lib/index.js",
   "module": "src/index.js",
@@ -35,6 +35,6 @@
     "num-sort": "^1.0.0"
   },
   "devDependencies": {
-    "nmr-predictor": "^1.1.4"
+    "nmr-predictor": "^1.1.5"
   }
 }
