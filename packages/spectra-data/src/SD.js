@@ -564,39 +564,39 @@ export default class SD {
      * @param {number} value - value with which to fill
      */
     fill(from, to, value = 0) {
-        var start, end, y;
+
+        if (from > to) {
+            [from, to] = [to, from];
+        }
+
         var currentActiveElement = this.getActiveElement();
         for (var i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
 
-            let currentFirst = this.getX(0);
-            let currentLast = this.getX(this.getNbPoints() - 1);
+            let minX = this.getFirstX();
+            let maxX = this.getLastX();
 
-            if (from > to) [from, to] = [to, from];
-            if (this.getDeltaX() < 0) [currentFirst, currentLast] = [currentLast, currentFirst];
+            if (this.getDeltaX()) [minX, maxX] = [maxX, minX];
 
-            from = Math.max(from, currentFirst);
-            to = Math.min(to, currentLast);
-
-            if (to === from) return;
-/*
-            if (to - from > currentLast - currentFirst) {
-                continue;
-            } else if (from > currentLast || to < currentFirst) {
-                continue;
+            if (from > maxX || to < minX) {
+                return;
             }
-*/
-            start = this.unitsToArrayPoint(from);
-            end = this.unitsToArrayPoint(to);
+
+            from = Math.max(from, minX);
+            to = Math.min(to, maxX);
+
+            let start = this.unitsToArrayPoint(from);
+            let end = this.unitsToArrayPoint(to);
 
             if (start > end) {
                 [start, end] = [end, start];
             }
 
-            y = this.getYData();
+            let y = this.getYData();
             for (let j = start; j <= end; j++) {
                 y[j] = value;
             }
+            this.updateFirstLastY();
         }
         this.setActiveElement(currentActiveElement);
     }
