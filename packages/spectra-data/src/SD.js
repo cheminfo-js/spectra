@@ -575,14 +575,19 @@ export default class SD {
             if (from > to) [from, to] = [to, from];
             if (this.getDeltaX() < 0) [currentFirst, currentLast] = [currentLast, currentFirst];
 
+            from = Math.max(from, currentFirst);
+            to = Math.min(to, currentLast);
+
+            if (to === from) return;
+/*
             if (to - from > currentLast - currentFirst) {
                 continue;
             } else if (from > currentLast || to < currentFirst) {
                 continue;
             }
-
-            start = from > currentFirst ? this.unitsToArrayPoint(from) : this.unitsToArrayPoint(currentFirst);
-            end = to < currentLast ? this.unitsToArrayPoint(to) : this.unitsToArrayPoint(currentLast);
+*/
+            start = this.unitsToArrayPoint(from);
+            end = this.unitsToArrayPoint(to);
 
             if (start > end) {
                 [start, end] = [end, start];
@@ -603,8 +608,8 @@ export default class SD {
      * @param {number} to - one limit the spectrum to suppress
      */
     suppressZone(from, to) {
-        var start, end, x, y;
-        var currentActiveElement = this.getActiveElement();
+        let start, end, x, y;
+        let currentActiveElement = this.getActiveElement();
         for (var i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
 
