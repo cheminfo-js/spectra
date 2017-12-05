@@ -620,43 +620,53 @@ export default class SD {
         let currentActiveElement = this.getActiveElement();
         for (var zone of zones) {
             if (zone.active !== false) {
-                let from=zone.from;
-                let to=zone.to;
+                let {
+                    from,
+                    to
+                } = zone;
+
+                if (from === to) {
+                    return;
+                } else if (from > to) {
+                    [from, to] = [to, from];
+                }
+
                 let start, end, x, y;
                 for (var i = 0; i < this.getNbSubSpectra(); i++) {
                     this.setActiveElement(i);
-        
+
                     x = this.getXData();
                     y = this.getYData();
-        
-                    let currentFirst = this.getX(0);
-                    let currentLast = this.getX(this.getNbPoints() - 1);
-        
-                    if (from > to) [from, to] = [to, from];
-                    if (this.getDeltaX() < 0) [currentFirst, currentLast] = [currentLast, currentFirst];
-        
-                    if (to - from > currentLast - currentFirst) {
-                        continue;
-                    } else if (from > currentLast || to < currentFirst) {
-                        continue;
+
+                    let minX = this.getFirstX();
+                    let maxX = this.getLastX();
+
+                    if (this.getDeltaX()) [minX, maxX] = [maxX, minX];
+
+                    if (from > maxX || to < minX) {
+                        return;
                     }
-        
-                    start = from > currentFirst ? this.unitsToArrayPoint(from) : this.unitsToArrayPoint(currentFirst);
-                    end = to < currentLast ? this.unitsToArrayPoint(to) : this.unitsToArrayPoint(currentLast);
-        
+
+                    from = Math.max(from, minX);
+                    to = Math.min(to, maxX);
+
+                    start = this.unitsToArrayPoint(from);
+                    end = this.unitsToArrayPoint(to);
+
                     if (start > end) {
                         [start, end] = [end, start];
                     }
-        
+
                     y.splice(start, end - start + 1);
                     x.splice(start, end - start + 1);
-                };
+
+                    this.updateFirstLastX();
+                    this.updateFirstLastY();
+                    this.setDataClass(DATACLASS_PEAK);
+                }
             }
         }
         this.setActiveElement(currentActiveElement);
-        this.updateFirstLastX();
-        this.updateFirstLastY();
-        this.setDataClass(DATACLASS_PEAK);
     }
 
 
