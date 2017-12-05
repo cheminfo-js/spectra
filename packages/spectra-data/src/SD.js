@@ -607,41 +607,8 @@ export default class SD {
      * @param {number} from - one limit the spectrum to suppress
      * @param {number} to - one limit the spectrum to suppress
      */
-    suppressZone(from, to) {
-        let start, end, x, y;
-        let currentActiveElement = this.getActiveElement();
-        for (var i = 0; i < this.getNbSubSpectra(); i++) {
-            this.setActiveElement(i);
-
-            x = this.getXData();
-            y = this.getYData();
-
-            let currentFirst = this.getX(0);
-            let currentLast = this.getX(this.getNbPoints() - 1);
-
-            if (from > to) [from, to] = [to, from];
-            if (this.getDeltaX() < 0) [currentFirst, currentLast] = [currentLast, currentFirst];
-
-            if (to - from > currentLast - currentFirst) {
-                continue;
-            } else if (from > currentLast || to < currentFirst) {
-                continue;
-            }
-
-            start = from > currentFirst ? this.unitsToArrayPoint(from) : this.unitsToArrayPoint(currentFirst);
-            end = to < currentLast ? this.unitsToArrayPoint(to) : this.unitsToArrayPoint(currentLast);
-
-            if (start > end) {
-                [start, end] = [end, start];
-            }
-
-            y.splice(start, end - start + 1);
-            x.splice(start, end - start + 1);
-        }
-        this.setActiveElement(currentActiveElement);
-        this.updateFirstLastX();
-        this.updateFirstLastY();
-        this.setDataClass(DATACLASS_PEAK);
+    suppressRange(from, to) {
+        this.suppressRanges([{from, to}]);
     }
 
     /**
@@ -649,10 +616,47 @@ export default class SD {
      * Returns a spectraData of type PEAKDATA without peaks in the given region
      * @param {Array} zones - Array with from-to limits of the spectrum to suppress.
      */
-    suppressZones(zones = []) {
-        for (var i = 0; i < zones.length; i++) {
-            this.suppressZone(zones[i].from, zones[i].to);
+    suppressRanges(zones = []) {
+        let currentActiveElement = this.getActiveElement();
+        for (var zone of zones) {
+            if (zone.active !== false) {
+                let from=zone.from;
+                let to=zone.to;
+                let start, end, x, y;
+                for (var i = 0; i < this.getNbSubSpectra(); i++) {
+                    this.setActiveElement(i);
+        
+                    x = this.getXData();
+                    y = this.getYData();
+        
+                    let currentFirst = this.getX(0);
+                    let currentLast = this.getX(this.getNbPoints() - 1);
+        
+                    if (from > to) [from, to] = [to, from];
+                    if (this.getDeltaX() < 0) [currentFirst, currentLast] = [currentLast, currentFirst];
+        
+                    if (to - from > currentLast - currentFirst) {
+                        continue;
+                    } else if (from > currentLast || to < currentFirst) {
+                        continue;
+                    }
+        
+                    start = from > currentFirst ? this.unitsToArrayPoint(from) : this.unitsToArrayPoint(currentFirst);
+                    end = to < currentLast ? this.unitsToArrayPoint(to) : this.unitsToArrayPoint(currentLast);
+        
+                    if (start > end) {
+                        [start, end] = [end, start];
+                    }
+        
+                    y.splice(start, end - start + 1);
+                    x.splice(start, end - start + 1);
+                };
+            }
         }
+        this.setActiveElement(currentActiveElement);
+        this.updateFirstLastX();
+        this.updateFirstLastY();
+        this.setDataClass(DATACLASS_PEAK);
     }
 
 
