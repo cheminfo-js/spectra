@@ -559,34 +559,38 @@ export default class SD {
     }
     /**
      * Fills a zone of the spectrum with the given value.
-     * If value is undefined it will suppress the elements
      * @param {number} from - one limit the spectrum to fill
      * @param {number} to - one limit the spectrum to fill
      * @param {number} value - value with which to fill
      */
-    fill(from, to, value) {
-        var start, end, x, y;
+    fill(from, to, value = 0) {
+        var start, end, y;
         var currentActiveElement = this.getActiveElement();
         for (var i = 0; i < this.getNbSubSpectra(); i++) {
             this.setActiveElement(i);
 
-            x = this.getXData();
-            y = this.getYData();
+            let currentFirst = this.getX(0);
+            let currentLast = this.getX(this.getNbPoints() - 1);
 
-            start = this.unitsToArrayPoint(from);
-            end = this.unitsToArrayPoint(to);
+            if (from > to) [from, to] = [to, from];
+            if (this.getDeltaX() < 0) [currentFirst, currentLast] = [currentLast, currentFirst];
+
+            if (to - from > currentLast - currentFirst) {
+                continue;
+            } else if (from > currentLast || to < currentFirst) {
+                continue;
+            }
+
+            start = from > currentFirst ? this.unitsToArrayPoint(from) : this.unitsToArrayPoint(currentFirst);
+            end = to < currentLast ? this.unitsToArrayPoint(to) : this.unitsToArrayPoint(currentLast);
 
             if (start > end) {
                 [start, end] = [end, start];
             }
 
-            if (typeof value !== 'number') {
-                y.splice(start, end - start);
-                x.splice(start, end - start);
-            } else {
-                for (let j = start; j <= end; j++) {
-                    y[j] = value;
-                }
+            y = this.getYData();
+            for (let j = start; j <= end; j++) {
+                y[j] = value;
             }
         }
         this.setActiveElement(currentActiveElement);
@@ -599,7 +603,39 @@ export default class SD {
      * @param {number} to - one limit the spectrum to suppress
      */
     suppressZone(from, to) {
-        this.fill(from, to);
+        var start, end, x, y;
+        var currentActiveElement = this.getActiveElement();
+        for (var i = 0; i < this.getNbSubSpectra(); i++) {
+            this.setActiveElement(i);
+
+            x = this.getXData();
+            y = this.getYData();
+
+            let currentFirst = this.getX(0);
+            let currentLast = this.getX(this.getNbPoints() - 1);
+
+            if (from > to) [from, to] = [to, from];
+            if (this.getDeltaX() < 0) [currentFirst, currentLast] = [currentLast, currentFirst];
+
+            if (to - from > currentLast - currentFirst) {
+                continue;
+            } else if (from > currentLast || to < currentFirst) {
+                continue;
+            }
+
+            start = from > currentFirst ? this.unitsToArrayPoint(from) : this.unitsToArrayPoint(currentFirst);
+            end = to < currentLast ? this.unitsToArrayPoint(to) : this.unitsToArrayPoint(currentLast);
+
+            if (start > end) {
+                [start, end] = [end, start];
+            }
+
+            y.splice(start, end - start + 1);
+            x.splice(start, end - start + 1);
+        }
+        this.setActiveElement(currentActiveElement);
+        this.updateFirstLastX();
+        this.updateFirstLastY();
         this.setDataClass(DATACLASS_PEAK);
     }
 
