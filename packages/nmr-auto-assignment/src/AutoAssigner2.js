@@ -66,7 +66,11 @@ class Assignment {
                                 this.expandMap[sourceID].push(targetID);
                             } else {
                                 let tmp = (target.from + target.to) / 2;
-                                if (Math.abs(source.delta - tmp) < (source.error
+                                let error = errorAbs;
+                                if(source.error)
+                                    error = Math.max(error, source.error);
+                                
+                                if (Math.abs(source.delta - tmp) < (error
                                     + Math.abs(target.from - target.to)) / 2 + errorAbs) {
                                     this.expandMap[sourceID].push(targetID);
                                 }
@@ -209,7 +213,8 @@ class Assignment {
             let total = targetToSource.reduce((sum, value) => {
                 return sum + this.spinSystem.sourcesConstrains[value].atomIDs.length;
             }, 0);
-            if (Math.abs(total - this.spinSystem.targetsConstains[key].integral) >= 1) {
+
+            if (total - this.spinSystem.targetsConstains[key].integral >= 0.5) {
                 return 0;
             }
         }
@@ -225,6 +230,9 @@ class Assignment {
                     count++;
                     let source = this.spinSystem.sourcesConstrains[this.sourcesIDs[index]];
                     let target = this.spinSystem.targetsConstains[targetID];
+                    let error = this.errorCS;
+                    if(source.error)
+                        error = Math.max(source.error, this.errorCS);
                     if (typeof source.delta === 'undefined') { //Chemical shift is not a restriction
                         chemicalShiftScore += 1;
                     } else {
@@ -234,8 +242,8 @@ class Assignment {
                         if (diff < widthSignal) {
                             chemicalShiftScore += 1;
                         } else {
-                            diff = Math.abs(diff - widthSignal);
-                            chemicalShiftScore += (-0.25 / this.errorCS) * diff + 1;
+                            diff = Math.abs(diff - widthSignal);               
+                            chemicalShiftScore += (-0.25 / error) * diff + 1;
                         }
                     }
                 }

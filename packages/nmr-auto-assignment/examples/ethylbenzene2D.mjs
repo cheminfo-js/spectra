@@ -22,6 +22,7 @@ function createSpectraData2D(filename, label, data) {
 function loadFile(filename) {
     return FS.readFileSync(process.cwd() + filename).toString();
 }
+
 async function start() {
     //var molecule = OCLE.Molecule.fromSmiles("CCc1ccccc1");
     var molecule = OCLE.Molecule.fromSmiles("C(=C)OCC");

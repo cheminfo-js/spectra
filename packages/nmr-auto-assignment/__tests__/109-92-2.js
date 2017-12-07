@@ -47,8 +47,8 @@ describe('Auto-assignment 109-92-2', function () {
     const db = JSON.parse(loadFile('/../../nmr-predictor/data/h1.json'));
     predictor.setDb(db, 'proton', 'proton');
 
-    it('condensed for 109-92-2 from molfile', function () {
-        var result = autoassigner({
+    it('condensed for 109-92-2 from molfile', async function () {
+        const result = await autoassigner({
             general: {molfile: molecule.toMolfileV3()},
             spectra: {
                 nmr: [{
@@ -69,10 +69,14 @@ describe('Auto-assignment 109-92-2', function () {
             levels: [5, 4, 3, 2]
         }
         );//.getAssignments();
-        result.setAssignmentOnRanges(peakPicking, 0)
+        /*console.log(result.setAssignmentOnRanges(peakPicking, 0));
         console.log(JSON.stringify(peakPicking));
-        result.getAssignments().length.should.equal(4);
-       // result.getAssignments()[0].score.should.equal(1);
+        console.log(result.setAssignmentOnRanges(peakPicking, 1));
+        console.log(JSON.stringify(peakPicking));
+        console.log(JSON.stringify(result.getAssignments()));*/
+        result.getAssignments().length.should.equal(6);
 
+        //console.log(result.getAssignments()[0].score == result.getAssignments()[1].score)
+       // result.getAssignments()[0].score.should.equal(1);
     });
 });

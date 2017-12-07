@@ -7,15 +7,15 @@ const getOcleFromOptions = require('./getOcleFromOptions');
 const nmrUtilities = require('spectra-nmr-utilities');
 let OCLE;
 
-function autoAssign(entry, options) {
+async function autoAssign(entry, options) {
     if (entry && entry.spectra && entry.spectra.nmr && entry.spectra.nmr[0].range || entry.spectra.nmr[0].region) {
-        return assignmentFromPeakPicking(entry, options);
+        return await assignmentFromPeakPicking(entry, options);
     } else {
-        return assignmentFromRaw(entry, options);
+        return await assignmentFromRaw(entry, options);
     }
 }
 
-function assignmentFromRaw(entry, options) {
+async function assignmentFromRaw(entry, options) {
     //TODO Implement this method
     if (entry !== null && options !== null) {
         return null;
@@ -23,7 +23,7 @@ function assignmentFromRaw(entry, options) {
     return null;
 }
 
-function assignmentFromPeakPicking(entry, options) {
+async function assignmentFromPeakPicking(entry, options) {
     //const predictor = options.predictor;
     var molecule, diaIDs;
     OCLE = getOcleFromOptions(options);
@@ -50,14 +50,17 @@ function assignmentFromPeakPicking(entry, options) {
     //console.log(diaIDs);
 
     let prediction = [];
-    entry.spectra.nmr.forEach(nmr => {
-        prediction.push(predictByExperiment(molecule, nmr, options));
+    //entry.spectra.nmr.forEach(nmr => {
+    for(let i = 0; i < entry.spectra.nmr.length; i++) {
+        let nmr = entry.spectra.nmr[i];
+        let aa = await predictByExperiment(molecule, nmr, options);
+        prediction.push(aa);
         if (nmr.experiment === '1d') {
             nmr.range.sort(function (a, b) {
                 return b.integral - a.integral;
             });
         }
-    });
+    };
 
     //console.log(JSON.stringify(prediction))
     const spinSystem = new SpinSystem(spectra, prediction, options);
@@ -69,15 +72,22 @@ function assignmentFromPeakPicking(entry, options) {
     return autoAssigner;
 }
 
-function predictByExperiment(molecule, nmr, options) {
+async function predictByExperiment(molecule, nmr, options) {
     if (nmr.experiment === '1d') {
         let pred;
         if (nmr.nucleus === 'H') {
-            pred = options.predictor.proton(molecule, Object.assign({}, options, {ignoreLabile: false}));
+            try {
+                pred = await options.predictor.proton(molecule, Object.assign({}, options, {ignoreLabile: false}));                
+            }
+            catch (e) {
+                //console.log("Using spinus")
+                pred = await options.predictor.spinus(molecule, Object.assign({}, options, {ignoreLabile: false}));                                
+            }
+            //pred = options.predictor.spinus(molecule, Object.assign({}, options, {ignoreLabile: false})).then(value => {console.log(value)}); 
         }
 
         if (nmr.nucleus === 'C') {
-            pred = options.predictor.carbon(molecule, Object.assign({}, options, {ignoreLabile: false}));
+            pred = await options.predictor.carbon(molecule, Object.assign({}, options, {ignoreLabile: false}));
         }
         //console.log(pred.length)
         pred = nmrUtilities.group(pred);
