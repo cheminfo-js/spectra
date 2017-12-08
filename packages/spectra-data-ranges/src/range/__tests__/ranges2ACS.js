@@ -1,4 +1,3 @@
-
 require('should');
 const FS = require('fs');
 const spectraData = require('spectra-data');
@@ -9,7 +8,6 @@ function createSpectraData(filename) {
     );
     return spectrum;
 }
-
 
 describe('spectra-data examples peak picking in ACS format', function () {
     var spectrum = createSpectraData('/../../../../../data-test/ethylbenzene/h1_0.jdx');

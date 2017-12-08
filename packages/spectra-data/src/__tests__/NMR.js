@@ -69,12 +69,12 @@ describe('spectra-data examples ethylvinylether/1h.jdx', () => {
     });
 
     it('Check peak-picking', () => {
-        var peakPicking = spectrum.getRanges({nH: 8, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H', format: 'new', keepPeaks: true});
+        var peakPicking = spectrum.getRanges({nH: 8, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H', keepPeaks: true, keepNbSignals: true});
         peakPicking[0].signal[0].peak.length.should.equal(4);
     });
 
     it('Check peak-picking in zone', () => {
-        var peakPicking = spectrum.getRanges({nH: 8, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H', format: 'new', from: 1, to: 2});
+        var peakPicking = spectrum.getRanges({nH: 8, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H', from: 1, to: 2, keepNbSignals: true});
         peakPicking.length.should.eql(1);
         peakPicking[0].signal[0].multiplicity.should.eql('t');
     });
@@ -85,7 +85,7 @@ describe('spectra-data examples ethylvinylether/1h.jdx', () => {
 
     it('updateIntegrals', () => {
         var nH = 8;
-        var ranges = spectrum.getRanges({nH: nH, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H', format: 'new'});
+        var ranges = spectrum.getRanges({nH: nH, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H'});
         ranges[0].to = 6.47;
         var integral0 = ranges[0].integral;
         spectrum.updateIntegrals(ranges, {nH: nH});

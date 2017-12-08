@@ -1,6 +1,6 @@
 
 // small note on the best way to define array
-// http://jsperf.com/lp-array-and-loops/2
+// http://jsperf.com/lp-array-and-loops/2;
 
 import ArrayUtils from 'ml-array-utils';
 import min from 'ml-array-min';
@@ -9,7 +9,7 @@ import getMedian from 'ml-array-median';
 import rescale from 'ml-array-rescale';
 import JcampConverter from 'jcampconverter';
 import JcampCreator from './jcampEncoder/JcampCreator';
-import peakPicking from './peakPicking/peakPicking';
+import {peakPicking} from './peakPicking/peakPicking';
 
 const DATACLASS_XY = 1;
 const DATACLASS_PEAK = 2;
@@ -557,6 +557,7 @@ export default class SD {
         this.setFirstX(x[0]);
         this.setLastX(x[x.length - 1]);
     }
+
     /**
      * Fills a zone of the spectrum with the given value.
      * @param {number} from - one limit the spectrum to fill
@@ -957,6 +958,7 @@ export default class SD {
             throw Error('values outside this in range');
         }
     }
+
 
     /**
      * Is it a 2D spectrum?

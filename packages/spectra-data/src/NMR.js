@@ -1,9 +1,8 @@
 import SD from './SD';
 import * as Filters from './filters/Filters.js';
 import Brukerconverter from 'brukerconverter';
-import peaks2Ranges from './peakPicking/peaks2Ranges';
 import {SpinSystem, simulate1D} from 'nmr-simulation';
-import impurities from './peakPicking/impurities.js';
+import {impurities, peaks2Ranges, getSignalFromRange} from './peakPicking/peakPicking';
 
 /**
  * @class NMR
@@ -100,6 +99,16 @@ export default class NMR extends SD {
     }
 
     /**
+     * get the signals from a range.
+     * @param {object} range - range object.
+     * @param {object} options - options for automatic peak picking.
+     * @return {Array} signals
+     */
+    getSignals(range, options = {}) {
+        return getSignalFromRange(this, range, options);
+    }
+
+    /**
      * @private
      * Returns the observed nucleus. A dimension parameter is accepted for compatibility with 2DNMR
      * @param {number} dim
@@ -146,48 +155,6 @@ export default class NMR extends SD {
         }
         return 1.0;
     }
-
-
-    /**
-     * This function adds white noise to the the given spectraData. The intensity of the noise is
-     * calculated from the given signal to noise ratio.
-     * @param SNR Signal to noise ratio
-     * @return {NMR} this object
-     */
-    /*addNoise(SNR) {
-        //@TODO Implement addNoise filter
-    }*/
-
-
-    /**
-     *  This filter performs a linear combination of two spectraDatas.
-     * A=spec1
-     * B=spec2
-     * After to apply this filter you will get:
-     *      A=A*factor1+B*factor2
-     * if autoscale is set to 'true' then you will obtain:
-     *  A=A*factor1+B*k*factor2
-     * Where the k is a factor such that the maximum peak in A is equal to the maximum peak in spectraData2
-     * @param spec2 spectraData2
-     * @param factor1 linear factor for spec1
-     * @param factor2 linear factor for spec2
-     * @param autoscale Auto-adjust scales before combine the spectraDatas
-     * @return {NMR} this object
-     * @example spec1 = addSpectraDatas(spec1,spec2,1,-1, false) This subtract spec2 from spec1
-     */
-    /*addSpectraDatas(spec2, factor1, factor2, autoscale) {
-        //@TODO Implement addSpectraDatas filter
-
-    }*/
-
-    /**
-     * Automatically corrects the base line of a given spectraData. After this process the spectraData
-     * should have meaningful integrals.
-     * @return {NMR} this object
-     */
-    /*autoBaseline() {
-        //@TODO Implement autoBaseline filter
-    }*/
 
     /**
      * Fourier transforms the given spectraData (Note. no 2D handling yet) this spectraData have to be
@@ -269,72 +236,6 @@ export default class NMR extends SD {
     }
 
     /**
-     * That decodes an Echo-Antiecho 2D spectrum.
-     * @return {NMR} this object
-     */
-    echoAntiechoFilter() {
-        //@TODO Implement echoAntiechoFilter filter
-        return this;
-    }
-
-    /**
-     * This function apply a Standard Normal Variate Transformation over the given spectraData. Mainly used for IR spectra.
-     * @return {NMR} this object
-     */
-    SNVFilter() {
-        //@TODO Implement SNVFilter
-        return this;
-    }
-
-    /**
-     * This function applies a power to all the Y values. If the power is less than 1 and the spectrum has negative values,
-     * it will be shifted so that the lowest value is zero
-     * @param {number} power - The power value to apply
-     * @return {NMR} this object
-     */
-    powerFilter(power) {
-        var minY = this.getMinY();
-        if (power < 1 && minY < 0) {
-            this.YShift(-1 * minY);
-            //console.warn('SD.powerFilter: The spectrum had negative values and was automatically shifted before applying the function.');
-        }
-        //@TODO Implement powerFilter
-        return this;
-    }
-
-    /**
-     * This function applies a log to all the Y values.<br>If the spectrum has negative or zero values, it will be shifted so that the lowest value is 1
-     * @param   base    The base to use
-     * @return this object
-     */
-    /*logarithmFilter(base) {
-        var minY = this.getMinY();
-        if (minY <= 0) {
-            this.yShift((-1 * minY) + 1);
-            //console.warn('SD.logarithmFilter: The spectrum had negative values and was automatically shifted before applying the function.');
-        }
-        //@TODO Implement logarithmFilter filter
-    }*/
-
-
-    /**
-     * This function correlates the given spectraData with the given vector func. The correlation
-     * operation (*) is defined as:
-     *
-     *                    __ inf
-     *  c(x)=f(x)(*)g(x)= \        f(x)*g(x+i)
-     *                   ./
-     *                    -- i=-inf
-     * @param func A double array containing the function to correlates the spectraData
-     * @return this object
-     * @example var smoothedSP = SD.correlationFilter(spectraData,[1,1]) returns a smoothed version of the
-     * given spectraData.
-     */
-    /*correlationFilter(func) {
-        //@TODO Implement correlationFilter filter
-    }*/
-
-    /**
      * Applies the phase correction (phi0,phi1) to a Fourier transformed spectraData. The angles must be given in radians.
      * @param {number} phi0 - the value of Zero order phase correction
      * @param {number} phi1 - the value of first order phase correction
@@ -343,16 +244,6 @@ export default class NMR extends SD {
     phaseCorrection(phi0, phi1) {
         return Filters.phaseCorrection(this, phi0, phi1);
     }
-
-    /**
-     * This function determines automatically the correct parameters phi0 and phi1 for a phaseCorrection
-     * function and applies it.
-     * @return {NMR}
-     */
-    /*automaticPhase() {
-        //@TODO Implement automaticPhase filter
-    }*/
-
 
     /**
      * This function process the given spectraData and tries to determine the NMR signals. Returns an NMRSignal1D array
@@ -459,4 +350,119 @@ export default class NMR extends SD {
             }
         });
     }
+
+    /**
+     * This function adds white noise to the the given spectraData. The intensity of the noise is
+     * calculated from the given signal to noise ratio.
+     * @param SNR Signal to noise ratio
+     * @return {NMR} this object
+     */
+    /*addNoise(SNR) {
+        //@TODO Implement addNoise filter
+    }*/
+
+
+    /**
+     *  This filter performs a linear combination of two spectraDatas.
+     * A=spec1
+     * B=spec2
+     * After to apply this filter you will get:
+     *      A=A*factor1+B*factor2
+     * if autoscale is set to 'true' then you will obtain:
+     *  A=A*factor1+B*k*factor2
+     * Where the k is a factor such that the maximum peak in A is equal to the maximum peak in spectraData2
+     * @param spec2 spectraData2
+     * @param factor1 linear factor for spec1
+     * @param factor2 linear factor for spec2
+     * @param autoscale Auto-adjust scales before combine the spectraDatas
+     * @return {NMR} this object
+     * @example spec1 = addSpectraDatas(spec1,spec2,1,-1, false) This subtract spec2 from spec1
+     */
+    /*addSpectraDatas(spec2, factor1, factor2, autoscale) {
+        //@TODO Implement addSpectraDatas filter
+
+    }*/
+
+    /**
+     * Automatically corrects the base line of a given spectraData. After this process the spectraData
+     * should have meaningful integrals.
+     * @return {NMR} this object
+     */
+    /*autoBaseline() {
+        //@TODO Implement autoBaseline filter
+    }*/
+
+    /**
+     * This function determines automatically the correct parameters phi0 and phi1 for a phaseCorrection
+     * function and applies it.
+     * @return {NMR}
+     */
+    /*automaticPhase() {
+        //@TODO Implement automaticPhase filter
+    }*/
+
+    /**
+     * This function applies a log to all the Y values.<br>If the spectrum has negative or zero values, it will be shifted so that the lowest value is 1
+     * @param   base    The base to use
+     * @return this object
+     */
+    /*logarithmFilter(base) {
+        var minY = this.getMinY();
+        if (minY <= 0) {
+            this.yShift((-1 * minY) + 1);
+            //console.warn('SD.logarithmFilter: The spectrum had negative values and was automatically shifted before applying the function.');
+        }
+        //@TODO Implement logarithmFilter filter
+    }*/
+
+
+    /**
+     * This function correlates the given spectraData with the given vector func. The correlation
+     * operation (*) is defined as:
+     *
+     *                    __ inf
+     *  c(x)=f(x)(*)g(x)= \        f(x)*g(x+i)
+     *                   ./
+     *                    -- i=-inf
+     * @param func A double array containing the function to correlates the spectraData
+     * @return this object
+     * @example var smoothedSP = SD.correlationFilter(spectraData,[1,1]) returns a smoothed version of the
+     * given spectraData.
+     */
+    /*correlationFilter(func) {
+        //@TODO Implement correlationFilter filter
+    }*/
+    /**
+     * That decodes an Echo-Antiecho 2D spectrum.
+     * @return {NMR} this object
+     */
+    // echoAntiechoFilter() {
+    //     //@TODO Implement echoAntiechoFilter filter
+    //     return this;
+    // }
+
+    /**
+     * This function apply a Standard Normal Variate Transformation over the given spectraData. Mainly used for IR spectra.
+     * @return {NMR} this object
+     */
+    // SNVFilter() {
+    //     //@TODO Implement SNVFilter
+    //     return this;
+    // }
+
+    /**
+     * This function applies a power to all the Y values. If the power is less than 1 and the spectrum has negative values,
+     * it will be shifted so that the lowest value is zero
+     * @param {number} power - The power value to apply
+     * @return {NMR} this object
+     */
+    // powerFilter(power) {
+    //     var minY = this.getMinY();
+    //     if (power < 1 && minY < 0) {
+    //         this.YShift(-1 * minY);
+    //         //console.warn('SD.powerFilter: The spectrum had negative values and was automatically shifted before applying the function.');
+    //     }
+    //     //@TODO Implement powerFilter
+    //     return this;
+    // }
 }
