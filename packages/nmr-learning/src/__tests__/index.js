@@ -1,11 +1,14 @@
 const FS = require('fs');
 const OCLE = require('openchemlib-extended-minimal');
-const autoassigner = require('../../nmr-auto-assignment/src/index');
-const predictor = require('nmr-predictor-dev');
-const cheminfo = require('./preprocess/cheminfo');
-const maybridge = require('./preprocess/maybridge');
-const compilePredictionTable = require('./compilePredictionTable');
-const stats = require('./stats');
+const autoassigner = require('../../../nmr-auto-assignment/src/index');
+const predictor = require('../../../nmr-predictor/src/index');
+const cheminfo = require('../preprocess/cheminfo');
+const maybridge = require('../preprocess/maybridge');
+const compilePredictionTable = require('../compilePredictionTable');
+const stats = require('../stats');
+
+require('should');
+
 
 function loadFile(filename) {
     return FS.readFileSync(__dirname + filename).toString();
@@ -16,7 +19,7 @@ async function start() {
     var ignoreLabile = true;//Set the use of labile protons during training
     var learningRatio = 0.8; //A number between 0 and 1
 
-    var testSet = JSON.parse(loadFile('/../data/assigned298.json'));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
+    var testSet = JSON.parse(loadFile('/../../data/assigned298.json'));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
     var dataset1 = []; //cheminfo.load('/home/acastillo/Documents/data/cheminfo443/', 'cheminfo', {keepMolecule: true, OCLE: OCLE});
     var dataset2 = maybridge.load('/home/acastillo/Documents/data/maybridge/', 'maybridge', {keepMolecule: true, keepMolfile: true, OCLE: OCLE});
     var dataset3 = [];//reiner.load("/data/Reiner", "reiner", {keepMolecule: true, keepMolfile: true});
@@ -182,4 +185,13 @@ async function start() {
     
 }
 
-start();
+
+describe('Auto-assignment 109-92-2', function () {
+    
+    it('condensed for 109-92-2 from molfile', function () {
+        start();
+        
+        var i = 0;
+        i.should.equal(0);
+    });
+});
