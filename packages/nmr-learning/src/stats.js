@@ -97,7 +97,7 @@ function hoseStats(dataSet, nmrShiftDBPred1H, options) {
 }
 
 
-function cmp2asg(dataSet, predictor, options) {
+async function cmp2asg(dataSet, predictor, options) {
     let OCLE = options.OCLE;
     var molecule, h1pred, result;
     var avgError = 0;
@@ -117,7 +117,7 @@ function cmp2asg(dataSet, predictor, options) {
             molecule = dataSet[i].molecule;
         }
 
-        h1pred = predictor.proton(molecule, {
+        h1pred = await predictor.proton(molecule, {
             ignoreLabile: options.ignoreLabile,
             hoseLevels: options.hoseLevels
         });

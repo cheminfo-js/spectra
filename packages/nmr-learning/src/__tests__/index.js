@@ -146,7 +146,7 @@ async function start() {
         start = date.getTime();
         //var error = comparePredictors(datasetSim,{"db":db,"dataset":testSet,"iteration":"="+iteration});
         var histParams = {from: 0, to: 1, nBins: 30};
-        var error = stats.cmp2asg(testSet, predictor, {
+        var error = await stats.cmp2asg(testSet, predictor, {
             db: fastDB,
             dataset: testSet,
             ignoreLabile: ignoreLabile,

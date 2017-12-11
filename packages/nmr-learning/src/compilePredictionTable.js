@@ -25,10 +25,10 @@ function compilePredictionTable(samples, options) {
                                 type: algorithm
                             });
                             for (let i = 0; i < hose.length; i++) {
-                                if (!db[i + 1][hose[i]]) {
-                                    db[i + 1][hose[i]] = [];
+                                if (!db[i ][hose[i]]) {
+                                    db[i ][hose[i]] = [];
                                 }
-                                db[i + 1][hose[i]].push(signal.delta);
+                                db[i ][hose[i]].push(signal.delta);
                             }
                         });
                     });
