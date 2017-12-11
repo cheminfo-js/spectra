@@ -1,11 +1,13 @@
 const FS = require('fs');
 const OCLE = require('openchemlib-extended-minimal');
 const autoassigner = require('../../nmr-auto-assignment/src/index');
-const predictor = require('../../nmr-predictor/src/index');
+const predictor = require('nmr-predictor');
 const cheminfo = require('./preprocess/cheminfo');
 const maybridge = require('./preprocess/maybridge');
 const compilePredictionTable = require('./compilePredictionTable');
 const stats = require('./stats');
+const Worker = require('webworker-threads').Worker;
+
 
 function loadFile(filename) {
     return FS.readFileSync(__dirname + filename).toString();
@@ -91,8 +93,7 @@ async function start() {
                     levels: [5, 4, 3],
                     ignoreLabile: ignoreLabile,
                     learningRatio: learningRatio,
-                    iteration: iteration,
-                    unassigned: 0
+                    iteration: iteration
                 }
             );
             solutions = result.getAssignments();

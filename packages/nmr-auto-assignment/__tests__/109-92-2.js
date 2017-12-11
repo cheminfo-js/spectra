@@ -28,6 +28,7 @@ describe('Auto-assignment 109-92-2', function () {
     molecule.addImplicitHydrogens();
     var molfile = molecule.toMolfile();
     var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') * 1;
+
     var peakPicking = spectrum.getRanges({
         "nH": nH,
         realTop: true,
@@ -62,18 +63,19 @@ describe('Auto-assignment 109-92-2', function () {
         {
             minScore: 0.9,
             maxSolutions: 3000,
-            errorCS: 1,
+            errorCS: -1.5,
             predictor: predictor,
             condensed: true,
             OCLE: OCLE,
-            levels: [5, 4, 3, 2]
+            levels: [5, 4, 3, 2], 
+            unassigned: 0
         }
         );//.getAssignments();
         /*console.log(result.setAssignmentOnRanges(peakPicking, 0));
         console.log(JSON.stringify(peakPicking));
         console.log(result.setAssignmentOnRanges(peakPicking, 1));
-        console.log(JSON.stringify(peakPicking));
-        console.log(JSON.stringify(result.getAssignments()));*/
+        console.log(JSON.stringify(peakPicking));*/
+        //console.log(JSON.stringify(result.getAssignments()));
         result.getAssignments().length.should.equal(6);
 
         //console.log(result.getAssignments()[0].score == result.getAssignments()[1].score)

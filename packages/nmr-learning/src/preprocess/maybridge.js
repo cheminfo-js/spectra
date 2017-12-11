@@ -26,7 +26,7 @@ function load(path, datasetName, options) {
         // we could now loop on the sdf to add the int index
         for (var i = 1; i < max; i++) {
             let row = fileContent[i].split('\t');
-            result.push(row);
+            //result.push(row);
             //try {
             //var sdfi = {dataset: datasetName, id: p + "_" + i + "_" + molFiles[i].catalogID};
             var molfile = row[1].replace(/\\n/g, '\n');
@@ -69,6 +69,10 @@ function load(path, datasetName, options) {
                 }
             }
 
+            signals.forEach((range, index)=> {
+                range.signalID = "1H_" + index;
+            });
+
             let sample = {
                 general: {ocl: ocl, molfile: molecule.toMolfile()},
                 spectra: {
@@ -81,7 +85,6 @@ function load(path, datasetName, options) {
                 }
             };
             // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}
-
             result.push(sample);
             //}
             //catch (e) {

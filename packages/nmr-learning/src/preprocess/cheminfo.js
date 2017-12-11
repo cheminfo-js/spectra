@@ -65,6 +65,11 @@ function load(path, datasetName, options) {
                     format: 'new'
                 }
             );
+
+            signals.forEach((range, index)=> {
+                range.signalID = "1H_" + index;
+            });
+            
             //console.log(JSON.stringify(signals));
             let sample = {general: {ocl: ocl, molfile: molecule.toMolfileV3()}, //{ocl: ocl, molfile: molecule.toMolfileV3()},
                 spectra: {nmr: [{nucleus: 'H', experiment: '1d', range: signals, solvent: spectraData1H.getParamString('.SOLVENT NAME', 'unknown')}]}};

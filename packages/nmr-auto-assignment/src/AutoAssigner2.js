@@ -4,7 +4,7 @@
  */
 const treeSet = require('ml-tree-set');
 
-const defaultOptions = {minScore: 1, maxSolutions: 100, errorCS: -1, onlyCount: false, timeout: 7000, condensed: true};
+const defaultOptions = {minScore: 1, maxSolutions: 100, errorCS: -1, onlyCount: false, timeout: 7000, condensed: true, unassigned: 0};
 
 class Assignment {
     constructor(spinSystem, opt) {
@@ -27,6 +27,7 @@ class Assignment {
         this.MAXERRORSHMBC = 1;
         this.MAXERRORSCOSY = 1;
         this.condensed = options.condensed;
+        this.unassigned = options.unassigned;
 
         this.timeoutTerminated = false;
         this.score = 0;
@@ -201,9 +202,12 @@ class Assignment {
                 }
             }
             if (targetID === '*') {
-                countStars++;
+                countStars++;                    
             }
         });
+
+        if(countStars > this.unassigned)
+            return 0;       
 
         let penaltyByStarts = countStars / partial.length;
 
@@ -333,11 +337,13 @@ class Assignment {
             let sourceID = this.sourcesIDs[sourceAddress];
             //let source = system.sourcesConstrains[sourceID];//The 1D prediction to be assigned
             let expand = this.expandMap[sourceID];
-            //console.log(expand);
+            //console.log("X "+JSON.stringify(expand));
             expand.forEach(targetID => {
                 partial[sourceAddress] = targetID;
-                if (this.isPlausible(partial, system.sourcesConstrains, sourceID, targetID)) {
-                    this.score = this.partialScore(partial, system.sourcesConstrains);
+                this.score = this.partialScore(partial, system.sourcesConstrains); 
+                //console.log(partial)
+                //console.log(this.score);
+                
                     if (this.score > 0) {
                         //If there is no more sources or targets available, we have a solution for the assignment problem
                         if (sourceAddress === system.nSources - 1 && this.score >= this.minScore) {
@@ -353,11 +359,14 @@ class Assignment {
                                 this.solutions.add(solution);
                             }
                         } else {
-                            this.exploreTreeRec(system, sourceAddress + 1, partial);
+                            this.exploreTreeRec(system, sourceAddress + 1, JSON.parse(JSON.stringify(partial)));
                         }
-                    }
-                }
+                    } else {
+                        if(targetID === "*") {
+                            partial[sourceAddress] = null;
+                        }
 
+                    }
             });
         }
     }

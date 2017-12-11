@@ -114,8 +114,8 @@ describe('ssss.', function () {
             levels: [5, 4, 3, 2]
         }
         );
-        console.log(result);
-        console.log(result.getAssignments());
+        //console.log(result);
+        //console.log(result.getAssignments());
         result.getAssignments().length.should.equal(12);
         result.getAssignments()[0].score.should.equal(1);
     });
