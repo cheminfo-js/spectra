@@ -4,6 +4,8 @@ const autoassigner = require('../../nmr-auto-assignment/src/index');
 const predictor = require('nmr-predictor-dev');
 const cheminfo = require('./preprocess/cheminfo');
 const maybridge = require('./preprocess/maybridge');
+const c6h6 = require('./preprocess/c6h6');
+
 const compilePredictionTable = require('./compilePredictionTable');
 const stats = require('./stats');
 
@@ -17,9 +19,9 @@ async function start() {
     var learningRatio = 0.8; //A number between 0 and 1
 
     var testSet = JSON.parse(loadFile('/../data/assigned298.json'));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
-    var dataset1 = []; //cheminfo.load('/home/acastillo/Documents/data/cheminfo443/', 'cheminfo', {keepMolecule: true, OCLE: OCLE});
-    var dataset2 = maybridge.load('/home/acastillo/Documents/data/maybridge/', 'maybridge', {keepMolecule: true, keepMolfile: true, OCLE: OCLE});
-    var dataset3 = [];//reiner.load("/data/Reiner", "reiner", {keepMolecule: true, keepMolfile: true});
+    var dataset1 = []//cheminfo.load('/home/acastillo/Documents/data/cheminfo443/', 'cheminfo', {keepMolecule: true, OCLE: OCLE});
+    var dataset2 = [];//maybridge.load('/home/acastillo/Documents/data/maybridge/', 'maybridge', {keepMolecule: true, keepMolfile: true, OCLE: OCLE});
+    var dataset3 = c6h6.load("/home/acastillo/Documents/data/output.json", "c6h6", {keepMolecule: true, keepMolfile: true, OCLE: OCLE});
 
     var datasets = [dataset1, dataset2, dataset3];
 
@@ -33,6 +35,7 @@ async function start() {
 
     console.log('Cheminfo All: ' + dataset1.length);
     console.log('MayBridge All: ' + dataset2.length);
+    console.log('C6H6 All: ' + dataset3.length);
     
     //Remove the overlap molecules from train and test
     var removed = 0;
@@ -62,6 +65,7 @@ async function start() {
     
     console.log('Cheminfo Final: ' + dataset1.length);
     console.log('MayBridge Final: ' + dataset2.length);
+    console.log('C6H6 Final: ' + dataset3.length);
     console.log('Overlaped molecules: ' + removed + '.  They were removed from training datasets');
     
 
@@ -75,15 +79,17 @@ async function start() {
         var count = 0;
         dataset = trainDataset;//datasets[ds];
         max = dataset.length;
-        // we could now loop on the sdf to add the int index
+        // we could now loop on the sdf to add the int index++
+        predictor.setDb(fastDB, 'proton', 'proton');
+        
         for (i = 0; i < max; i++) {
             //console.log(i);
             //try {
-            predictor.setDb(fastDB, 'proton', 'proton');
             result = await autoassigner(dataset[i],
                 {
                     minScore: 1,
-                    maxSolutions: 3000,
+                    maxSolutions: 2000,
+                    timeout: 3000,
                     errorCS: -1.5,
                     predictor: predictor,
                     condensed: true,
@@ -97,7 +103,7 @@ async function start() {
             );
             solutions = result.getAssignments();
             if (result.timeoutTerminated || result.nSolutions > solutions.length) {
-                console.log(i + " Too much solutions");
+                console.log(i + " Too many solutions");
                 continue;
             }
             //Get the unique assigments in the assignment variable.

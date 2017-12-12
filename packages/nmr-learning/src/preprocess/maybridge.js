@@ -64,11 +64,10 @@ function load(path, datasetName, options) {
             );
 
             for (var j = signals.length - 1; j >= 0; j--) {
-                if (signals[j].delta1 < 0 || signals[j].delta1 > 16) {
+                if (signals[j].delta < 0 || signals[j].delta > 16) {
                     signals.splice(j, 1);
                 }
             }
-
             signals.forEach((range, index)=> {
                 range.signalID = "1H_" + index;
             });
