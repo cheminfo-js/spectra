@@ -619,7 +619,7 @@ export default class SD {
     suppressRanges(zones = []) {
         let currentActiveElement = this.getActiveElement();
         for (var zone of zones) {
-            if (zone.active !== false) {
+            if (zone.active) {
                 let {
                     from,
                     to
