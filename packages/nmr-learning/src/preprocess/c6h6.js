@@ -17,7 +17,7 @@ function load(path, datasetName, options) {
         if(row.value.nucleus === '1H') {
             try {
                 var molecule = OCLE.Molecule.fromIDCode(row.value.idCode);
-                console.log(p + " " +molecule.getIDCode());
+                //console.log(p + " " +molecule.getIDCode());
                 //let ocl = {value: molecule};
         
                 molecule.addImplicitHydrogens();
@@ -32,12 +32,12 @@ function load(path, datasetName, options) {
         
                 let ocl = {value: molecule};
                 ocl.diaIDs = diaIDs;
-                ocl.diaID = molecule.getIDCode();
+                ocl.diaID = row.value.idCode;//molecule.getIDCode();
                 ocl.nH = nH;
                 
                 var signals = row.value.range;
                 for (var j = signals.length - 1; j >= 0; j--) {
-                    if (signals[j].delta < 0 || signals[j].delta > 16) {
+                    if (signals[j].from < 0 || signals[j].from > 16) {
                         signals.splice(j, 1);
                     }
                 }
@@ -47,7 +47,7 @@ function load(path, datasetName, options) {
                 });
         
                 let sample = {
-                    general: {ocl: ocl, molfile: molecule.toMolfile()},
+                    general: {ocl: ocl},//: molecule.toMolfile()},
                     spectra: {
                         nmr: [{
                             nucleus: 'H',

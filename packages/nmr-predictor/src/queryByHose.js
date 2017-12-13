@@ -67,7 +67,7 @@ export default function queryByHose(molecule, db, options) {
         toReturn.push(atom);
     }
 
-    if (options.ignoreLabile) {
+    if (options.ignoreLabile && atomLabel === 'H') {
         const linksOH = molecule.getAllPaths({
             fromLabel: 'H',
             toLabel: 'O',

@@ -45,6 +45,34 @@ function load(path, datasetName, options) {
                 return a.atomLabel < b.atomLabel ? 1 : -1;
             });
 
+/*
+            const diaIdsH = molecule.getGroupedDiastereotopicAtomIDs("H");
+            const atoms = {};
+            const atomNumbers = [];
+            const levels = [5, 4, 3];
+            for (const diaId of diaIdsH) {
+                const hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
+                    maxSphereSize: 5,
+                    type: 0
+                });
+                const atom = {
+                    diaIDs: [diaId.oclID]
+                };
+                for (const level of levels) {
+                    if (hoseCodes[level]) {
+                        atom['hose' + level] = hoseCodes[level];
+                    }
+                }
+                for (const diaIdAtom of diaId.atoms) {
+                    atoms[diaIdAtom] = JSON.parse(JSON.stringify(atom));
+                    atomNumbers.push(diaIdAtom);
+                }
+            }
+
+            molecule.___atoms = atoms;
+            molecule.___atomNumbers = atomNumbers;
+            molecule.___diaIdsH = diaIdsH; */
+
             let ocl = {value: molecule};
             ocl.diaIDs = diaIDs;
             ocl.diaID = molecule.getIDCode();
@@ -71,7 +99,7 @@ function load(path, datasetName, options) {
             });
             
             //console.log(JSON.stringify(signals));
-            let sample = {general: {ocl: ocl, molfile: molecule.toMolfileV3()}, //{ocl: ocl, molfile: molecule.toMolfileV3()},
+            let sample = {general: {ocl: ocl}, //{ocl: ocl, molfile: molecule.toMolfileV3()},
                 spectra: {nmr: [{nucleus: 'H', experiment: '1d', range: signals, solvent: spectraData1H.getParamString('.SOLVENT NAME', 'unknown')}]}};
             // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}
             result.push(sample);

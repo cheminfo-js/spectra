@@ -43,6 +43,33 @@ function load(path, datasetName, options) {
                 return a.atomLabel < b.atomLabel ? 1 : -1;
             });
 
+            /*const diaIdsH = molecule.getGroupedDiastereotopicAtomIDs("H");
+            const atoms = {};
+            const atomNumbers = [];
+            const levels = [5, 4, 3, 2];
+            for (const diaId of diaIdsH) {
+                const hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
+                    maxSphereSize: 5,
+                    type: 0
+                });
+                const atom = {
+                    diaIDs: [diaId.oclID]
+                };
+                for (const level of levels) {
+                    if (hoseCodes[level]) {
+                        atom['hose' + level] = hoseCodes[level];
+                    }
+                }
+                for (const diaIdAtom of diaId.atoms) {
+                    atoms[diaIdAtom] = JSON.parse(JSON.stringify(atom));
+                    atomNumbers.push(diaIdAtom);
+                }
+            }
+
+            molecule.___atoms = atoms;
+            molecule.___atomNumbers = atomNumbers;
+            molecule.___diaIdsH = diaIdsH;*/
+
             let ocl = {value: molecule};
             ocl.diaIDs = diaIDs;
             ocl.diaID = molecule.getIDCode();
@@ -64,16 +91,17 @@ function load(path, datasetName, options) {
             );
 
             for (var j = signals.length - 1; j >= 0; j--) {
-                if (signals[j].delta < 0 || signals[j].delta > 16) {
+                if (signals[j].from < 0 || signals[j].from > 16) {
                     signals.splice(j, 1);
                 }
             }
+
             signals.forEach((range, index)=> {
                 range.signalID = "1H_" + index;
             });
 
             let sample = {
-                general: {ocl: ocl, molfile: molecule.toMolfile()},
+                general: {ocl: ocl},
                 spectra: {
                     nmr: [{
                         nucleus: 'H',
