@@ -62,7 +62,7 @@ async function assignmentFromPeakPicking(entry, options) {
         }
     };
 
-    //console.log(JSON.stringify(prediction))
+    //console.log(JSON.stringify(prediction[0].length))
     const spinSystem = new SpinSystem(spectra, prediction, options);
 
     //console.log(JSON.stringify(spinSystem));
@@ -77,17 +77,17 @@ async function predictByExperiment(molecule, nmr, options) {
         let pred;
         if (nmr.nucleus === 'H') {
             try {
-                pred = await options.predictor.proton(molecule, Object.assign({}, options, {ignoreLabile: false}));                
+                pred = await options.predictor.proton(molecule, Object.assign({}, options));                
             }
             catch (e) {
                 //console.log("Using spinus")
-                pred = await options.predictor.spinus(molecule, Object.assign({}, options, {ignoreLabile: false}));                                
+                pred = await options.predictor.spinus(molecule, Object.assign({}, options));                                
             }
             //pred = options.predictor.spinus(molecule, Object.assign({}, options, {ignoreLabile: false})).then(value => {console.log(value)}); 
         }
 
         if (nmr.nucleus === 'C') {
-            pred = await options.predictor.carbon(molecule, Object.assign({}, options, {ignoreLabile: false}));
+            pred = await options.predictor.carbon(molecule, Object.assign({}, options));
         }
         //console.log(pred.length)
         pred = nmrUtilities.group(pred);

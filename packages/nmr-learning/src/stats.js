@@ -119,7 +119,7 @@ async function cmp2asg(dataSet, predictor, options) {
 
         h1pred = await predictor.proton(molecule, {
             ignoreLabile: options.ignoreLabile,
-            hoseLevels: options.hoseLevels
+            levels: options.levels
         });
 
 

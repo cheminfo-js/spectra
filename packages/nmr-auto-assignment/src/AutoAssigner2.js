@@ -211,13 +211,13 @@ class Assignment {
 
         let penaltyByStarts = countStars / partial.length;
 
-
+        //console.log(partial)
         for (let key in partialInverse) {
             let targetToSource = partialInverse[key];
             let total = targetToSource.reduce((sum, value) => {
                 return sum + this.spinSystem.sourcesConstrains[value].atomIDs.length;
             }, 0);
-
+            //console.log(total + " " + this.spinSystem.targetsConstains[key].integral)
             if (total - this.spinSystem.targetsConstains[key].integral >= 0.5) {
                 return 0;
             }

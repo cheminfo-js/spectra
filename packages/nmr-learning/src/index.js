@@ -15,7 +15,7 @@ function loadFile(filename) {
 
 async function start() {
     var maxIterations = 5; // Set the number of interations for training
-    var ignoreLabile = false;//Set the use of labile protons during training
+    var ignoreLabile = true;//Set the use of labile protons during training
     var learningRatio = 0.8; //A number between 0 and 1
 
     var testSet = JSON.parse(loadFile('/../data/assigned298.json'));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
@@ -83,7 +83,8 @@ async function start() {
         predictor.setDb(fastDB, 'proton', 'proton');
         
         for (i = 0; i < max; i++) {
-            //console.log(i);
+            //console.log(dataset[i].general.ocl.diaID);
+            //console.log(dataset[i].spectra.nmr[0]);
             //try {
             result = await autoassigner(dataset[i],
                 {
@@ -94,7 +95,7 @@ async function start() {
                     predictor: predictor,
                     condensed: true,
                     OCLE: OCLE,
-                    levels: [5, 4, 3],
+                    levels: [5, 4],
                     ignoreLabile: ignoreLabile,
                     learningRatio: learningRatio,
                     iteration: iteration,
@@ -106,6 +107,7 @@ async function start() {
                 console.log(i + " Too many solutions");
                 continue;
             }
+            //console.log(solutions)
             //Get the unique assigments in the assignment variable.
             let solution = null;
             if (solutions !== null && solutions.length > 0) {
@@ -126,6 +128,7 @@ async function start() {
                     }
                 }
             }
+            //console.log(solution);
             //Only save the last state
             result.setAssignmentOnSample(dataset[i], solution);
         }
@@ -134,9 +137,11 @@ async function start() {
         //Becasuse that, the iteration parameter has not effect on the stats
         fastDB = compilePredictionTable(dataset, {iteration, OCLE}).H;
         
-        //console.log(JSON.stringify(fastDB));
+        console.log(JSON.stringify(fastDB));
         console.log(Object.keys(fastDB[1]).length + ' ' + Object.keys(fastDB[2]).length + ' ' + Object.keys(fastDB[3]).length + ' ' + Object.keys(fastDB[4]).length + ' ' + Object.keys(fastDB[5]).length);
         
+        FS.writeFileSync(__dirname + "/../data/h_" + iteration + ".json", JSON.stringify(fastDB));
+
         predictor.setDb(fastDB, 'proton', 'proton');
         //console.log(JSON.stringify(fastDB));
         date = new Date();
@@ -154,7 +159,7 @@ async function start() {
             dataset: testSet,
             ignoreLabile: ignoreLabile,
             histParams: histParams,
-            hoseLevels: [5, 4, 3],
+            levels: [5, 4],
             OCLE: OCLE
         });
         date = new Date();
