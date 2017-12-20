@@ -34,7 +34,7 @@
     "spectra-data": "^3.1.12",
     "ml-tree-set": "0.1.1",
     "spectra-nmr-utilities": "^1.0.1",
-    "webworker-threads": "0.7.13"
-
+    "webworker-threads": "0.7.13",
+    "paralleljs":"0.2.1"
   }
 }

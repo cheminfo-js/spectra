@@ -12,7 +12,7 @@ function load(path, datasetName, options) {
     var result = [];
     var rows = JSON.parse(loadFile(path)).rows;
     console.log(rows.length);
-    for (var p = 0; p < 8000; p++) {
+    for (var p = 0; p < 4000; p++) {
         var row = rows[p];
         if(row.value.nucleus === '1H') {
             try {

@@ -77,7 +77,13 @@ function load(path, datasetName, options) {
 
             //console.log(i / max * 100 );
             var spectraData1H = SD.NMR.fromJcamp(row[2].replace(/\\n/g, '\n'));
-
+            //
+            //console.log(spectraData1H.getParamString('.SOLVENTNAME', 'unknown'));
+            try {
+                spectraData1H.fillImpurity(spectraData1H.getParamString('.SOLVENTNAME', 'DMSO'));                
+            }
+            catch (e) {}
+            
             var signals = spectraData1H.getRanges(
                 {
                     nH: nH,
@@ -89,6 +95,7 @@ function load(path, datasetName, options) {
                     format: 'new'
                 }
             );
+
 
             for (var j = signals.length - 1; j >= 0; j--) {
                 if (signals[j].from < 0 || signals[j].from > 16) {
@@ -111,6 +118,7 @@ function load(path, datasetName, options) {
                     }]
                 }
             };
+
             // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}
             result.push(sample);
             //}
