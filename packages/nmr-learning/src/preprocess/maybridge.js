@@ -22,7 +22,7 @@ function load(path, datasetName, options) {
     var result = [];
     for (var p = 0; p < parts.length; p++) {
         let fileContent = loadFile(path + parts[p]).split('\n');
-        var max = fileContent.length - 1;
+        var max = 2//fileContent.length - 1;
         // we could now loop on the sdf to add the int index
         for (var i = 1; i < max; i++) {
             let row = fileContent[i].split('\t');
