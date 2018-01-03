@@ -8,7 +8,7 @@ export default function queryByHose(molecule, db, options) {
         atomLabel = 'H',
         use = null,
         algorithm = 0,
-        levels = [5, 4, 3, 2, 1, 0]
+        levels = [5, 4, 3, 2, 1]
     } = options;
 
     levels.sort(numSort.desc);

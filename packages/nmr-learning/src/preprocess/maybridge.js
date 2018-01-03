@@ -65,10 +65,11 @@ function load(path, datasetName, options) {
                     atomNumbers.push(diaIdAtom);
                 }
             }
+            let molecule2 = {};
 
-            molecule.___atoms = atoms;
-            molecule.___atomNumbers = atomNumbers;
-            molecule.___diaIdsH = diaIdsH;*/
+            molecule2.atoms = atoms;
+            molecule2.atomNumbers = atomNumbers;
+            molecule2.diaIds = diaIdsH;
 
             let ocl = {value: molecule};
             ocl.diaIDs = diaIDs;
@@ -79,10 +80,10 @@ function load(path, datasetName, options) {
             var spectraData1H = SD.NMR.fromJcamp(row[2].replace(/\\n/g, '\n'));
             //
             //console.log(spectraData1H.getParamString('.SOLVENTNAME', 'unknown'));
-            try {
+           /* try {
                 spectraData1H.fillImpurity(spectraData1H.getParamString('.SOLVENTNAME', 'DMSO'));                
             }
-            catch (e) {}
+            catch (e) {}*/
             
             var signals = spectraData1H.getRanges(
                 {
