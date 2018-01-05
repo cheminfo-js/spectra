@@ -44,29 +44,21 @@ function load(path, datasetName, options) {
                 }
                 return a.atomLabel < b.atomLabel ? 1 : -1;
             });
-            
+
             //const diaIdsH = molecule.getGroupedDiastereotopicAtomIDs("H");
             const atoms = {};
             const levels = [5, 4, 3];
             for (const diaId of diaIDs) {
-                const hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
+                diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
                     maxSphereSize: levels[0],
                     type: 0
                 });
-                const atom = {
-                    diaID: diaId.oclID,
-                    hose: hoseCodes
-                };
-                //for (const level of levels) {
-                //    if (hoseCodes[level]) {
-                //        atom['hose' + level] = hoseCodes[level];
-                //    }
-                //}
+
                 for (const atomID of diaId.atoms) {
-                    atoms[atomID] = JSON.parse(JSON.stringify(atom));
+                    atoms[atomID] = diaId.oclID;
                 }
             }
-
+            let molecule2 = {id: molecule.getIDCode(), atom: atoms, diaId: diaIDs }
             molecule._atoms = atoms;
             molecule._diaIdsH = diaIdsH; 
 

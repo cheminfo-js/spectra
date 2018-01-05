@@ -29,11 +29,47 @@ function load(path, datasetName, options) {
                     }
                     return a.atomLabel < b.atomLabel ? 1 : -1;
                 });
-        
-                let ocl = {value: molecule};
-                ocl.diaIDs = diaIDs;
-                ocl.diaID = row.value.idCode;//molecule.getIDCode();
-                ocl.nH = nH;
+
+                const linksOH = molecule.getAllPaths({
+                    fromLabel: 'H',
+                    toLabel: 'O',
+                    minLength: 1,
+                    maxLength: 1
+                });
+                const linksNH = molecule.getAllPaths({
+                    fromLabel: 'H',
+                    toLabel: 'N',
+                    minLength: 1,
+                    maxLength: 1
+                });
+                const atoms = {};
+                const levels = [5, 4, 3];
+                for (const diaId of diaIDs) {
+                    diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
+                        maxSphereSize: levels[0],
+                        type: 0
+                    });
+    
+                    for (const atomID of diaId.atoms) {
+                        atoms[atomID] = diaId.oclID;
+                    }
+    
+                    diaId.isLabile = false;
+                    
+                    for (const linkOH of linksOH) {
+                        if (diaId.oclID === linkOH.fromDiaID) {
+                            diaId.isLabile = true;
+                            break;
+                        }
+                    }
+                    for (const linkNH of linksNH) {
+                        if (diaId.oclID === linkNH.fromDiaID) {
+                            diaId.isLabile = true;
+                            break;
+                        }
+                    }
+    
+                }
                 
                 var signals = row.value.range;
                 for (var j = signals.length - 1; j >= 0; j--) {
@@ -47,7 +83,7 @@ function load(path, datasetName, options) {
                 });
         
                 let sample = {
-                    general: {ocl: ocl},//: molecule.toMolfile()},
+                    general: {ocl: {id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH }},//: molecule.toMolfile()},
                     spectra: {
                         nmr: [{
                             nucleus: 'H',

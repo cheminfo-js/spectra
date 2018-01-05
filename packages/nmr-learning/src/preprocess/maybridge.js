@@ -43,47 +43,46 @@ function load(path, datasetName, options) {
                 return a.atomLabel < b.atomLabel ? 1 : -1;
             });
 
-            /*const diaIdsH = molecule.getGroupedDiastereotopicAtomIDs("H");
+            const linksOH = molecule.getAllPaths({
+                fromLabel: 'H',
+                toLabel: 'O',
+                minLength: 1,
+                maxLength: 1
+            });
+            const linksNH = molecule.getAllPaths({
+                fromLabel: 'H',
+                toLabel: 'N',
+                minLength: 1,
+                maxLength: 1
+            });
             const atoms = {};
-            const atomNumbers = [];
-            const levels = [5, 4, 3, 2];
-            for (const diaId of diaIdsH) {
-                const hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
-                    maxSphereSize: 5,
+            const levels = [5, 4, 3];
+            for (const diaId of diaIDs) {
+                diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
+                    maxSphereSize: levels[0],
                     type: 0
                 });
-                const atom = {
-                    diaIDs: [diaId.oclID]
-                };
-                for (const level of levels) {
-                    if (hoseCodes[level]) {
-                        atom['hose' + level] = hoseCodes[level];
+
+                for (const atomID of diaId.atoms) {
+                    atoms[atomID] = diaId.oclID;
+                }
+
+                diaId.isLabile = false;
+                
+                for (const linkOH of linksOH) {
+                    if (diaId.oclID === linkOH.fromDiaID) {
+                        diaId.isLabile = true;
+                        break;
                     }
                 }
-                for (const diaIdAtom of diaId.atoms) {
-                    atoms[diaIdAtom] = JSON.parse(JSON.stringify(atom));
-                    atomNumbers.push(diaIdAtom);
+                for (const linkNH of linksNH) {
+                    if (diaId.oclID === linkNH.fromDiaID) {
+                        diaId.isLabile = true;
+                        break;
+                    }
                 }
+
             }
-            let molecule2 = {};
-
-            molecule2.atoms = atoms;
-            molecule2.atomNumbers = atomNumbers;
-            molecule2.diaIds = diaIdsH;
-
-            let ocl = {value: molecule};
-            ocl.diaIDs = diaIDs;
-            ocl.diaID = molecule.getIDCode();
-            ocl.nH = nH;
-
-            //console.log(i / max * 100 );
-            var spectraData1H = SD.NMR.fromJcamp(row[2].replace(/\\n/g, '\n'));
-            //
-            //console.log(spectraData1H.getParamString('.SOLVENTNAME', 'unknown'));
-           /* try {
-                spectraData1H.fillImpurity(spectraData1H.getParamString('.SOLVENTNAME', 'DMSO'));                
-            }
-            catch (e) {}*/
             
             var signals = spectraData1H.getRanges(
                 {
@@ -109,7 +108,7 @@ function load(path, datasetName, options) {
             });
 
             let sample = {
-                general: {ocl: ocl},
+                general: {ocl: {id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH }},
                 spectra: {
                     nmr: [{
                         nucleus: 'H',
