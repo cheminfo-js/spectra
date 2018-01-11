@@ -43,8 +43,8 @@ async function assignmentFromPeakPicking(entry, options) {
         entry.general.ocl.diaIDs = diaIDs;
         entry.general.ocl.diaID = molecule.getIDCode();
     } else {
-        molecule = entry.general.ocl.value;
-        diaIDs = entry.general.ocl.diaIDs;
+        molecule = entry.general.ocl;
+        diaIDs = entry.general.ocl.diaId;
     }
 
     //console.log(diaIDs);
@@ -73,14 +73,16 @@ async function assignmentFromPeakPicking(entry, options) {
 }
 
 async function predictByExperiment(molecule, nmr, options) {
+
     if (nmr.experiment === '1d') {
         let pred;
         if (nmr.nucleus === 'H') {
             try {
+                console.log("sdsdsdsdd")
                 pred = await options.predictor.proton(molecule, Object.assign({}, options));                
             }
             catch (e) {
-                //console.log("Using spinus")
+                console.log(e)
                 pred = await options.predictor.spinus(molecule, Object.assign({}, options));                                
             }
             //pred = options.predictor.spinus(molecule, Object.assign({}, options, {ignoreLabile: false})).then(value => {console.log(value)}); 

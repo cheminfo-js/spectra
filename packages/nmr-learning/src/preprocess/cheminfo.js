@@ -45,10 +45,24 @@ function load(path, datasetName, options) {
                 return a.atomLabel < b.atomLabel ? 1 : -1;
             });
 
+             
             //const diaIdsH = molecule.getGroupedDiastereotopicAtomIDs("H");
+            const linksOH = molecule.getAllPaths({
+                fromLabel: 'H',
+                toLabel: 'O',
+                minLength: 1,
+                maxLength: 1
+            });
+            const linksNH = molecule.getAllPaths({
+                fromLabel: 'H',
+                toLabel: 'N',
+                minLength: 1,
+                maxLength: 1
+            });
             const atoms = {};
             const levels = [5, 4, 3];
             for (const diaId of diaIDs) {
+                delete diaId['_highlight'];
                 diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
                     maxSphereSize: levels[0],
                     type: 0
@@ -57,15 +71,27 @@ function load(path, datasetName, options) {
                 for (const atomID of diaId.atoms) {
                     atoms[atomID] = diaId.oclID;
                 }
-            }
-            let molecule2 = {id: molecule.getIDCode(), atom: atoms, diaId: diaIDs }
-            molecule._atoms = atoms;
-            molecule._diaIdsH = diaIdsH; 
 
-            let ocl = {value: molecule};
-            ocl.diaIDs = diaIDs;
-            ocl.diaID = molecule.getIDCode();
-            ocl.nH = nH;
+                diaId.isLabile = false;
+                
+                for (const linkOH of linksOH) {
+                    if (diaId.oclID === linkOH.fromDiaID) {
+                        diaId.isLabile = true;
+                        break;
+                    }
+                }
+                for (const linkNH of linksNH) {
+                    if (diaId.oclID === linkNH.fromDiaID) {
+                        diaId.isLabile = true;
+                        break;
+                    }
+                }
+
+            }
+            //let ocl = {value: molecule};
+            //ocl.diaIDs = diaIDs;
+            //ocl.diaID = molecule.getIDCode();
+            //ocl.nH = nH;
 
             //Simulate and process the 1H-NMR spectrum at 400MHz
             var jcampFile = molFiles[i].replace('mol_', 'h1_').replace('.mol', '.jdx');
@@ -88,7 +114,7 @@ function load(path, datasetName, options) {
             });
             
             //console.log(JSON.stringify(signals));
-            let sample = {general: {ocl: ocl}, //{ocl: ocl, molfile: molecule.toMolfileV3()},
+            let sample = {general: {ocl: {id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH }}, //{ocl: ocl, molfile: molecule.toMolfileV3()},
                 spectra: {nmr: [{nucleus: 'H', experiment: '1d', range: signals, solvent: spectraData1H.getParamString('.SOLVENT NAME', 'unknown')}]}};
             // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}
             result.push(sample);

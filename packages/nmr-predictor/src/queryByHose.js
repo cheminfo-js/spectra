@@ -12,6 +12,7 @@ export default function queryByHose(molecule, db, options) {
     } = options;
 
     levels.sort(numSort.desc);
+    console.log("iuiui");
 
     const diaIds = molecule.getGroupedDiastereotopicAtomIDs({atomLabel});
     const atoms = {};

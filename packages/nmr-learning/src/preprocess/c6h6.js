@@ -10,10 +10,13 @@ function load(path, datasetName, options) {
     let OCLE = options.OCLE;
 
     var result = [];
+    var k = 0;
     var rows = JSON.parse(loadFile(path)).rows;
     console.log(rows.length);
-    for (var p = 0; p < 4000; p++) {
+    for (var p = 0; p < rows.length; p++) {
         var row = rows[p];
+        if( p % 500 === 0)
+            console.log(p);
         if(row.value.nucleus === '1H') {
             try {
                 var molecule = OCLE.Molecule.fromIDCode(row.value.idCode);
@@ -45,6 +48,7 @@ function load(path, datasetName, options) {
                 const atoms = {};
                 const levels = [5, 4, 3];
                 for (const diaId of diaIDs) {
+                    delete diaId['_highlight'];
                     diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
                         maxSphereSize: levels[0],
                         type: 0
@@ -95,13 +99,22 @@ function load(path, datasetName, options) {
                 }
     
                 result.push(sample);
+
+                if(result.length === 1000) {
+                    FS.writeFileSync(__dirname + '/big' + k++ + '.json', JSON.stringify(result));
+                    result = [];
+                }
             }
             catch(e) {
                 console.log("Could not load this molecule: " + row.value.idCode)
             }
         }
-
+        
     }
+    if(result.length > 0) {
+        FS.writeFileSync(__dirname + '/big' + k + '.json', JSON.stringify(result));
+    }
+
     return result;
 }
 

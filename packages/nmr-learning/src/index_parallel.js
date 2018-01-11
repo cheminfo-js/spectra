@@ -2,11 +2,10 @@ const FS = require('fs');
 const OCLE = require('openchemlib-extended-minimal');
 const autoassigner = require('../../nmr-auto-assignment/src/index');
 const predictor = require('nmr-predictor');
-const cheminfo = require('./preprocess/cheminfo');
-const maybridge = require('./preprocess/maybridge');
+//const cheminfo = require('./preprocess/cheminfo');
+//const maybridge = require('./preprocess/maybridge');
 const compilePredictionTable = require('./compilePredictionTable');
 const stats = require('./stats');
-const Worker = require('webworker-threads').Worker;
 
 
 function loadFile(filename) {
@@ -19,9 +18,9 @@ async function start() {
     var learningRatio = 0.8; //A number between 0 and 1
 
     var testSet = JSON.parse(loadFile('/../data/assigned298.json'));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
-    var dataset1 = []; //cheminfo.load('/home/acastillo/Documents/data/cheminfo443/', 'cheminfo', {keepMolecule: true, OCLE: OCLE});
-    var dataset2 = maybridge.load('/home/acastillo/Documents/data/maybridge/', 'maybridge', {keepMolecule: true, keepMolfile: true, OCLE: OCLE});
-    var dataset3 = [];//reiner.load("/data/Reiner", "reiner", {keepMolecule: true, keepMolfile: true});
+    var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443.json').toString());
+    var dataset2 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/maybridge.json').toString());
+    var dataset3 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
 
     var datasets = [dataset1, dataset2, dataset3];
 
@@ -35,6 +34,8 @@ async function start() {
 
     console.log('Cheminfo All: ' + dataset1.length);
     console.log('MayBridge All: ' + dataset2.length);
+    console.log('Other All: ' + dataset3.length);
+
     
     //Remove the overlap molecules from train and test
     var removed = 0;
@@ -43,7 +44,7 @@ async function start() {
         for (ds = 0; ds < datasets.length; ds++) {
             dataset = datasets[ds];
             for (j = dataset.length - 1; j >= 0; j--) {
-                if (testSet[i].diaID === dataset[j].general.ocl.diaID) {
+                if (testSet[i].diaID === dataset[j].general.ocl.id) {
                     dataset.splice(j, 1);
                     removed++;
                     break;
@@ -64,6 +65,7 @@ async function start() {
     
     console.log('Cheminfo Final: ' + dataset1.length);
     console.log('MayBridge Final: ' + dataset2.length);
+    console.log('Other Final: ' + dataset3.length);
     console.log('Overlaped molecules: ' + removed + '.  They were removed from training datasets');
     
 
@@ -71,6 +73,7 @@ async function start() {
     //We have to use another stop criteria like convergence
     var iteration = 0;
     var convergence = false;
+    try {
     while (iteration < maxIterations && !convergence) {
         date = new Date();
         start = date.getTime();
@@ -149,7 +152,7 @@ async function start() {
             dataset: testSet,
             ignoreLabile: ignoreLabile,
             histParams: histParams,
-            hoseLevels: [5, 4, 3, 2],
+            hoseLevels: [5, 4, 3],
             OCLE: OCLE
         });
         date = new Date();
@@ -178,7 +181,7 @@ async function start() {
 
         iteration++;
     }
-    
+} catch (e) {console.log(e)}
     console.log('Done');
     
 }

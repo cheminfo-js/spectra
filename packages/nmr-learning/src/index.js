@@ -18,7 +18,7 @@ const learningRatio = 0.8; //A number between 0 and 1
 var iteration = 0;
 
 async function process(entry) {
-    result = await autoassigner(entry,
+    let result = await autoassigner(entry,
                 {
                     minScore: 1,
                     maxSolutions: 2000,
@@ -37,41 +37,46 @@ async function process(entry) {
     solutions = result.getAssignments();
     if (result.timeoutTerminated || result.nSolutions > solutions.length) {
         console.log(i + " Too many solutions");
-        continue;
     }
-    //console.log(solutions)
-    //Get the unique assigments in the assignment variable.
-    let solution = null;
-    if (solutions !== null && solutions.length > 0) {
-        solution = solutions[0];
-        let assignment = solution.assignment;
-        if (solutions.length > 1) {
-            nAtoms = assignment.length;
-            for (j = 0; j < nAtoms; j++) {
-                let signalId = assignment[j];
-                if (signalId !== '*') {
-                    for (k = 1; k < solutions.length; k++) {
-                        if (signalId !== solutions[k].assignment[j]) {
-                            assignment[j] = '*';
-                            break;
+    else {
+        //console.log(solutions)
+        //Get the unique assigments in the assignment variable.
+        let solution = null;
+        if (solutions !== null && solutions.length > 0) {
+            solution = solutions[0];
+            let assignment = solution.assignment;
+            if (solutions.length > 1) {
+                nAtoms = assignment.length;
+                for (j = 0; j < nAtoms; j++) {
+                    let signalId = assignment[j];
+                    if (signalId !== '*') {
+                        for (k = 1; k < solutions.length; k++) {
+                            if (signalId !== solutions[k].assignment[j]) {
+                                assignment[j] = '*';
+                                break;
+                            }
                         }
                     }
                 }
             }
         }
+        //console.log(solution);
+        //Only save the last state
+        result.setAssignmentOnSample(entry, solution);
     }
-    //console.log(solution);
-    //Only save the last state
-    result.setAssignmentOnSample(entry, solution);
+
 
     return entry;
 }
 
 async function start() {
     var testSet = JSON.parse(loadFile('/../data/assigned298.json'));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
-    var dataset1 = [];//cheminfo.load('/home/acastillo/Documents/data/cheminfo443/', 'cheminfo', {keepMolecule: true, OCLE: OCLE});
-    var dataset2 = maybridge.load('/home/acastillo/Documents/data/maybridge/', 'maybridge', {keepMolecule: true, OCLE: OCLE});
-    var dataset3 = [];//c6h6.load("/home/acastillo/Documents/data/output.json", "c6h6", {keepMolecule: true, OCLE: OCLE});
+    //var dataset1 = cheminfo.load('/home/acastillo/Documents/data/procjson/', 'cheminfo', {keepMolecule: true, OCLE: OCLE});
+    //var dataset2 = maybridge.load('/home/acastillo/Documents/data/maybridge/', 'maybridge', {keepMolecule: true, OCLE: OCLE});
+    //var dataset3 = c6h6.load("/home/acastillo/Documents/data/output.json", "c6h6", {keepMolecule: true, OCLE: OCLE});
+    var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443.json').toString());
+    var dataset2 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/maybridge.json').toString());
+    var dataset3 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
 
     var datasets = [dataset1, dataset2, dataset3];
 
@@ -81,7 +86,7 @@ async function start() {
     var prevCont = 0;
     var dataset, max, ds, i, j, k, nAtoms;
     var result, solutions;
-    var fastDB = JSON.parse(loadFile('/../data/h_4.json'));
+    var fastDB = [];//JSON.parse(loadFile('/../data/h_4.json'));
 
     console.log('Cheminfo All: ' + dataset1.length);
     console.log('MayBridge All: ' + dataset2.length);
@@ -94,7 +99,7 @@ async function start() {
         for (ds = 0; ds < datasets.length; ds++) {
             dataset = datasets[ds];
             for (j = dataset.length - 1; j >= 0; j--) {
-                if (testSet[i].diaID === dataset[j].general.ocl.diaID) {
+                if (testSet[i].diaID === dataset[j].general.ocl.id) {
                     dataset.splice(j, 1);
                     removed++;
                     break;
@@ -135,7 +140,7 @@ async function start() {
         p.map(process);
         //Create the fast prediction table. It contains the prediction at last iteration
         //Becasuse that, the iteration parameter has not effect on the stats
-        /*fastDB = compilePredictionTable(dataset, {iteration, OCLE}).H;
+        fastDB = compilePredictionTable(dataset, {iteration, OCLE}).H;
         
         //console.log(JSON.stringify(fastDB));
         console.log(Object.keys(fastDB[1]).length + ' ' + Object.keys(fastDB[2]).length + ' ' + Object.keys(fastDB[3]).length + ' ' + Object.keys(fastDB[4]).length + ' ' + Object.keys(fastDB[5]).length);
@@ -159,7 +164,7 @@ async function start() {
             dataset: testSet,
             ignoreLabile: ignoreLabile,
             histParams: histParams,
-            levels: [5, 4, 3, 2],
+            levels: [5, 4, 3],
             OCLE: OCLE
         });
         date = new Date();
@@ -184,7 +189,7 @@ async function start() {
             //convergence = true;
         }
         prevCont = count;
-        prevError = error;*/
+        prevError = error;
 
         iteration++;
     }
