@@ -40,7 +40,7 @@ async function assignmentFromPeakPicking(entry, options) {
         });
 
         entry.general.ocl = {value: molecule};
-        entry.general.ocl.diaIDs = diaIDs;
+        entry.general.ocl.diaId = diaIDs;
         entry.general.ocl.diaID = molecule.getIDCode();
     } else {
         molecule = entry.general.ocl;
