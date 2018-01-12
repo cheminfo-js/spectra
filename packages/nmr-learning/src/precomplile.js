@@ -20,11 +20,11 @@ var iteration = 0;
 
 async function start() {
     //var testSet = JSON.parse(loadFile('/../data/assigned298.json'));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
-    //var dataset1 = cheminfo.load('/home/acastillo/Documents/data/cheminfo443/', 'cheminfo', {keepMolecule: true, OCLE: OCLE});
+    var dataset1 = cheminfo.load('/home/acastillo/Documents/data/cheminfo443/', 'cheminfo', {keepMolecule: true, OCLE: OCLE});
     var dataset2 = maybridge.load('/home/acastillo/Documents/data/maybridge/', 'maybridge', {keepMolecule: true, OCLE: OCLE});
     //var dataset3 = c6h6.load("/home/acastillo/Documents/data/output.json", "c6h6", {keepMolecule: true, OCLE: OCLE});
 
-    //FS.writeFileSync('/home/acastillo/Documents/data/procjson/cheminfo443.json', JSON.stringify(dataset1));
+    FS.writeFileSync('/home/acastillo/Documents/data/procjson/cheminfo443.json', JSON.stringify(dataset1));
     FS.writeFileSync('/home/acastillo/Documents/data/procjson/maybridge.json', JSON.stringify(dataset2));
 }
 

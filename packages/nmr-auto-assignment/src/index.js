@@ -78,11 +78,9 @@ async function predictByExperiment(molecule, nmr, options) {
         let pred;
         if (nmr.nucleus === 'H') {
             try {
-                console.log("sdsdsdsdd")
                 pred = await options.predictor.proton(molecule, Object.assign({}, options));                
             }
             catch (e) {
-                console.log(e)
                 pred = await options.predictor.spinus(molecule, Object.assign({}, options));                                
             }
             //pred = options.predictor.spinus(molecule, Object.assign({}, options, {ignoreLabile: false})).then(value => {console.log(value)}); 

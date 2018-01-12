@@ -60,7 +60,7 @@ function load(path, datasetName, options) {
                 maxLength: 1
             });
             const atoms = {};
-            const levels = [5, 4, 3];
+            const levels = [6, 5, 4, 3];
             for (const diaId of diaIDs) {
                 delete diaId['_highlight'];
                 diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {

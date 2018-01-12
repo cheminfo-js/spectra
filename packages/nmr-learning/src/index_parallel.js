@@ -16,11 +16,12 @@ async function start() {
     var maxIterations = 10; // Set the number of interations for training
     var ignoreLabile = true;//Set the use of labile protons during training
     var learningRatio = 0.8; //A number between 0 and 1
+    const levels = [6, 5, 4, 3]
 
     var testSet = JSON.parse(loadFile('/../data/assigned298.json'));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
     var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443.json').toString());
     var dataset2 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/maybridge.json').toString());
-    var dataset3 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
+    var dataset3 = []//JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
 
     var datasets = [dataset1, dataset2, dataset3];
 
@@ -30,8 +31,8 @@ async function start() {
     var prevCont = 0;
     var dataset, max, ds, i, j, k, nAtoms;
     var result, solutions;
-    var fastDB = [];
-
+    //var fastDB = [];
+    var fastDB = [];//JSON.parse(loadFile('/../data/h_4.json'));
     console.log('Cheminfo All: ' + dataset1.length);
     console.log('MayBridge All: ' + dataset2.length);
     console.log('Other All: ' + dataset3.length);
@@ -82,7 +83,7 @@ async function start() {
         max = dataset.length;
         // we could now loop on the sdf to add the int index
         for (i = 0; i < max; i++) {
-            //console.log(i);
+            //console.log(dataset[i]);
             //try {
             predictor.setDb(fastDB, 'proton', 'proton');
             result = await autoassigner(dataset[i],
@@ -93,7 +94,7 @@ async function start() {
                     predictor: predictor,
                     condensed: true,
                     OCLE: OCLE,
-                    levels: [5, 4, 3],
+                    levels: levels,
                     ignoreLabile: ignoreLabile,
                     learningRatio: learningRatio,
                     iteration: iteration
@@ -105,6 +106,8 @@ async function start() {
                 continue;
             }
             //Get the unique assigments in the assignment variable.
+            //if(solutions.length > 0)
+            //    console.log(solutions.length)
             let solution = null;
             if (solutions !== null && solutions.length > 0) {
                 solution = solutions[0];
@@ -126,6 +129,7 @@ async function start() {
             }
             //Only save the last state
             result.setAssignmentOnSample(dataset[i], solution);
+            //console.log(JSON.stringify(dataset[i].spectra.nmr[0]))
         }
 
         //Create the fast prediction table. It contains the prediction at last iteration
@@ -147,12 +151,12 @@ async function start() {
         start = date.getTime();
         //var error = comparePredictors(datasetSim,{"db":db,"dataset":testSet,"iteration":"="+iteration});
         var histParams = {from: 0, to: 1, nBins: 30};
-        var error = stats.cmp2asg(testSet, predictor, {
+        var error = await stats.cmp2asg(testSet, predictor, {
             db: fastDB,
             dataset: testSet,
             ignoreLabile: ignoreLabile,
             histParams: histParams,
-            hoseLevels: [5, 4, 3],
+            hoseLevels: levels,
             OCLE: OCLE
         });
         date = new Date();
