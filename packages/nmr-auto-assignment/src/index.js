@@ -127,7 +127,7 @@ function getError(prediction, param) {
         //console.log(prediction.ncs+" "+(param.iteration+1)+" "+param.learningRatio);
         var factor = 3 * prediction.std /
             (Math.pow(prediction.ncs, (param.iteration + 1) * param.learningRatio));//(param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
-        return 2 * prediction.std + factor;
+        return 1 * prediction.std //+ factor;
     }
 }
 

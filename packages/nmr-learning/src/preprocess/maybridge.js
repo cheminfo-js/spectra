@@ -55,8 +55,15 @@ function load(path, datasetName, options) {
                 minLength: 1,
                 maxLength: 1
             });
+            const linksClH = molecule.getAllPaths({
+                fromLabel: 'H',
+                toLabel: 'Cl',
+                minLength: 1,
+                maxLength: 1
+            });
             const atoms = {};
             const levels = [6, 5, 4, 3];
+            let hasLabile = false;
             for (const diaId of diaIDs) {
                 delete diaId['_highlight'];
                 diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
@@ -73,12 +80,21 @@ function load(path, datasetName, options) {
                 for (const linkOH of linksOH) {
                     if (diaId.oclID === linkOH.fromDiaID) {
                         diaId.isLabile = true;
+                        hasLabile = true;
                         break;
                     }
                 }
                 for (const linkNH of linksNH) {
                     if (diaId.oclID === linkNH.fromDiaID) {
                         diaId.isLabile = true;
+                        hasLabile = true;
+                        break;
+                    }
+                }
+                for (const linkClH of linksClH) {
+                    if (diaId.oclID === linkClH.fromDiaID) {
+                        diaId.isLabile = true;
+                        hasLabile = true;
                         break;
                     }
                 }
@@ -109,7 +125,7 @@ function load(path, datasetName, options) {
             });
 
             let sample = {
-                general: {ocl: {id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH }},
+                general: {ocl: {id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH, hasLabile }},
                 spectra: {
                     nmr: [{
                         nucleus: 'H',

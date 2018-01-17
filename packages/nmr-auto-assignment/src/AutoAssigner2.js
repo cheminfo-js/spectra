@@ -91,7 +91,7 @@ class Assignment {
         var nSources;
         this.lowerBound = this.minScore;
 
-        //do {
+        do {
             this.nSolutions = 0;
             this.nSteps = 0;
             this.solutions = new treeSet(this.comparator);
@@ -115,9 +115,10 @@ class Assignment {
 
             this.exploreTreeRec(this.spinSystem, 0, partial);
 
-            //this.lowerBound -= 0.1;
+            this.lowerBound -= 0.05;
+            this.unassigned = 1;
             // if (DEBUG) console.log('Decreasing lowerBound: ' + this.lowerBound);
-        //} while (this.solutions.isEmpty() && this.lowerBound >= 0.4);
+        } while (this.solutions.isEmpty() && this.lowerBound >= 0.8);
 
         //Format the result
         //this._formatAssignmentOutput();
@@ -346,7 +347,7 @@ class Assignment {
                 
                     if (this.score > 0) {
                         //If there is no more sources or targets available, we have a solution for the assignment problem
-                        if (sourceAddress === system.nSources - 1 && this.score >= this.minScore) {
+                        if (sourceAddress === system.nSources - 1 && this.score >= this.lowerBound) {
                             //console.log(this.score + ' Found ' + JSON.stringify(partial));
                             this.nSolutions++;
                             var solution = {assignment: this._cloneArray(partial), score: this.score};

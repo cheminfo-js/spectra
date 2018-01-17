@@ -132,8 +132,14 @@ async function cmp2asg(dataSet, predictor, options) {
                 minLength: 1,
                 maxLength: 1
             });
+            const linksClH = molecule.getAllPaths({
+                fromLabel: 'Cl',
+                toLabel: 'N',
+                minLength: 1,
+                maxLength: 1
+            });
             const atoms = {};
-            const levels = [5, 4, 3];
+            const levels = options.levels;
             for (const diaId of diaIDs) {
                 delete diaId['_highlight'];
                 diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
@@ -155,6 +161,12 @@ async function cmp2asg(dataSet, predictor, options) {
                 }
                 for (const linkNH of linksNH) {
                     if (diaId.oclID === linkNH.fromDiaID) {
+                        diaId.isLabile = true;
+                        break;
+                    }
+                }
+                for (const linkCl of linksClH) {
+                    if (diaId.oclID === linkClH.fromDiaID) {
                         diaId.isLabile = true;
                         break;
                     }

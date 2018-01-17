@@ -13,15 +13,17 @@ function loadFile(filename) {
 }
 
 async function start() {
-    var maxIterations = 10; // Set the number of interations for training
+    var maxIterations = 5; // Set the number of interations for training
     var ignoreLabile = true;//Set the use of labile protons during training
     var learningRatio = 0.8; //A number between 0 and 1
-    const levels = [6, 5, 4, 3]
+    const levels = [5, 4, 3]
 
     var testSet = JSON.parse(loadFile('/../data/assigned298.json'));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
     var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443.json').toString());
     var dataset2 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/maybridge.json').toString());
     var dataset3 = []//JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
+
+    //dataset3.splice(0, 500)
 
     var datasets = [dataset1, dataset2, dataset3];
 
@@ -32,7 +34,7 @@ async function start() {
     var dataset, max, ds, i, j, k, nAtoms;
     var result, solutions;
     //var fastDB = [];
-    var fastDB = [];//JSON.parse(loadFile('/../data/h_4.json'));
+    var fastDB = JSON.parse(loadFile('/../data/h_0.json'));
     console.log('Cheminfo All: ' + dataset1.length);
     console.log('MayBridge All: ' + dataset2.length);
     console.log('Other All: ' + dataset3.length);
@@ -45,7 +47,7 @@ async function start() {
         for (ds = 0; ds < datasets.length; ds++) {
             dataset = datasets[ds];
             for (j = dataset.length - 1; j >= 0; j--) {
-                if (testSet[i].diaID === dataset[j].general.ocl.id) {
+                if (dataset[j].general.ocl.hasLabile || testSet[i].diaID === dataset[j].general.ocl.id) {
                     dataset.splice(j, 1);
                     removed++;
                     break;
@@ -72,7 +74,7 @@ async function start() {
 
     //Run the learning process. After each iteration the system has seen every single molecule once
     //We have to use another stop criteria like convergence
-    var iteration = 0;
+    var iteration = 1;
     var convergence = false;
     try {
     while (iteration < maxIterations && !convergence) {
@@ -89,12 +91,15 @@ async function start() {
             result = await autoassigner(dataset[i],
                 {
                     minScore: 1,
-                    maxSolutions: 3000,
-                    errorCS: -1.5,
+                    unassigned: 0,
+                    maxSolutions: 2500,
+                    timeout: 2000,
+                    errorCS: -0.1,
                     predictor: predictor,
                     condensed: true,
                     OCLE: OCLE,
-                    levels: levels,
+                    levels: [5],
+                    use:"median",
                     ignoreLabile: ignoreLabile,
                     learningRatio: learningRatio,
                     iteration: iteration
@@ -136,7 +141,8 @@ async function start() {
         //Becasuse that, the iteration parameter has not effect on the stats
         fastDB = compilePredictionTable(dataset, {iteration, OCLE}).H;
         
-        //console.log(JSON.stringify(fastDB));
+        FS.writeFileSync(__dirname + "/../data/h_" + iteration + ".json", JSON.stringify(fastDB));
+
         console.log(Object.keys(fastDB[1]).length + ' ' + Object.keys(fastDB[2]).length + ' ' + Object.keys(fastDB[3]).length + ' ' + Object.keys(fastDB[4]).length + ' ' + Object.keys(fastDB[5]).length);
         
         predictor.setDb(fastDB, 'proton', 'proton');
@@ -156,7 +162,8 @@ async function start() {
             dataset: testSet,
             ignoreLabile: ignoreLabile,
             histParams: histParams,
-            hoseLevels: levels,
+            levels: [5, 4, 3, 2],
+            use: "median",
             OCLE: OCLE
         });
         date = new Date();

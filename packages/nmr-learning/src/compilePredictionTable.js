@@ -19,23 +19,25 @@ function compilePredictionTable(samples, options) {
                 let db = result[nmr.nucleus];
                 nmr.range.forEach(range => {
                     range.signal.forEach(signal => {
-                        signal.diaID.forEach(id => {
-                            let hose = null;
-                            for (let k = 0; k < sample.general.ocl.diaId.length; k++) {
-                                if (sample.general.ocl.diaId[k]['oclID'] === id) {
-                                    hose = sample.general.ocl.diaId[k]['hose'];
-                                    break;
-                                }
-                            }
-                            if (hose) {
-                                for (let i = 0; i < hose.length; i++) {
-                                    if (!db[i ][hose[i]]) {
-                                        db[i ][hose[i]] = [];
+                        if (signal.diaID) {
+                            signal.diaID.forEach(id => {
+                                let hose = null;
+                                for (let k = 0; k < sample.general.ocl.diaId.length; k++) {
+                                    if (sample.general.ocl.diaId[k]['oclID'] === id) {
+                                        hose = sample.general.ocl.diaId[k]['hose'];
+                                        break;
                                     }
-                                    db[i ][hose[i]].push(signal.delta);
                                 }
-                            }
-                        });
+                                if (hose) {
+                                    for (let i = 0; i < hose.length; i++) {
+                                        if (!db[i ][hose[i]]) {
+                                            db[i ][hose[i]] = [];
+                                        }
+                                        db[i ][hose[i]].push(signal.delta);
+                                    }
+                                }
+                            });
+                        }
                     });
                 });
             }

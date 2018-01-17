@@ -59,8 +59,15 @@ function load(path, datasetName, options) {
                 minLength: 1,
                 maxLength: 1
             });
+            const linksClH = molecule.getAllPaths({
+                fromLabel: 'H',
+                toLabel: 'Cl',
+                minLength: 1,
+                maxLength: 1
+            });
             const atoms = {};
             const levels = [6, 5, 4, 3];
+            let hasLabile = false;
             for (const diaId of diaIDs) {
                 delete diaId['_highlight'];
                 diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
@@ -83,6 +90,13 @@ function load(path, datasetName, options) {
                 for (const linkNH of linksNH) {
                     if (diaId.oclID === linkNH.fromDiaID) {
                         diaId.isLabile = true;
+                        break;
+                    }
+                }
+                for (const linkClH of linksClH) {
+                    if (diaId.oclID === linkClH.fromDiaID) {
+                        diaId.isLabile = true;
+                        hasLabile = true;
                         break;
                     }
                 }
@@ -114,7 +128,7 @@ function load(path, datasetName, options) {
             });
             
             //console.log(JSON.stringify(signals));
-            let sample = {general: {ocl: {id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH }}, //{ocl: ocl, molfile: molecule.toMolfileV3()},
+            let sample = {general: {ocl: {id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH, hasLabile }}, //{ocl: ocl, molfile: molecule.toMolfileV3()},
                 spectra: {nmr: [{nucleus: 'H', experiment: '1d', range: signals, solvent: spectraData1H.getParamString('.SOLVENT NAME', 'unknown')}]}};
             // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}
             result.push(sample);
