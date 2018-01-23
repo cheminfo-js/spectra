@@ -48,7 +48,7 @@ describe('Auto-assignment 109-92-2', function () {
     const db = JSON.parse(loadFile('/../../nmr-predictor/data/h1.json'));
     predictor.setDb(db, 'proton', 'proton');
 
-    it('condensed for 109-92-2 from molfile', async function () {
+    it('condensed for 109-92-2 from molfile', function () {
         const result = await autoassigner({
             general: {molfile: molecule.toMolfileV3()},
             spectra: {

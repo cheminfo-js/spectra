@@ -11,6 +11,7 @@ import normalizeOptions from './normalizeOptions';
  * @return {Promise<Array>}
  */
 export default function spinus(molecule, options) {
+    options = Object.assign({}, {keepMolfile: true, distanceMatrix:true}, options);
     [molecule, options] = normalizeOptions(molecule, options);
     return fromSpinus(molecule).then(prediction => {
         return options.group ? group(prediction) : prediction;
@@ -19,7 +20,7 @@ export default function spinus(molecule, options) {
 
 function fromSpinus(molecule) {
     const request = superagent.post('https://www.nmrdb.org/service/predictor');
-    request.field('molfile', molecule.toMolfile());
+    request.field('molfile', molecule.molfile);
 
     return request.then(response => {
         //Convert to the ranges format and include the diaID for each atomID
@@ -30,23 +31,25 @@ function fromSpinus(molecule) {
         const multiplicity = data.multiplicity;
         const integrals = data.integrals;
         const nspins = cs.length;
-        const diaIDs = molecule.getGroupedDiastereotopicAtomIDs({atomLabel: 'H'});
-        const distanceMatrix = molecule.getConnectivityMatrix({pathLength: true});
+        const diaIDs = molecule.diaId;
+        const distanceMatrix = molecule.distanceMatrix;
         var result = new Array(nspins);
         var atoms = {};
         var atomNumbers = [];
         var i, j, k, oclID, tmpCS;
         var csByOclID = {};
         for (j = diaIDs.length - 1; j >= 0; j--) {
-            oclID = diaIDs[j].oclID + '';
-            for (k = diaIDs[j].atoms.length - 1; k >= 0; k--) {
-                atoms[diaIDs[j].atoms[k]] = oclID;
-                atomNumbers.push(diaIDs[j].atoms[k]);
-                if (!csByOclID[oclID]) {
-                    csByOclID[oclID] = {nc: 1, cs: cs[ids[diaIDs[j].atoms[k]]]};
-                } else {
-                    csByOclID[oclID].nc++;
-                    csByOclID[oclID].cs += cs[ids[diaIDs[j].atoms[k]]];
+            if(diaIDs[j].atomLabel === "H") {
+                oclID = diaIDs[j].oclID + '';
+                for (k = diaIDs[j].atoms.length - 1; k >= 0; k--) {
+                    atoms[diaIDs[j].atoms[k]] = oclID;
+                    atomNumbers.push(diaIDs[j].atoms[k]);
+                    if (!csByOclID[oclID]) {
+                        csByOclID[oclID] = {nc: 1, cs: cs[ids[diaIDs[j].atoms[k]]]};
+                    } else {
+                        csByOclID[oclID].nc++;
+                        csByOclID[oclID].cs += cs[ids[diaIDs[j].atoms[k]]];
+                    }
                 }
             }
         }

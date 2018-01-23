@@ -8,7 +8,7 @@ export default function queryByHose(molecule, db, options) {
         levels = [5, 4, 3, 2]
     } = options;
 
-    levels.sort(_numSort2.default.desc);
+    levels.sort(numSort.desc);
     const diaIds = molecule.diaId;
     const atoms = molecule.atom;
     const atomNumbers = Object.keys(atoms);

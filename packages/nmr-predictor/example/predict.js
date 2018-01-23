@@ -1,4 +1,6 @@
-const Predictor = require('../src/index.js');
+const predictor = require('../lib/index.js');
+const fs = require('fs');
+
 
 var molfile = `
 Actelion Java MolfileCreator 1.0
@@ -61,7 +63,7 @@ predictor.spinus(molfile, {group: false}).then(prediction => {
 
 const prediction = predictor.proton(molfile, {group: false, db: db1H});
 console.log(prediction.length);
-console.log(JSON.stringify(prediction))
+//console.log(JSON.stringify(prediction))
 
 
 

@@ -1,7 +1,10 @@
 import normalizeOptions from './normalizeOptions';
 
 export default function twoD(dim1, dim2, molecule, options) {
+    options = Object.assign({}, {keepMolecule: true}, options);
     [molecule, options] = normalizeOptions(molecule, options);
+   
+    let mol = molecule.molecule;
     var fromAtomLabel = '';
     var toAtomLabel = '';
     if (dim1 && dim1.length > 0) {
@@ -13,11 +16,11 @@ export default function twoD(dim1, dim2, molecule, options) {
 
     options = Object.assign({minLength: 1, maxLength: 3}, options, {fromLabel: fromAtomLabel, toLabel: toAtomLabel});
 
-    var paths = molecule.getAllPaths(options);
+    var paths = mol.getAllPaths(options);
     var inverseMap = {};
     if (fromAtomLabel === 'C' || toAtomLabel === 'C') {
-        molecule.removeExplicitHydrogens();
-        var diaIDsC = molecule.getGroupedDiastereotopicAtomIDs({atomLabel: 'C'});
+        mol.removeExplicitHydrogens();
+        var diaIDsC = mol.getGroupedDiastereotopicAtomIDs({atomLabel: 'C'});
         diaIDsC.forEach(diaID => {
             inverseMap[diaID.atoms.join(',')] = diaID.oclID;
         });

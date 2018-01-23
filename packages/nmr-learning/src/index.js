@@ -145,7 +145,7 @@ async function start() {
         //console.log(JSON.stringify(fastDB));
         console.log(Object.keys(fastDB[1]).length + ' ' + Object.keys(fastDB[2]).length + ' ' + Object.keys(fastDB[3]).length + ' ' + Object.keys(fastDB[4]).length + ' ' + Object.keys(fastDB[5]).length);
         
-        FS.writeFileSync(__dirname + "/../data/hh_" + iteration + ".json", JSON.stringify(fastDB));
+        FS.writeFileSync(__dirname + "/../data/h_" + iteration + ".json", JSON.stringify(fastDB));
 
         predictor.setDb(fastDB, 'proton', 'proton');
         //console.log(JSON.stringify(fastDB));

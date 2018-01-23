@@ -4,12 +4,15 @@ const defaultOptions = {
     atomLabel: 'H',
     ignoreLabile: true,
     use: 'median',
-    levels: [5,4,3,2]
+    levels: [5, 4, 3, 2],
+    keepMolfile: false,
+    keepMolecule: false,
+    distanceMatrix: false
 };
 
 export default function normalizeOptions(molecule, options) {
     options = Object.assign({}, defaultOptions, options);
-    let {Molecule} = getOcleFromOptions(options);
+    let {Molecule, Util} = getOcleFromOptions(options);
     if (typeof molecule === 'string') {
         if (molecule.split(/[\r\n]+/).length > 2) {
             molecule = Molecule.fromMolfile(molecule);
@@ -27,8 +30,8 @@ export default function normalizeOptions(molecule, options) {
     if (options.atomLabel === 'C') {
         molecule.removeExplicitHydrogens();
     }
-
-    return [molecule2Json(molecule, Molecule.Util, options), options];
+    
+    return [molecule2Json(molecule, Util, options), options];
 }
 
 function molecule2Json(molecule, Util, options) {
@@ -48,18 +51,21 @@ function molecule2Json(molecule, Util, options) {
         minLength: 1,
         maxLength: 1
     });
+
     const linksNH = molecule.getAllPaths({
         fromLabel: 'H',
         toLabel: 'N',
         minLength: 1,
         maxLength: 1
     });
+
     const linksClH = molecule.getAllPaths({
         fromLabel: 'H',
         toLabel: 'Cl',
         minLength: 1,
         maxLength: 1
     });
+
     const atoms = {};
     const levels = options.levels;
     let hasLabile = false;
@@ -98,5 +104,18 @@ function molecule2Json(molecule, Util, options) {
             }
         }
     }
-    return {id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH, hasLabile }
+
+    let toReturn = {id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH, hasLabile };
+
+    if (options.distanceMatrix) {
+        toReturn.distanceMatrix = molecule.getConnectivityMatrix({pathLength: true});
+    } 
+    if (options.keepMolfile) {
+        toReturn.molfile = molecule.toMolfile();
+    }
+    if (options.keepMolecule) {
+        toReturn.molecule = molecule;
+    }
+
+    return toReturn;
 }

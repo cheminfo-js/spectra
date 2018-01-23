@@ -98,7 +98,6 @@ function load(path, datasetName, options) {
                         break;
                     }
                 }
-
             }
             var spectraData1H = SD.NMR.fromJcamp(row[2].replace(/\\n/g, '\n'));		
             var signals = spectraData1H.getRanges(
