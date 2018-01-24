@@ -61,7 +61,7 @@ describe('ssss.', function () {
 
     const db = JSON.parse(loadFile('/../../nmr-predictor/data/h1.json'));
     //console.log(db)
-    predictor.setDb(db, 'proton', 'proton');
+    //predictor.setDb(db, 'proton', 'proton');
 
     /*it('Known patterns for ethylbenzene', async function () {
         var result = await autoassigner({general: {molfile: molfile},

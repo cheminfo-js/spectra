@@ -19,9 +19,9 @@ export default function normalizeOptions(molecule, options) {
         } else { // it is probably a SMILES
             molecule = Molecule.fromSmiles(molecule);
         }
-    } else if (!(molecule instanceof Molecule)) {
-        throw new Error('molecule must be a molfile string or Molecule instance');
-    }
+    } //else if (!(molecule instanceof Molecule)) {
+     //   throw new Error('molecule must be a molfile string or Molecule instance');
+    //}
 
     if (options.atomLabel === 'H') {
         molecule.addImplicitHydrogens();
