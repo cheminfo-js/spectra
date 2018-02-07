@@ -13,14 +13,14 @@ function loadFile(filename) {
 }
 
 async function start() {
-    var maxIterations = 5; // Set the number of interations for training
+    var maxIterations = 15; // Set the number of interations for training
     var ignoreLabile = true;//Set the use of labile protons during training
     var learningRatio = 0.8; //A number between 0 and 1
     const levels = [5, 4, 3]
 
     var testSet = JSON.parse(loadFile('/../data/assigned298.json'));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
-    var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443.json').toString());
-    var dataset2 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/maybridge.json').toString());
+    var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
+    var dataset2 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/maybridge_y.json').toString());
     var dataset3 = []//JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
 
     //dataset3.splice(0, 500)
@@ -48,6 +48,7 @@ async function start() {
             dataset = datasets[ds];
             for (j = dataset.length - 1; j >= 0; j--) {
                 if (dataset[j].general.ocl.hasLabile || testSet[i].diaID === dataset[j].general.ocl.id) {
+                //if (testSet[i].diaID === dataset[j].general.ocl.id) {
                     dataset.splice(j, 1);
                     removed++;
                     break;
@@ -75,6 +76,7 @@ async function start() {
     //Run the learning process. After each iteration the system has seen every single molecule once
     //We have to use another stop criteria like convergence
     var iteration = 1;
+    maxIterations = 10;
     var convergence = false;
     try {
     while (iteration < maxIterations && !convergence) {
@@ -107,7 +109,7 @@ async function start() {
             );
             solutions = result.getAssignments();
             if (result.timeoutTerminated || result.nSolutions > solutions.length) {
-                console.log(i + " Too much solutions");
+                //console.log(i + " Too much solutions");
                 continue;
             }
             //Get the unique assigments in the assignment variable.
@@ -162,7 +164,7 @@ async function start() {
             dataset: testSet,
             ignoreLabile: ignoreLabile,
             histParams: histParams,
-            levels: [5, 4, 3, 2],
+            levels: [5,4,3,2],
             use: "median",
             OCLE: OCLE
         });

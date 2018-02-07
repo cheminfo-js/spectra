@@ -91,7 +91,7 @@ class Assignment {
         var nSources;
         this.lowerBound = this.minScore;
 
-        do {
+        //do {
             this.nSolutions = 0;
             this.nSteps = 0;
             this.solutions = new treeSet(this.comparator);
@@ -114,11 +114,13 @@ class Assignment {
             }));*/
 
             this.exploreTreeRec(this.spinSystem, 0, partial);
-
-            this.lowerBound -= 0.05;
-            this.unassigned = 1;
+            //this.errorCS = Math.sign(this.errorCS) * 5;
+            
+            //this.generateExpandMap();
+            //this.lowerBound -= 0.05;
+            //this.unassigned = 1;
             // if (DEBUG) console.log('Decreasing lowerBound: ' + this.lowerBound);
-        } while (this.solutions.isEmpty() && this.lowerBound >= 0.8);
+        //} while (this.solutions.isEmpty() && this.lowerBound >= 0.8);
 
         //Format the result
         //this._formatAssignmentOutput();

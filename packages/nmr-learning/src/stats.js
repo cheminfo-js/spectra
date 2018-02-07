@@ -14,6 +14,10 @@ function compare(A, B, hist) {
             if (A[i].diaIDs[0] === B[j].diaIDs[0]) {
                 if (typeof A[i].delta !== 'undefined' && typeof B[j].delta !== 'undefined') {
                     tmp = Math.abs(A[i].delta - B[j].delta);
+                    if(tmp > 4) {
+                        //console.log(A[i].delta + " " + B[j].delta + " " + A[i].diaIDs[0]);
+                    }
+                        
                     hist.push(tmp);
                     error += tmp;
                     count++;

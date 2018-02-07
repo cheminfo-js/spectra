@@ -47,8 +47,8 @@ M  END
 
 const db1H = JSON.parse(fs.readFileSync(__dirname + '/../data/h1.json', 'utf8'));
 
-predictor.spinus(molfile, {group: false}).then(prediction => {
-    console.log(JSON.stringify(prediction))
+predictor.spinus(molfile, {group: true}).then(prediction => {
+    console.log(JSON.stringify(prediction.length))
     //var a = simule2DNmrSpectrum(prediction, {nbPointsX: 100, nbPointsY: 100});
     //console.log(prediction)
     //API.createData("data", a.to2DArray());
@@ -61,8 +61,8 @@ predictor.spinus(molfile, {group: false}).then(prediction => {
 });*/
 
 
-const prediction = predictor.proton(molfile, {group: false, db: db1H});
-console.log(prediction.length);
+const prediction = predictor.proton(molfile, {group: true, db: db1H});
+console.log("xx " + prediction.length);
 //console.log(JSON.stringify(prediction))
 
 

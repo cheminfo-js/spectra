@@ -105,18 +105,41 @@ function load(path, datasetName, options) {
                     nH: nH,
                     realTop: true,
                     thresholdFactor: 1,
+                   // minMaxRatio:0.020,
                     clean: true,
                     compile: true,
-                    idPrefix: '1H',
                     format: 'new'
                 }
             );
 
-
+            let sum = 0;
             for (var j = signals.length - 1; j >= 0; j--) {
-                if (signals[j].from < 0 || signals[j].from > 16) {
+                if (signals[j].from < 0 || signals[j].from > 11.8) {
                     signals.splice(j, 1);
+                } else {
+                    if(signals[j].from > 2.48 && signals[j].to < 2.59 && signals[j].signal[0].multiplicity === "quint")
+                        signals.splice(j, 1);
+                    else
+                        if(signals[j].from > 7.10 && signals[j].to < 7.30 && signals[j].signal[0].multiplicity === "s")
+                        signals.splice(j, 1);
+                        else
+                            sum += signals[j].integral;
                 }
+            }
+            //Restore the integral to nH
+            /*for (var j = signals.length - 1; j >= 0; j--) {
+                signals[j].integral *= nH / sum;
+            }*/
+            for (var j = signals.length - 2; j >= 0; j--) {
+                if( Math.abs((signals[j].to + signals[j].from)  - (signals[j + 1].to + signals[j + 1].from)) < 
+                    (Math.abs(signals[j].to - signals[j].from)  + Math.abs(signals[j + 1].to - signals[j + 1].from))) {
+                        signals[j].from = Math.min(signals[j].from, signals[j + 1].from);
+                        signals[j].to = Math.max(signals[j].to, signals[j + 1].to);
+                        signals[j].integral +=  signals[j + 1].integral;
+                        signals[j].signal[0].multiplicity = "m";
+                        signals[j].signal[0].delta = (signals[j].from + signals[j].to) / 2;
+                        signals.splice(j + 1, 1);
+                    }
             }
 
             signals.forEach((range, index)=> {
