@@ -117,24 +117,24 @@ async function predictByExperiment(molecule, nmr, options) {
 
 }
 
-/*function getError(prediction, param) {
+function getError(prediction, param) {
     //console.log(prediction)
     //Never use predictions with less than 3 votes
     if (prediction.std === 0 || prediction.ncs < 5) {
-        return 1;
+        return 5;
     } else {
         //factor is between 1 and +inf
         //console.log(prediction.ncs+" "+(param.iteration+1)+" "+param.learningRatio);
         var factor = 3 * prediction.std /
             (Math.pow(prediction.ncs, (param.iteration + 1) * param.learningRatio));//(param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
-        return 2 * prediction.std + factor;
+        return 2 * prediction.std;
     }
-}*/
+}
 
-function getError(prediction, param) {
+///function getError(prediction, param) {
     //console.log(prediction)
     //Never use predictions with less than 3 votes
-    let error = Math.abs(prediction.min - prediction.max) * 1.05;
+    //let error = Math.abs(prediction.min - prediction.max) * 1.05;
     //if(error < 0.1)
     //    error = 0.1;
     /*if(error === )
@@ -147,6 +147,6 @@ function getError(prediction, param) {
             (Math.pow(prediction.ncs, (param.iteration + 1) * param.learningRatio));//(param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
         return 2 * prediction.std + factor;
     }*/
-}
+//}
 
 module.exports = autoAssign;

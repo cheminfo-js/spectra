@@ -19,6 +19,7 @@ async function start() {
     const levels = [5, 4, 3]
 
     var testSet = JSON.parse(loadFile('/../data/assigned298.json'));//File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
+    //var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big4.json').toString());//JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
     var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
     var dataset2 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/maybridge_y.json').toString());
     var dataset3 = []//JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
@@ -33,8 +34,8 @@ async function start() {
     var prevCont = 0;
     var dataset, max, ds, i, j, k, nAtoms;
     var result, solutions;
-    //var fastDB = [];
-    var fastDB = JSON.parse(loadFile('/../data/h_0.json'));
+    var fastDB = [];
+    //var fastDB = JSON.parse(loadFile('/../data/h_clean.json'));
     console.log('Cheminfo All: ' + dataset1.length);
     console.log('MayBridge All: ' + dataset2.length);
     console.log('Other All: ' + dataset3.length);
@@ -75,7 +76,7 @@ async function start() {
 
     //Run the learning process. After each iteration the system has seen every single molecule once
     //We have to use another stop criteria like convergence
-    var iteration = 1;
+    var iteration = 0;
     maxIterations = 10;
     var convergence = false;
     try {
@@ -85,11 +86,11 @@ async function start() {
         var count = 0;
         dataset = trainDataset;//datasets[ds];
         max = dataset.length;
+        predictor.setDb(fastDB, 'proton', 'proton');
         // we could now loop on the sdf to add the int index
         for (i = 0; i < max; i++) {
             //console.log(dataset[i]);
             //try {
-            predictor.setDb(fastDB, 'proton', 'proton');
             result = await autoassigner(dataset[i],
                 {
                     minScore: 1,
@@ -109,7 +110,7 @@ async function start() {
             );
             solutions = result.getAssignments();
             if (result.timeoutTerminated || result.nSolutions > solutions.length) {
-                //console.log(i + " Too much solutions");
+                console.log(i + " Too much solutions");
                 continue;
             }
             //Get the unique assigments in the assignment variable.
@@ -142,12 +143,79 @@ async function start() {
         //Create the fast prediction table. It contains the prediction at last iteration
         //Becasuse that, the iteration parameter has not effect on the stats
         fastDB = compilePredictionTable(dataset, {iteration, OCLE}).H;
+        predictor.setDb(fastDB, 'proton', 'proton');
+
+
+        if((iteration+1)%5 === 0) {
+            for(level of levels) {
+                for (i = 0; i < max; i++) {
+                    let predictions = await predictor.proton(dataset[i].general.ocl,  {
+                        condensed: true,
+                        OCLE: OCLE,
+                        levels: [level],
+                        hose: true,
+                        use:"median",
+                        ignoreLabile: ignoreLabile,
+                        keepMolecule: true
+                    });
+                    //console.log(i)
+                    let ranges = dataset[i].spectra.nmr[0].range;
+                    for(let k =  predictions.length - 1; k >= 0; k--) {
+                        let pred = predictions[k];
+                        if(pred.ncs) {
+                            let hose5 = pred.hose[level - 1];
+                            let found = false;
+                            for(range of ranges) {
+                                //console.log(range)
+                                if(Math.abs((range.from + range.to) - (pred.min + pred.max))  < (Math.abs(range.from - range.to) + Math.abs(pred.min - pred.max))) {
+                                    if(!fastDB[level - 1][hose5].p)
+                                        fastDB[level - 1][hose5].p = 1;
+                                    else
+                                        fastDB[level - 1][hose5].p++;
+                                    found = true;
+                                    break;
+    
+                                }
+                            } 
+                            if(!found) {
+                                if(!fastDB[level - 1][hose5].n)
+                                    fastDB[level - 1][hose5].n = 1;
+                                else
+                                    fastDB[level - 1][hose5].n++;
+                            }
+                        }
+                        else
+                            predictions.splice(k,1);
+                    }
+                }
+                let keys = Object.keys(fastDB[level - 1]);
+                var deleted = 0;
+                keys.forEach(key => {
+                        let confidence = 0;
+                        if(fastDB[level - 1][key].p) {
+                            confidence = 1;
+                            if(fastDB[level - 1][key].n) {
+                                confidence = fastDB[level - 1][key].p / (fastDB[level - 1][key].p + fastDB[level - 1][key].n);
+                            }
+                        }
+                        fastDB[level - 1][key].conf = confidence;
+                        if(confidence > 0 && confidence < 0.2) {
+                            console.log(key + ":" + JSON.stringify(fastDB[level - 1][key]))
+                            delete fastDB[level - 1][key];
+                            deleted++;
+                            //console.log(fastDB[4][key]);
+                        }
+                });
+                console.log("Deleted at " + level + ":" + deleted);
+            };    
+        }
+
         
         FS.writeFileSync(__dirname + "/../data/h_" + iteration + ".json", JSON.stringify(fastDB));
 
         console.log(Object.keys(fastDB[1]).length + ' ' + Object.keys(fastDB[2]).length + ' ' + Object.keys(fastDB[3]).length + ' ' + Object.keys(fastDB[4]).length + ' ' + Object.keys(fastDB[5]).length);
         
-        predictor.setDb(fastDB, 'proton', 'proton');
+        //predictor.setDb(fastDB, 'proton', 'proton');
         //console.log(JSON.stringify(fastDB));
         date = new Date();
         //Evalueate the error
