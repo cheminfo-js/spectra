@@ -47,6 +47,10 @@ export default function queryByHose(molecule, db, options) {
                 atom.min = res.min;
                 atom.max = res.max;
                 atom.nbAtoms = 1;
+
+                if(options.hose)
+                    atom.hose = element.hose;
+
                 toReturn.push(atom);
             }
         }

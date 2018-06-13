@@ -10,28 +10,38 @@ const defaultOptions = {
     distanceMatrix: false
 };
 
-export default function normalizeOptions(molecule, options) {
+function normalizeOptions(molecule, options) {
     options = Object.assign({}, defaultOptions, options);
-    let {Molecule, Util} = getOcleFromOptions(options);
+    let { Molecule, Util } = (0, _getOcleFromOptions2.default)(options);
     if (typeof molecule === 'string') {
         if (molecule.split(/[\r\n]+/).length > 2) {
             molecule = Molecule.fromMolfile(molecule);
-        } else { // it is probably a SMILES
+        } else {
+            // it is probably a SMILES
             molecule = Molecule.fromSmiles(molecule);
         }
-    } //else if (!(molecule instanceof Molecule)) {
-     //   throw new Error('molecule must be a molfile string or Molecule instance');
-    //}
+    }
+    if (molecule instanceof Molecule) {
+        if (options.atomLabel === 'H') {
+            molecule.addImplicitHydrogens();
+        }
+        //@TODO Should be removed
+        if (options.atomLabel === 'C') {
+            molecule.removeExplicitHydrogens();
+        }
+        return [molecule2Json(molecule, Util, options), options];
+    }
+    if(options.keepMolfile && !molecule.molfile) {
+        //console.log(options.OCLE.Molecule)
+        let mol = options.OCLE.Molecule.fromIDCode(molecule.id);
+        mol.addImplicitHydrogens();
+        molecule.molfile = mol.toMolfile();
+        if (options.distanceMatrix && !molecule.distanceMatrix) {
+            molecule.distanceMatrix = mol.getConnectivityMatrix({ pathLength: true });
+        }
+    }
 
-    if (options.atomLabel === 'H') {
-        molecule.addImplicitHydrogens();
-    }
-    //@TODO Should be removed
-    if (options.atomLabel === 'C') {
-        molecule.removeExplicitHydrogens();
-    }
-    
-    return [molecule2Json(molecule, Util, options), options];
+    return [molecule, options];
 }
 
 function molecule2Json(molecule, Util, options) {
