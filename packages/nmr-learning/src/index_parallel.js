@@ -34,8 +34,8 @@ async function start() {
     var prevCont = 0;
     var dataset, max, ds, i, j, k, nAtoms;
     var result, solutions;
-    var fastDB = [];
-    //var fastDB = JSON.parse(loadFile('/../data/h_clean.json'));
+    //var fastDB = [];
+    var fastDB = JSON.parse(loadFile('/../data/h_3.json'));
     console.log('Cheminfo All: ' + dataset1.length);
     console.log('MayBridge All: ' + dataset2.length);
     console.log('Other All: ' + dataset3.length);
@@ -76,7 +76,7 @@ async function start() {
 
     //Run the learning process. After each iteration the system has seen every single molecule once
     //We have to use another stop criteria like convergence
-    var iteration = 0;
+    var iteration = 4;
     maxIterations = 10;
     var convergence = false;
     try {
@@ -97,7 +97,7 @@ async function start() {
                     unassigned: 0,
                     maxSolutions: 2500,
                     timeout: 2000,
-                    errorCS: -0.1,
+                    errorCS: -0.2,
                     predictor: predictor,
                     condensed: true,
                     OCLE: OCLE,
@@ -144,72 +144,6 @@ async function start() {
         //Becasuse that, the iteration parameter has not effect on the stats
         fastDB = compilePredictionTable(dataset, {iteration, OCLE}).H;
         predictor.setDb(fastDB, 'proton', 'proton');
-
-
-        if((iteration+1)%5 === 0) {
-            for(level of levels) {
-                for (i = 0; i < max; i++) {
-                    let predictions = await predictor.proton(dataset[i].general.ocl,  {
-                        condensed: true,
-                        OCLE: OCLE,
-                        levels: [level],
-                        hose: true,
-                        use:"median",
-                        ignoreLabile: ignoreLabile,
-                        keepMolecule: true
-                    });
-                    //console.log(i)
-                    let ranges = dataset[i].spectra.nmr[0].range;
-                    for(let k =  predictions.length - 1; k >= 0; k--) {
-                        let pred = predictions[k];
-                        if(pred.ncs) {
-                            let hose5 = pred.hose[level - 1];
-                            let found = false;
-                            for(range of ranges) {
-                                //console.log(range)
-                                if(Math.abs((range.from + range.to) - (pred.min + pred.max))  < (Math.abs(range.from - range.to) + Math.abs(pred.min - pred.max))) {
-                                    if(!fastDB[level - 1][hose5].p)
-                                        fastDB[level - 1][hose5].p = 1;
-                                    else
-                                        fastDB[level - 1][hose5].p++;
-                                    found = true;
-                                    break;
-    
-                                }
-                            } 
-                            if(!found) {
-                                if(!fastDB[level - 1][hose5].n)
-                                    fastDB[level - 1][hose5].n = 1;
-                                else
-                                    fastDB[level - 1][hose5].n++;
-                            }
-                        }
-                        else
-                            predictions.splice(k,1);
-                    }
-                }
-                let keys = Object.keys(fastDB[level - 1]);
-                var deleted = 0;
-                keys.forEach(key => {
-                        let confidence = 0;
-                        if(fastDB[level - 1][key].p) {
-                            confidence = 1;
-                            if(fastDB[level - 1][key].n) {
-                                confidence = fastDB[level - 1][key].p / (fastDB[level - 1][key].p + fastDB[level - 1][key].n);
-                            }
-                        }
-                        fastDB[level - 1][key].conf = confidence;
-                        if(confidence > 0 && confidence < 0.2) {
-                            console.log(key + ":" + JSON.stringify(fastDB[level - 1][key]))
-                            delete fastDB[level - 1][key];
-                            deleted++;
-                            //console.log(fastDB[4][key]);
-                        }
-                });
-                console.log("Deleted at " + level + ":" + deleted);
-            };    
-        }
-
         
         FS.writeFileSync(__dirname + "/../data/h_" + iteration + ".json", JSON.stringify(fastDB));
 

@@ -101,11 +101,10 @@ async function start() {
                 let ranges = dataset[i].spectra.nmr[0].range;
                 for(let k =  predictions.length - 1; k >= 0; k--) {
                     let pred = predictions[k];
-                    if(pred.ncs) {
-                        let hose5 = pred.hose[level - 1];
+                    let hose5 = pred.hose[level - 1];
+                    if(pred.ncs > 4 && fastDB[level - 1][hose5]) {
                         let found = false;
                         for(range of ranges) {
-                            //console.log(range)
                             if(Math.abs((range.from + range.to) - (pred.min + pred.max))  < (Math.abs(range.from - range.to) + Math.abs(pred.min - pred.max))) {
                                 if(!fastDB[level - 1][hose5].p)
                                     fastDB[level - 1][hose5].p = 1;
@@ -116,6 +115,7 @@ async function start() {
 
                             }
                         } 
+                        //console.log(hose5)
                         if(!found) {
                             if(!fastDB[level - 1][hose5].n)
                                 fastDB[level - 1][hose5].n = 1;
