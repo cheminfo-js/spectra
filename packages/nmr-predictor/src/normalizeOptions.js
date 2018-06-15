@@ -10,9 +10,9 @@ const defaultOptions = {
     distanceMatrix: false
 };
 
-function normalizeOptions(molecule, options) {
+export default function normalizeOptions(molecule, options) {
     options = Object.assign({}, defaultOptions, options);
-    let { Molecule, Util } = (0, _getOcleFromOptions2.default)(options);
+    let { Molecule, Util } = getOcleFromOptions(options);//(0, getOcleFromOptions.default)(options);
     if (typeof molecule === 'string') {
         if (molecule.split(/[\r\n]+/).length > 2) {
             molecule = Molecule.fromMolfile(molecule);

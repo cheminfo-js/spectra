@@ -76,7 +76,7 @@ async function start() {
 
     //Run the learning process. After each iteration the system has seen every single molecule once
     //We have to use another stop criteria like convergence
-    var iteration = 4;
+    var iteration = 5;
     maxIterations = 10;
     var convergence = false;
     try {
