@@ -81,6 +81,7 @@ describe('Simulation from signals', function () {
         simulation.should.have.property('x');
         simulation.should.have.property('y');
         simulation.x.length.should.eql(16384);
+        expect(simulation).toMatchSnapshot();
     });
 
     it('simulation 13C gives {x,y} data', function () {
@@ -90,5 +91,6 @@ describe('Simulation from signals', function () {
         simulation.should.have.property('x');
         simulation.should.have.property('y');
         simulation.x.length.should.eql(16384);
+        expect(simulation).toMatchSnapshot();
     });
 });
