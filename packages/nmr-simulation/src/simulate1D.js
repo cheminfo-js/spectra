@@ -9,7 +9,7 @@ const smallValue = 1e-2;
 
 export default function simulate1d(spinSystem, options) {
     var i, j;
-    const {
+    var {
         lineWidth = 1,
         nbPoints = 1024,
         maxClusterSize = 10,
@@ -17,6 +17,8 @@ export default function simulate1d(spinSystem, options) {
         frequency: frequencyMHz = 400,
         noiseFactor = 1
     } = options;
+
+    nbPoints = Number(nbPoints);
 
     const from = options.from * frequencyMHz || 0;
     const to = (options.to || 10) * frequencyMHz;
