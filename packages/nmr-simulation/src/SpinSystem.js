@@ -74,22 +74,28 @@ export default class SpinSystem {
         let result = [];
         prediction.forEach(pred => {
             let atomIDs = pred.atomIDs;
-            for (let i = 0; i < atomIDs.length; i++) {
-                let tempPred = JSON.parse(JSON.stringify(pred));
-                let nmrJ = [];
-                tempPred.atomIDs = [atomIDs[i]];
-                tempPred.integral = 1;
-                for (let j = 0; j < tempPred.j.length; j++) {
-                    let assignment = tempPred.j[j].assignment;
-                    for (let k = 0; k < assignment.length; k++) {
-                        let tempJ = JSON.parse(JSON.stringify(tempPred.j[j]));
-                        tempJ.assignment = assignment[k];
-                        nmrJ.push(tempJ);
+            if (atomIDs instanceof Array) {
+                for (let i = 0; i < atomIDs.length; i++) {
+                    let tempPred = JSON.parse(JSON.stringify(pred));
+                    let nmrJ = [];
+                    tempPred.atomIDs = [atomIDs[i]];
+                    tempPred.integral = 1;
+                    if (tempPred.j instanceof Array) {
+                        for (let j = 0; j < tempPred.j.length; j++) {
+                            let assignment = tempPred.j[j].assignment;
+                            if (assignment instanceof Array) {
+                                for (let k = 0; k < assignment.length; k++) {
+                                    let tempJ = JSON.parse(JSON.stringify(tempPred.j[j]));
+                                    tempJ.assignment = assignment[k];
+                                    nmrJ.push(tempJ);
+                                }
+                            }
+                        }
                     }
+                    tempPred.j = nmrJ;
+                    delete tempPred.nbAtoms;
+                    result.push(tempPred);
                 }
-                tempPred.j = nmrJ;
-                delete tempPred.nbAtoms;
-                result.push(tempPred);
             }
         });
 

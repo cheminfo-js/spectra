@@ -51,11 +51,13 @@ var options1h = {
 
 const prediction13c = [
     {
-        nbAtoms: 3,
+        atomIDs: ['11', '12'],
+        nbAtoms: 2,
         delta: 100,
         atomLabel: 'C'
     }, {
-        nbAtoms: 3,
+        atomIDs: ['5', '6'],
+        nbAtoms: 2,
         delta: 150,
         atomLabel: 'C'
     }
