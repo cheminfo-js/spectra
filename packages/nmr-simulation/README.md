@@ -6,6 +6,9 @@
 
 Simulate NMR spectra from spin systems
 
+The computational cost for the simulation of NMR spectra grows exponentially with the number of nuclei. Today, the memory available to store the Hamiltonian limits the size of the system that can be studied. Modern computers enable to tackle systems containing up to 13 spins [1], which obviously does not allow to study most molecules of interest in research. This issue can be addressed by identifying groups of spins or fragments that are not or only weakly interacting together, i.e., that only share weakly coupled spin pairs. Such a fragmentation is only permitted in the weak coupling regime, i.e., when the coupling interaction is weak compared to the difference in chemical shift of the coupled spins. Here, we propose a procedure that removes weak coupling interactions in order to split the spin system efficiently and to correct a posteriori for the effect of the neglected couplings. This approach yields accurate spectra when the adequate interactions are removed, i.e., between spins only involved in weak coupling interactions, but fails otherwise. As a result, the computational time for the simulation of 1D spectra grows linearly with the size of the spin system.
+This library is a JavaScript implementation of such algorithm. The spin system is specified as a set of magnetically equivalent spins. The description of the input format is ilustrated by means of the bellow example. There we have a spin system composed of 4 spins(11, 12, 5 and 6). Spins 11 and 12 are chemically equivalent, so they must be specified on the same group. nbAtoms stands for the number of atoms in the group. It should math the atomIDs.length. AtomLabel stands for the kind of atom of the group. It could be H, C, N, P refering to nuclei 1H, 13C, 15N and 31P respectively. Coupling between atoms should be specified in the j array.
+
 ## Installation
 
 `$ npm i nmr-simulation`
