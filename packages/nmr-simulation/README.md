@@ -23,7 +23,7 @@ const prediction = [
         atomIDs: ['11', '12'],
         nbAtoms: 2,
         delta: 1,
-        atomLabel: 'H
+        atomLabel: 'H'
     }, {
         atomIDs: ['5', '6'],
         nbAtoms: 2,
