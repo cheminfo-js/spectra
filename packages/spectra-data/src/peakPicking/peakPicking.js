@@ -20,39 +20,39 @@ import GSD from 'ml-gsd';
  */
 
 const defaultOptions = {
-    thresholdFactor: 1,
-    minMaxRatio: 0.01,
-    broadRatio: 0.00025,
-    smoothY: true,
-    widthFactor: 4,
-    realTop: true,
-    functionName: 'gaussian',
-    broadWidth: 0.25,
-    sgOptions: {windowSize: 9, polynomial: 3}
+  thresholdFactor: 1,
+  minMaxRatio: 0.01,
+  broadRatio: 0.00025,
+  smoothY: true,
+  widthFactor: 4,
+  realTop: true,
+  functionName: 'gaussian',
+  broadWidth: 0.25,
+  sgOptions: { windowSize: 9, polynomial: 3 }
 };
 
 
 export default function extractPeaks(spectrum, options = {}) {
-    options = Object.assign({}, defaultOptions, options, {optimize: false, broadWidth: false});
+  options = Object.assign({}, defaultOptions, options, { optimize: false, broadWidth: false });
 
-    let {
-        from,
-        to,
-        broadWidth,
-        optimize,
-        noiseLevel = Math.abs(spectrum.getNoiseLevel(options)) * (options.thresholdFactor)
-    } = options;
+  let {
+    from,
+    to,
+    broadWidth,
+    optimize,
+    noiseLevel = Math.abs(spectrum.getNoiseLevel(options)) * (options.thresholdFactor)
+  } = options;
 
-    var data = (from !== undefined && to !== undefined) ? spectrum.getVector({from, to, outputX: true}) : spectrum.getSpectrumData();
+  var data = (from !== undefined && to !== undefined) ? spectrum.getVector({ from, to, outputX: true }) : spectrum.getSpectrumData();
 
-    var peakList = GSD.gsd(data.x, data.y, options);
+  var peakList = GSD.gsd(data.x, data.y, options);
 
-    if (broadWidth) {
-        peakList = GSD.post.joinBroadPeaks(peakList, {width: options.broadWidth});
-    }
-    if (optimize) {
-        peakList = GSD.post.optimizePeaks(peakList, data.x, data.y, options);
-    }
+  if (broadWidth) {
+    peakList = GSD.post.joinBroadPeaks(peakList, { width: options.broadWidth });
+  }
+  if (optimize) {
+    peakList = GSD.post.optimizePeaks(peakList, data.x, data.y, options);
+  }
 
-    return peakList.filter((p) => p.y >= noiseLevel);
+  return peakList.filter((p) => p.y >= noiseLevel);
 }

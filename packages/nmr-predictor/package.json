@@ -20,6 +20,7 @@
     "new-array": "^1.0.0",
     "num-sort": "^1.0.0",
     "openchemlib-extended-minimal": "^2.0.0",
+    "should": "^13.2.3",
     "spectra-nmr-utilities": "^1.0.1",
     "superagent": "^3.5.0"
   },

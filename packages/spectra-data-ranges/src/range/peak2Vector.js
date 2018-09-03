@@ -12,74 +12,74 @@
  */
 
 export default function peak2Vector(peaks, options = {}) {
-    var {
-        from = null,
-        to = null,
-        nbPoints = 1024,
-        functionName = '',
-        nWidth = 4
-    } = options;
+  var {
+    from = null,
+    to = null,
+    nbPoints = 1024,
+    functionName = '',
+    nWidth = 4
+  } = options;
 
-    var factor;
-    if (from === null) {
-        from = Number.MAX_VALUE;
-        for (let i = 0; i < peaks.length; i++) {
-            factor = peaks[i].x - peaks[i].width * nWidth;
-            if (factor < from) {
-                from = factor;
-            }
-        }
-    }
-    if (to === null) {
-        to = Number.MIN_VALUE;
-        for (let i = 0; i < peaks.length; i++) {
-            factor = peaks[i].x + peaks[i].width * nWidth;
-            if (factor > to) {
-                to = factor;
-            }
-        }
-    }
-
-    var x = new Array(nbPoints);
-    var y = new Array(nbPoints);
-    var dx = (to - from) / (nbPoints - 1);
-    for (let i = 0; i < nbPoints; i++) {
-        x[i] = from + i * dx;
-        y[i] = 0;
-    }
-
-    var intensity = peaks[0].y ? 'y' : 'intensity';
-
-    var functionToUse;
-    switch (functionName.toLowerCase()) {
-        case 'lorentzian':
-            functionToUse = lorentzian;
-            break;
-        default:
-            functionToUse = gaussian;
-    }
-
+  var factor;
+  if (from === null) {
+    from = Number.MAX_VALUE;
     for (let i = 0; i < peaks.length; i++) {
-        var peak = peaks[i];
-        if (peak.x > from && peak.x < to) {
-            var index = Math.round((peak.x - from) / dx);
-            var w = Math.round(peak.width * nWidth / dx);
-            for (var j = index - w; j < index + w; j++) {
-                if (j >= 0 && j < nbPoints) {
-                    y[j] += functionToUse(peak[intensity], x[j], peak.width, peak.x);
-                }
-            }
+      factor = peaks[i].x - peaks[i].width * nWidth;
+      if (factor < from) {
+        from = factor;
+      }
+    }
+  }
+  if (to === null) {
+    to = Number.MIN_VALUE;
+    for (let i = 0; i < peaks.length; i++) {
+      factor = peaks[i].x + peaks[i].width * nWidth;
+      if (factor > to) {
+        to = factor;
+      }
+    }
+  }
+
+  var x = new Array(nbPoints);
+  var y = new Array(nbPoints);
+  var dx = (to - from) / (nbPoints - 1);
+  for (let i = 0; i < nbPoints; i++) {
+    x[i] = from + i * dx;
+    y[i] = 0;
+  }
+
+  var intensity = peaks[0].y ? 'y' : 'intensity';
+
+  var functionToUse;
+  switch (functionName.toLowerCase()) {
+    case 'lorentzian':
+      functionToUse = lorentzian;
+      break;
+    default:
+      functionToUse = gaussian;
+  }
+
+  for (let i = 0; i < peaks.length; i++) {
+    var peak = peaks[i];
+    if (peak.x > from && peak.x < to) {
+      var index = Math.round((peak.x - from) / dx);
+      var w = Math.round(peak.width * nWidth / dx);
+      for (var j = index - w; j < index + w; j++) {
+        if (j >= 0 && j < nbPoints) {
+          y[j] += functionToUse(peak[intensity], x[j], peak.width, peak.x);
         }
+      }
     }
+  }
 
-    function lorentzian(intensity, x, width, mean) {
-        var factor = intensity * Math.pow(width, 2) / 4;
-        return factor / (Math.pow(mean - x, 2) + Math.pow(width / 2, 2));
-    }
+  function lorentzian(intensity, x, width, mean) {
+    var factor = intensity * Math.pow(width, 2) / 4;
+    return factor / (Math.pow(mean - x, 2) + Math.pow(width / 2, 2));
+  }
 
-    function gaussian(intensity, x, width, mean) {
-        return intensity * Math.exp(-0.5 * Math.pow((mean - x) / (width / 2), 2));
-    }
+  function gaussian(intensity, x, width, mean) {
+    return intensity * Math.exp(-0.5 * Math.pow((mean - x) / (width / 2), 2));
+  }
 
-    return {x: x, y: y};
+  return { x: x, y: y };
 }

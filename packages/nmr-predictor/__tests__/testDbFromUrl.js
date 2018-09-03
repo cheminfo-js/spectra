@@ -28,17 +28,17 @@ M  END
 const path = 'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/';
 
 describe('URL JSON 1H prediction', function () {
-    it.skip('1H chemical shift prediction expanded', function () {
-        predictor.fetchProton(path + 'h1.json', 'customProton');
-        const prediction = predictor.proton(molfile, {group: true, db: 'customProton'});
-        prediction.length.should.eql(5);
-    });
+  it.skip('1H chemical shift prediction expanded', function () {
+    predictor.fetchProton(`${path}h1.json`, 'customProton');
+    const prediction = predictor.proton(molfile, { group: true, db: 'customProton' });
+    prediction.length.should.eql(5);
+  });
 });
 
 describe('URL JSON 13C prediction', function () {
-    it.skip('13C chemical shift prediction expanded', function () {
-        predictor.fetchCarbon(path + 'nmrshiftdb2-13c.json', 'customCarbon');
-        const prediction = predictor.carbon(molfile, {group: true, db: 'customCarbon'});
-        prediction.length.should.eql(6);
-    });
+  it.skip('13C chemical shift prediction expanded', function () {
+    predictor.fetchCarbon(`${path}nmrshiftdb2-13c.json`, 'customCarbon');
+    const prediction = predictor.carbon(molfile, { group: true, db: 'customCarbon' });
+    prediction.length.should.eql(6);
+  });
 });

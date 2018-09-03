@@ -32,7 +32,9 @@
     "ml-matrix": "^2.3.0",
     "ml-simple-clustering": "0.1.0",
     "ml-sparse-matrix": "^0.2.1",
-    "num-sort": "^1.0.0"
+    "new-array": "^1.0.0",
+    "num-sort": "^1.0.0",
+    "should": "^13.2.3"
   },
   "devDependencies": {
     "nmr-predictor": "^1.1.6"
