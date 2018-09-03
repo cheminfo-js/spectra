@@ -21,15 +21,19 @@ export default class Ranges extends Array {
   }
 
   /**
-     * This function return a Range instance from predictions.
-     * @param {object} signals - predictions from a spin system.
-     * @param {object} options - options object.
-     * @param {number} [options.lineWidth] - spectral line width.
-     * @param {number} [options.frequency] - frequency to determine the [from, to] of a range.
-     * @return {Ranges}
-     */
+   * This function return a Range instance from predictions.
+   * @param {object} signals - predictions from a spin system.
+   * @param {object} options - options object.
+   * @param {number} [options.lineWidth] - spectral line width.
+   * @param {number} [options.frequency] - frequency to determine the [from, to] of a range.
+   * @return {Ranges}
+   */
   static fromSignals(signals, options) {
-    options = Object.assign({}, { lineWidth: 1, frequency: 400, nucleus: '1H' }, options);
+    options = Object.assign(
+      {},
+      { lineWidth: 1, frequency: 400, nucleus: '1H' },
+      options
+    );
     // 1. Collapse all the equivalent predictions
 
     signals = utils.group(signals, options);
@@ -66,8 +70,10 @@ export default class Ranges extends Array {
       width = Math.abs(result[i].from - result[i].to);
       for (j = result.length - 1; j > i; j--) {
         // Does it overlap?
-        if (Math.abs(center - (result[j].from + result[j].to) / 2)
-                    <= Math.abs(width + Math.abs(result[j].from - result[j].to)) / 2) {
+        if (
+          Math.abs(center - (result[j].from + result[j].to) / 2) <=
+          Math.abs(width + Math.abs(result[j].from - result[j].to)) / 2
+        ) {
           result[i].from = Math.min(result[i].from, result[j].from);
           result[i].to = Math.max(result[i].to, result[j].to);
           result[i].integral += result[j].integral;
@@ -89,23 +95,22 @@ export default class Ranges extends Array {
   }
 
   /**
-     * This function return Ranges instance from a SD instance
-     * @param {SD} spectrum - SD instance
-     * @param {object} options - options object to extractPeaks function
-     * @return {Ranges}
-     */
+   * This function return Ranges instance from a SD instance
+   * @param {SD} spectrum - SD instance
+   * @param {object} options - options object to extractPeaks function
+   * @return {Ranges}
+   */
   static fromSpectrum(spectrum, options = {}) {
     return spectrum.getRanges(options);
   }
 
-
   /**
-     * This function normalize or scale the integral data
-     * @param {object} options - object with the options
-     * @param {boolean} [options.sum] - anything factor to normalize the integrals, Similar to the number of proton in the molecule for a nmr spectrum
-     * @param {number} [options.factor] - Factor that multiply the intensities, if [options.sum] is defined it is override
-     * @return {Ranges}
-     */
+   * This function normalize or scale the integral data
+   * @param {object} options - object with the options
+   * @param {boolean} [options.sum] - anything factor to normalize the integrals, Similar to the number of proton in the molecule for a nmr spectrum
+   * @param {number} [options.factor] - Factor that multiply the intensities, if [options.sum] is defined it is override
+   * @return {Ranges}
+   */
   updateIntegrals(options = {}) {
     var factor = options.factor || 1;
     var i;
@@ -113,7 +118,13 @@ export default class Ranges extends Array {
       var nH = options.sum || 1;
       var sumObserved = 0;
       for (let range of this) {
-        if (!range.kind || (range.kind !== 'solvent' && range.kind !== 'reference' && range.kind !== 'impurity' && range.kind !== 'standard')) {
+        if (
+          !range.kind ||
+          (String(range.kind) !== 'solvent' &&
+            String(range.kind) !== 'reference' &&
+            String(range.kind) !== 'impurity' &&
+            String(range.kind) !== 'standard')
+        ) {
           sumObserved += range.integral;
         }
       }
@@ -126,10 +137,10 @@ export default class Ranges extends Array {
   }
 
   /**
-     * This function return the peak list as a object with x and y arrays
-     * @param {bject} options - See the options parameter in {@link #peak2vector} function documentation
-     * @return {object} - {x: Array, y: Array}
-     */
+   * This function return the peak list as a object with x and y arrays
+   * @param {bject} options - See the options parameter in {@link #peak2vector} function documentation
+   * @return {object} - {x: Array, y: Array}
+   */
   getVector(options) {
     if (this[0].signal[0].peak) {
       return peak2Vector(this.getPeakList(), options);
@@ -139,9 +150,9 @@ export default class Ranges extends Array {
   }
 
   /**
-     * This function return an Array of peaks.
-     * @return {Array}
-     */
+   * This function return an Array of peaks.
+   * @return {Array}
+   */
   getPeakList() {
     if (this[0].signal[0].peak) {
       var peaks = [];
@@ -158,23 +169,23 @@ export default class Ranges extends Array {
   }
 
   /**
-     * This function return ACS format for each range.
-     * @param {object} options - options object for toAcs function.
-     * @param {boolean} [options.ascending = true] - order to sort the chemical shift.
-     * @param {string} [options.format = 'AIMJ'] or when 2D data is collected the default format may be "IMJA"
-     * @param {string} [options.deltaSeparator = ', ']
-     * @param {string} [options.detailSeparator = ', ']
-     * @return {string}
-     */
+   * This function return ACS format for each range.
+   * @param {object} options - options object for toAcs function.
+   * @param {boolean} [options.ascending = true] - order to sort the chemical shift.
+   * @param {string} [options.format = 'AIMJ'] or when 2D data is collected the default format may be "IMJA"
+   * @param {string} [options.deltaSeparator = ', ']
+   * @param {string} [options.detailSeparator = ', ']
+   * @return {string}
+   */
   getACS(options) {
     return acs(this, options);
   }
 
   /**
-     * Makes a array of object with multiplicity, delta and integral
-     * @param {object} [options = {}] - options for joinCouplings function.
-     * @return {Array<object>}
-     */
+   * Makes a array of object with multiplicity, delta and integral
+   * @param {object} [options = {}] - options for joinCouplings function.
+   * @return {Array<object>}
+   */
   toIndex(options = {}) {
     var index = [];
     if (options.joinCouplings) {
@@ -188,9 +199,13 @@ export default class Ranges extends Array {
           delta[i] = range.signal[i].delta;
         }
         index.push({
-          multiplicity: (l > 1) ? 'm' : (range.signal[0].multiplicity ||
-                    utils.joinCoupling(range.signal[0], options.tolerance)),
-          delta: arrayUtils.arithmeticMean(delta) || (range.to + range.from) * 0.5,
+          multiplicity:
+            l > 1
+              ? 'm'
+              : range.signal[0].multiplicity ||
+                utils.joinCoupling(range.signal[0], options.tolerance),
+          delta:
+            arrayUtils.arithmeticMean(delta) || (range.to + range.from) * 0.5,
           integral: range.integral
         });
       } else {
@@ -203,12 +218,11 @@ export default class Ranges extends Array {
     return index;
   }
 
-
   /**
-     * Joins coupling constants
-     * @param {object} [options = {}]
-     * @param {number} [options.tolerance=0.05] - tolerance to join a coupling
-     */
+   * Joins coupling constants
+   * @param {object} [options = {}]
+   * @param {number} [options.tolerance=0.05] - tolerance to join a coupling
+   */
   joinCouplings(options = {}) {
     this.forEach((range) => {
       range.signal.forEach((signal) => {
@@ -218,16 +232,19 @@ export default class Ranges extends Array {
   }
 
   /**
-     * Update the multiplicity of the signals from J couplings.
-     * @param {object} [options = {}]
-     * @param {number} [options.tolerance = 0.05] - tolerance to join a coupling
-     */
+   * Update the multiplicity of the signals from J couplings.
+   * @param {object} [options = {}]
+   * @param {number} [options.tolerance = 0.05] - tolerance to join a coupling
+   */
   updateMultiplicity(options = {}) {
     this.forEach((range) => {
       if (range.signal) {
         let signal = range.signal;
         if (signal.length === 1) {
-          signal[0].multiplicity = utils.joinCoupling(signal[0], options.tolerance);
+          signal[0].multiplicity = utils.joinCoupling(
+            signal[0],
+            options.tolerance
+          );
         } else {
           signal.forEach((signal) => {
             signal.multiplicity = 'm';
@@ -238,9 +255,9 @@ export default class Ranges extends Array {
   }
 
   /**
-     * Return a copy of the current Ranges.
-     * @return {Range}
-     */
+   * Return a copy of the current Ranges.
+   * @return {Range}
+   */
   clone() {
     let newRanges = JSON.parse(JSON.stringify(this));
     return new Ranges(newRanges);
