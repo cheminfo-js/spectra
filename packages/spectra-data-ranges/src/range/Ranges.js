@@ -112,8 +112,10 @@ export default class Ranges extends Array {
     if (options.sum) {
       var nH = options.sum || 1;
       var sumObserved = 0;
-      for (i = 0; i < this.length; i++) {
-        sumObserved += this[i].integral;
+      for (let range of this) {
+        if (!range.kind || (range.kind !== 'solvent' && range.kind !== 'reference' && range.kind !== 'impurity' && range.kind !== 'standard')) {
+          sumObserved += range.integral;
+        }
       }
       factor = nH / sumObserved;
     }

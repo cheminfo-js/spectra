@@ -215,6 +215,13 @@ describe('Update ranges', function () {
     ranges = ranges.updateIntegrals({ sum: sum * 2 });
     ranges.should.eql(new Ranges([{ integral: 2 }, { integral: 4 }]));
   });
+
+  it('change sum to 3, ignore solvent', function () {
+    var ranges = new Ranges([{ integral: 1 }, { integral: 2, kind: 'solvent' }]);
+    ranges = ranges.updateIntegrals({ sum });
+    ranges.should.eql(new Ranges([{ integral: 3 }, { integral: 6, kind: 'solvent' }]));
+  });
+
   it('add an integral', function () {
     var ranges = new Ranges([{ integral: 1 }, { integral: 2 }]);
     ranges.push({ integral: 3 });
