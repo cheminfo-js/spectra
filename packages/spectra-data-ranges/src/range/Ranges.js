@@ -105,6 +105,38 @@ export default class Ranges extends Array {
   }
 
   /**
+   * Based on the kind define if we should take into account the integral
+   * @param {Range} range
+   * @return {boolean}
+   */
+  static shouldIntegrate(range) {
+    return (
+      !range.kind ||
+      (String(range.kind) !== 'solvent' &&
+        String(range.kind) !== 'reference' &&
+        String(range.kind) !== 'impurity' &&
+        String(range.kind) !== 'standard')
+    );
+  }
+
+  /**
+   * This function returns the sum of the integrals if the kind should integrate
+   * @param {object} [options={}]
+   * @param {boolean} [options.sumAll=false] - sum even if the kind should not integrate
+   * @return {number}
+   */
+  sumOfIntegrals(options = {}) {
+    let { sumAll = false } = options;
+    let sumObserved = 0;
+    for (let range of this) {
+      if (sumAll || Ranges.shouldIntegrate(range)) {
+        sumObserved += range.integral;
+      }
+    }
+    return sumObserved;
+  }
+
+  /**
    * This function normalize or scale the integral data
    * @param {object} options - object with the options
    * @param {boolean} [options.sum] - anything factor to normalize the integrals, Similar to the number of proton in the molecule for a nmr spectrum
@@ -116,19 +148,8 @@ export default class Ranges extends Array {
     var i;
     if (options.sum) {
       var nH = options.sum || 1;
-      var sumObserved = 0;
-      for (let range of this) {
-        if (
-          !range.kind ||
-          (String(range.kind) !== 'solvent' &&
-            String(range.kind) !== 'reference' &&
-            String(range.kind) !== 'impurity' &&
-            String(range.kind) !== 'standard')
-        ) {
-          sumObserved += range.integral;
-        }
-      }
-      factor = nH / sumObserved;
+      var sumObserved = this.sumOfIntegrals();
+      factor = nH / (sumObserved || 1);
     }
     for (i = 0; i < this.length; i++) {
       this[i].integral = round(this[i].integral * factor, 5);
