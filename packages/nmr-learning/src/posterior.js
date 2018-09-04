@@ -34,7 +34,7 @@ async function start() {
     var dataset, max, ds, i, j, k, nAtoms;
     var result, solutions;
     //var fastDB = [];
-    var fastDB = JSON.parse(loadFile('/../data/h_9.json'));
+    var fastDB = JSON.parse(loadFile('/../data/h_15.json'));
     console.log('Cheminfo All: ' + dataset1.length);
     console.log('MayBridge All: ' + dataset2.length);
     console.log('Other All: ' + dataset3.length);
@@ -138,7 +138,7 @@ async function start() {
                         }
                     }
                     fastDB[level - 1][key].conf = confidence;
-                    if(confidence > 0 && confidence < 0.2) {
+                    if(confidence > 0 && confidence < 0.5) {
                         console.log(key + ":" + JSON.stringify(fastDB[level - 1][key]))
                         delete fastDB[level - 1][key];
                         deleted++;
