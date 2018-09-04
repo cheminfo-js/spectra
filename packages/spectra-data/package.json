@@ -1,6 +1,6 @@
 {
   "name": "spectra-data",
-  "version": "3.4.1",
+  "version": "3.4.2",
   "description": "spectra-data project - manipulate spectra",
   "keywords": [
     "spectra-data",
@@ -46,7 +46,7 @@
     "ml-simple-clustering": "^0.1.0",
     "nmr-simulation": "^1.0.14",
     "should": "^13.2.3",
-    "spectra-data-ranges": "^1.1.1",
+    "spectra-data-ranges": "^1.1.2",
     "spectra-nmr-utilities": "^1.0.2"
   }
 }
