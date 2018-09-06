@@ -19,9 +19,10 @@
   "dependencies": {
     "new-array": "^1.0.0",
     "num-sort": "^1.0.0",
-    "openchemlib-extended-minimal": "^2.0.0",
     "should": "^13.2.3",
-    "spectra-nmr-utilities": "^1.0.2",
+    "openchemlib-extended": "^3.0.0",
+    "spectra-nmr-utilities": "^1.0.3",
+
     "superagent": "^3.5.0"
   },
   "devDependencies": {

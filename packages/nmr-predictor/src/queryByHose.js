@@ -1,9 +1,7 @@
 import numSort from 'num-sort';
 
-import getOcleFromOptions from './getOcleFromOptions';
-
 export default function queryByHose(molecule, db, options) {
-  const { Util } = getOcleFromOptions(options);
+  //const { Util } = getOcleFromOptions(options);
   const {
     atomLabel = 'H',
     use = null,
@@ -11,92 +9,55 @@ export default function queryByHose(molecule, db, options) {
     levels = [4, 3, 2, 1, 0]
   } = options;
 
-  levels.sort(numSort.desc);
+   levels.sort(numSort.desc);
+  
+    const diaIds = molecule.diaId;
+    const atoms = molecule.atom;
+    const atomNumbers = Object.keys(atoms);
 
-  const diaIds = molecule.getGroupedDiastereotopicAtomIDs({ atomLabel });
-  const atoms = {};
-  const atomNumbers = [];
+    const toReturn = [];
+    for (const element of diaIds) {
+        if (element.atomLabel === options.atomLabel && (!element.isLabile || !options.ignoreLabile)) {
+            let res;
+            let k = 0;
+            //console.log(element.hose)
+            while (!res && k < levels.length) {
+                if (db[levels[k]]) {
+                    res = db[levels[k] - 1][element.hose[levels[k] - 1]];//atom['hose' + levels[k]]];
+                }
+                k++;
+            }
+            if (!res) {
+                res = { cs: null, ncs: 0, std: 0, min: 0, max: 0 };
+                k = 0;
+            }
 
-  for (const diaId of diaIds) {
-    const hoseCodes = Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
-      maxSphereSize: levels[0],
-      type: algorithm
-    });
-    const atom = {
-      diaIDs: [diaId.oclID]
-    };
-    for (const level of levels) {
-      if (hoseCodes[level]) {
-        atom[`hose${level}`] = hoseCodes[level];
-      }
-    }
-    for (const diaIdAtom of diaId.atoms) {
-      atoms[diaIdAtom] = JSON.parse(JSON.stringify(atom));
-      atomNumbers.push(diaIdAtom);
-    }
-  }
+            for (const atomNumber of element.atoms) {
+                //console.log(element)
+                let atom = {diaIDs: [element.oclID]};
+                atom.atomLabel = atomLabel;
+                atom.level = levels[k - 1];
+                if (use === 'median') {
+                    atom.delta = res.median;
+                } else if (use === 'mean') {
+                    atom.delta = res.mean;
+                }
+                //atom.integral = 1;
+                atom.atomIDs = [atomNumber];
+                atom.ncs = res.ncs;
+                atom.std = res.std;
+                atom.min = res.min;
+                atom.max = res.max;
+                atom.nbAtoms = 1;
 
-  const toReturn = [];
-  for (const atomNumber of atomNumbers) {
-    const atom = atoms[atomNumber];
-    let res;
-    let k = 0;
-    while (!res && k < levels.length) {
-      if (db[levels[k]]) {
-        res = db[levels[k]][atom[`hose${levels[k]}`]];
-      }
-      k++;
-    }
-    if (!res) {
-      res = { cs: null, ncs: 0, std: 0, min: 0, max: 0 };
-    }
-    atom.atomLabel = atomLabel;
-    atom.level = levels[k - 1];
-    if (use === 'median') {
-      atom.delta = res.median;
-    } else if (use === 'mean') {
-      atom.delta = res.mean;
-    }
-    atom.integral = 1;
-    atom.atomIDs = [atomNumber];
-    atom.ncs = res.ncs;
-    atom.std = res.std;
-    atom.min = res.min;
-    atom.max = res.max;
+                if(options.hose)
+                    atom.hose = element.hose;
 
-    toReturn.push(atom);
-  }
-
-  if (options.ignoreLabile) {
-    const linksOH = molecule.getAllPaths({
-      fromLabel: 'H',
-      toLabel: 'O',
-      minLength: 1,
-      maxLength: 1
-    });
-    const linksNH = molecule.getAllPaths({
-      fromLabel: 'H',
-      toLabel: 'N',
-      minLength: 1,
-      maxLength: 1
-    });
-    for (let j = toReturn.length - 1; j >= 0; j--) {
-      for (const linkOH of linksOH) {
-        if (toReturn[j].diaIDs[0] === linkOH.fromDiaID) {
-          toReturn.splice(j, 1);
-          break;
+                toReturn.push(atom);
+            }
         }
-      }
+        
     }
 
-    for (let j = toReturn.length - 1; j >= 0; j--) {
-      for (const linkNH of linksNH) {
-        if (toReturn[j].diaIDs[0] === linkNH.fromDiaID) {
-          toReturn.splice(j, 1);
-          break;
-        }
-      }
-    }
-  }
-  return toReturn;
+    return toReturn;
 }

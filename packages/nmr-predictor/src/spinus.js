@@ -13,42 +13,47 @@ import normalizeOptions from './normalizeOptions';
  * @return {Promise<Array>}
  */
 export default function spinus(molecule, options) {
-  [molecule, options] = normalizeOptions(molecule, options);
-  return fromSpinus(molecule).then((prediction) => {
-    return options.group ? group(prediction) : prediction;
-  });
+    options = Object.assign({}, {keepMolfile: true, distanceMatrix:true}, options);
+    [molecule, options] = normalizeOptions(molecule, options);
+    return fromSpinus(molecule).then(prediction => {
+        return options.group ? group(prediction) : prediction;
+    });
 }
 
 function fromSpinus(molecule) {
-  const request = superagent.post('https://www.nmrdb.org/service/predictor');
-  request.field('molfile', molecule.toMolfile());
+    const request = superagent.post('https://www.nmrdb.org/service/predictor');
+    request.field('molfile', molecule.molfile);
 
-  return request.then((response) => {
-    // Convert to the ranges format and include the diaID for each atomID
-    const data = spinusParser(response.text);
-    const ids = data.ids;
-    const jc = data.couplingConstants;
-    const cs = data.chemicalShifts;
-    const multiplicity = data.multiplicity;
-    const integrals = data.integrals;
-    const nspins = cs.length;
-    const diaIDs = molecule.getGroupedDiastereotopicAtomIDs({ atomLabel: 'H' });
-    const distanceMatrix = molecule.getConnectivityMatrix({ pathLength: true });
-    var result = new Array(nspins);
-    var atoms = {};
-    var atomNumbers = [];
-    var i, j, k, oclID, tmpCS;
-    var csByOclID = {};
-    for (j = diaIDs.length - 1; j >= 0; j--) {
-      oclID = `${diaIDs[j].oclID}`;
-      for (k = diaIDs[j].atoms.length - 1; k >= 0; k--) {
-        atoms[diaIDs[j].atoms[k]] = oclID;
-        atomNumbers.push(diaIDs[j].atoms[k]);
-        if (!csByOclID[oclID]) {
-          csByOclID[oclID] = { nc: 1, cs: cs[ids[diaIDs[j].atoms[k]]] };
-        } else {
-          csByOclID[oclID].nc++;
-          csByOclID[oclID].cs += cs[ids[diaIDs[j].atoms[k]]];
+    return request.then(response => {
+        //Convert to the ranges format and include the diaID for each atomID
+        const data = spinusParser(response.text);
+        const ids = data.ids;
+        const jc = data.couplingConstants;
+        const cs = data.chemicalShifts;
+        const multiplicity = data.multiplicity;
+        const integrals = data.integrals;
+        const nspins = cs.length;
+        const diaIDs = molecule.diaId;
+        const distanceMatrix = molecule.distanceMatrix;
+        var result = new Array(nspins);
+        var atoms = {};
+        var atomNumbers = [];
+        var i, j, k, oclID, tmpCS;
+        var csByOclID = {};
+        for (j = diaIDs.length - 1; j >= 0; j--) {
+            if(diaIDs[j].atomLabel === "H") {
+                oclID = diaIDs[j].oclID + '';
+                for (k = diaIDs[j].atoms.length - 1; k >= 0; k--) {
+                    atoms[diaIDs[j].atoms[k]] = oclID;
+                    atomNumbers.push(diaIDs[j].atoms[k]);
+                    if (!csByOclID[oclID]) {
+                        csByOclID[oclID] = {nc: 1, cs: cs[ids[diaIDs[j].atoms[k]]]};
+                    } else {
+                        csByOclID[oclID].nc++;
+                        csByOclID[oclID].cs += cs[ids[diaIDs[j].atoms[k]]];
+                    }
+                }
+            }
         }
       }
     }

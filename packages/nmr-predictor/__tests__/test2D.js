@@ -70,7 +70,6 @@ describe('2D prediction', function () {
         count++;
       }
     });
-
     prediction.length.should.equal(count);
   });
 

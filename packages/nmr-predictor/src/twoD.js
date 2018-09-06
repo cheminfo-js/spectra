@@ -11,18 +11,29 @@ import normalizeOptions from './normalizeOptions';
 
 
 export default function twoD(dim1, dim2, molecule, options) {
-  [molecule, options] = normalizeOptions(molecule, options);
-  var fromAtomLabel = '';
-  var toAtomLabel = '';
-  if (dim1 && dim1.length > 0) {
-    fromAtomLabel = dim1[0].atomLabel;
-  }
-  if (dim2 && dim2.length > 0) {
-    toAtomLabel = dim2[0].atomLabel;
-  }
+    options = Object.assign({}, {keepMolecule: true}, options);
+    [molecule, options] = normalizeOptions(molecule, options);
+   
+    let mol = molecule.molecule;
+    var fromAtomLabel = '';
+    var toAtomLabel = '';
+    if (dim1 && dim1.length > 0) {
+        fromAtomLabel = dim1[0].atomLabel;
+    }
+    if (dim2 && dim2.length > 0) {
+        toAtomLabel = dim2[0].atomLabel;
+    }
 
-  options = Object.assign({ minLength: 1, maxLength: 3 }, options, { fromLabel: fromAtomLabel, toLabel: toAtomLabel });
-
+    options = Object.assign({ minLength: 1, maxLength: 3 }, options, { fromLabel: fromAtomLabel, toLabel: toAtomLabel });
+    var paths = mol.getAllPaths(options);
+    var inverseMap = {};
+    if (fromAtomLabel === 'C' || toAtomLabel === 'C') {
+        mol.removeExplicitHydrogens();
+        var diaIDsC = mol.getGroupedDiastereotopicAtomIDs({atomLabel: 'C'});
+        diaIDsC.forEach(diaID => {
+            inverseMap[diaID.atoms.join(',')] = diaID.oclID;
+        });
+    }
   var paths = molecule.getAllPaths(options);
   var inverseMap = {};
   if (fromAtomLabel === 'C' || toAtomLabel === 'C') {

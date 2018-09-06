@@ -5,6 +5,7 @@ export default function getOcleFromOptions(options) {
   if (options.OCLE) {
     return options.OCLE;
   } else {
-    return require('openchemlib-extended-minimal');
+    return require('openchemlib-extended');
   }
+
 }
