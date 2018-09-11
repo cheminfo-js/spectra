@@ -22,7 +22,6 @@
     "should": "^13.2.3",
     "openchemlib-extended": "^3.0.0",
     "spectra-nmr-utilities": "^1.0.2",
-
     "superagent": "^3.5.0"
   },
   "devDependencies": {

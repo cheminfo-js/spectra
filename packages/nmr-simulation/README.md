@@ -24,33 +24,35 @@ const simulation = require('nmr-simulation');
 
 const prediction = [
     {
-        atomIDs: ['11', '12'],
-        nbAtoms: 2,
-        delta: 1,
-        atomLabel: 'H'
+        atomIDs: ['11'],
+        nbAtoms: 1,
+        delta: 1.2,
+        atomLabel: 'H',
+        j:[{'assignment':['5'],'coupling':7.4,'multiplicity':'d','distance':3}, 
+           {'assignment':['6'],'coupling':7.4,'multiplicity':'d','distance':3}]
     }, {
         atomIDs: ['5', '6'],
         nbAtoms: 2,
-        delta: 1,
+        delta: 1.3,
         atomLabel: 'H'
     }
 ];
 
 var options1h = {
     frequency: 400.082470657773,
-    from: 0,
-    to: 3,
+    from: 1,
+    to: 1.5,
     lineWidth: 3,
-    nbPoints: 16384,
+    nbPoints: 512,
     maxClusterSize: 8,
     output: 'xy'
 };
 
-const spinSystem = nmr.SpinSystem.fromPrediction(prediction1h);
+const spinSystem = simulation.SpinSystem.fromPrediction(prediction);
 spinSystem.ensureClusterSize(options1h);
-var spectrum = nmr.simulate1D(spinSystem, options1h);
-console.log(spectrum.x);// x in PPM
-console.log(spectrum.y);// y in arbitrary units
+var spectrum = simulation.simulate1D(spinSystem, options1h);
+console.log(JSON.stringify(spectrum.x));// x in PPM
+console.log(JSON.stringify(spectrum.y));// y in arbitrary units
 ```
 
 

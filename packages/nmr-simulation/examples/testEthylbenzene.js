@@ -3,8 +3,8 @@
  */
 'use strict';
 
-const nmr = require('./../src/index');
-const NmrPredictor = new require("nmr-predictor");
+const nmr = require('nmr-simulation');
+const predictor = require("nmr-predictor");
 
 
 var molfile = `Benzene, ethyl-, ID: C100414
@@ -30,9 +30,10 @@ Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
 M  END
 `;
 
-    const predictor = new NmrPredictor("spinus");
-    predictor.predict(molfile, {group: false}).then(prediction => {
-        console.log(nmr);
+    //const predictor = new NmrPredictor("spinus");
+    //pred = await options.predictor.spinus(molecule, Object.assign({}, options));    
+    predictor.spinus(molfile, {group: false}).then(prediction => {
+        console.log(JSON.stringify(prediction));
         console.time('simulate');
 
         const spinSystem = nmr.SpinSystem.fromPrediction(prediction);
@@ -48,6 +49,6 @@ M  END
         spinSystem.ensureClusterSize(options);
         var simulation = nmr.simulate1D(spinSystem, options);
         console.timeEnd('simulate');
-        console.timeEnd(simulation);
+        //console.timeEnd(simulation);
     }, reject => { console.log(reject)});
 
