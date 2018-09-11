@@ -54,6 +54,9 @@ var spectrum = simulation.simulate1D(spinSystem, options1h);
 console.log(JSON.stringify(spectrum.x));// x in PPM
 console.log(JSON.stringify(spectrum.y));// y in arbitrary units
 ```
+A plot of the output spectrum
+
+<img width="300" alt="output" src="https://github.com/cheminfo-js/spectra/blob/master/packages/nmr-simulation/examples/spectrum.png"> 
 
 
 ## License
