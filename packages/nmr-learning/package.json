@@ -35,7 +35,7 @@
     "nmr-predictor-dev": "^1.1.6",
     "paralleljs": "0.2.1",
     "spectra-data": "^3.1.20",
-    "spectra-nmr-utilities": "^1.0.3",
+    "spectra-nmr-utilities": "^1.0.2",
     "webworker-threads": "0.7.13"
   }
 }
