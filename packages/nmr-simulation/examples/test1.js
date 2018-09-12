@@ -1,11 +1,11 @@
 'use strict';
 
 const request = require('request');
-const nmr = require('.');
-const NmrPredictor = new require("nmr-predictor");
+const sm = require('nmr-simulation');
+const predictor = require("nmr-predictor");
 
-var molfile = 
-`CCCC(C)O
+var molfile =
+  `CCCC(C)O
 JME 2016-03-06 Tue May 24 10:19:11 GMT+200 2016
 
   6  5  0  0  0  0  0  0  0  0999 V2000
@@ -23,20 +23,19 @@ JME 2016-03-06 Tue May 24 10:19:11 GMT+200 2016
 M  END
 `;
 
-request.post("http://www.nmrdb.org/service/predictor",{form:{molfile:molfile}},function(error, response, body){
-    const predictor = new NmrPredictor("spinus");
-    const prediction = predictor.predict(molfile, body);
-    const spinSystem = nmr.SpinSystem.fromPrediction(prediction);
-    console.log(spinSystem);
-    console.time('simulate');
-    var simulation = nmr.simulate1D(spinSystem, {
-        frequency: 400.082470657773,
-        from: 0,
-        to: 11,
-        lineWidth: 1,
-        nbPoints: 16384,
-        maxClusterSize: Infinity
-    });
-    console.timeEnd('simulate');
-    //console.log(JSON.stringify(simulation));
+//request.post("http://www.nmrdb.org/service/predictor",{form:{molfile:molfile}},function(error, response, body){
+//const predictor = new NmrPredictor("spinus");
+predictor.spinus(molfile).then(prediction => {
+  const spinSystem = sm.SpinSystem.fromPrediction(prediction);
+  console.log(spinSystem);
+  console.time('simulating. It could take several minutes');
+  var simulation = sm.simulate1D(spinSystem, {
+    frequency: 400.082470657773,
+    from: 0,
+    to: 11,
+    lineWidth: 1,
+    nbPoints: 16384,
+    maxClusterSize: Infinity
+  });
+  console.timeEnd('simulate');
 });

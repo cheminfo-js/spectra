@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const nmr = require('nmr-simulation');
+const sm = require('nmr-simulation');
 const predictor = require("nmr-predictor");
 
 
@@ -30,25 +30,25 @@ Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
 M  END
 `;
 
-    //const predictor = new NmrPredictor("spinus");
-    //pred = await options.predictor.spinus(molecule, Object.assign({}, options));    
-    predictor.spinus(molfile, {group: false}).then(prediction => {
-        console.log(JSON.stringify(prediction));
-        console.time('simulate');
+//const predictor = new NmrPredictor("spinus");
+//pred = await options.predictor.spinus(molecule, Object.assign({}, options));    
+predictor.spinus(molfile, { group: false }).then(prediction => {
+  console.log(JSON.stringify(prediction));
+  console.time('simulate');
 
-        const spinSystem = nmr.SpinSystem.fromPrediction(prediction);
-        console.log(spinSystem);
-        var options = {
-            frequency: 400.082470657773,
-            from: 0,
-            to: 11,
-            lineWidth: 1,
-            nbPoints: 16384,
-            maxClusterSize: 8
-        }
-        spinSystem.ensureClusterSize(options);
-        var simulation = nmr.simulate1D(spinSystem, options);
-        console.timeEnd('simulate');
-        //console.timeEnd(simulation);
-    }, reject => { console.log(reject)});
+  const spinSystem = sm.SpinSystem.fromPrediction(prediction);
+  console.log(spinSystem);
+  var options = {
+    frequency: 400.082470657773,
+    from: 0,
+    to: 11,
+    lineWidth: 1,
+    nbPoints: 16384,
+    maxClusterSize: 8
+  }
+  spinSystem.ensureClusterSize(options);
+  var simulation = sm.simulate1D(spinSystem, options);
+  console.timeEnd('simulate');
+  //console.timeEnd(simulation);
+}, reject => { console.log(reject) });
 
