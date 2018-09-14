@@ -5,8 +5,8 @@
 const FS = require('fs');
 const OCLE = require('openchemlib-extended-minimal');
 const autoassigner = require('../src/index');
-const predictor = require('../../nmr-predictor/src/index');
-const SD =  require('../../spectra-data/src/index');
+const predictor = require('nmr-predictor');
+const SD =  require('spectra-data');
 
 require('should');
 

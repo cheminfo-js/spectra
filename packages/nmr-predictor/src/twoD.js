@@ -25,6 +25,7 @@ export default function twoD(dim1, dim2, molecule, options) {
     }
 
     options = Object.assign({ minLength: 1, maxLength: 3 }, options, { fromLabel: fromAtomLabel, toLabel: toAtomLabel });
+    console.log(mol)
     var paths = mol.getAllPaths(options);
     var inverseMap = {};
     if (fromAtomLabel === 'C' || toAtomLabel === 'C') {
@@ -34,15 +35,6 @@ export default function twoD(dim1, dim2, molecule, options) {
             inverseMap[diaID.atoms.join(',')] = diaID.oclID;
         });
     }
-  var paths = molecule.getAllPaths(options);
-  var inverseMap = {};
-  if (fromAtomLabel === 'C' || toAtomLabel === 'C') {
-    molecule.removeExplicitHydrogens();
-    var diaIDsC = molecule.getGroupedDiastereotopicAtomIDs({ atomLabel: 'C' });
-    diaIDsC.forEach((diaID) => {
-      inverseMap[diaID.atoms.join(',')] = diaID.oclID;
-    });
-  }
 
   paths.forEach((path) => {
     if (path.fromLabel === 'C') {
