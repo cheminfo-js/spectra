@@ -82,15 +82,15 @@ export function joinCoupling(signal, tolerance = 0.05) {
 }
 
 export function group(signals, options = {}) {
-    var i, k;
-    for (i = 0; i < signals.length; i++) {
-        var j = signals[i].j;
-        if (j && j.length > 0) {
-            for (k = j.length - 2; k >= 0; k--) {
-                for (var m = j.length - 1; m > k; m--) {
-                    if (j[k].diaID === j[m].diaID &&
-                        j[k].coupling === j[m].coupling &&
-                        j[k].distance === j[m].distance) {
+  var i, k;
+  for (i = 0; i < signals.length; i++) {
+    var j = signals[i].j;
+    if (j && j.length > 0) {
+      for (k = j.length - 2; k >= 0; k--) {
+        for (var m = j.length - 1; m > k; m--) {
+          if (j[k].diaID === j[m].diaID &&
+            j[k].coupling === j[m].coupling &&
+            j[k].distance === j[m].distance) {
             j[k].assignment = j[k].assignment.concat(j[m].assignment);
             j.splice(m, 1);
           }
@@ -118,9 +118,9 @@ export function group(signals, options = {}) {
       for (k = 0; k < j.length; k++) {
         j[k].multiplicity = patterns[j[k].assignment.length];
       }
-      //signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
+      // signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
     }
-    //console.log(signals[i]);
+    // console.log(signals[i]);
     signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
   }
   return signals;

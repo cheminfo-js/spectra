@@ -1,7 +1,7 @@
 import numSort from 'num-sort';
 
 export default function queryByHose(molecule, db, options) {
-  //const { Util } = getOcleFromOptions(options);
+  // const { Util } = getOcleFromOptions(options);
   const {
     atomLabel = 'H',
     use = null,
@@ -9,55 +9,55 @@ export default function queryByHose(molecule, db, options) {
     levels = [4, 3, 2, 1, 0]
   } = options;
 
-   levels.sort(numSort.desc);
-  
-    const diaIds = molecule.diaId;
-    const atoms = molecule.atom;
-    const atomNumbers = Object.keys(atoms);
+  levels.sort(numSort.desc);
 
-    const toReturn = [];
-    for (const element of diaIds) {
-        if (element.atomLabel === options.atomLabel && (!element.isLabile || !options.ignoreLabile)) {
-            let res;
-            let k = 0;
-            //console.log(element.hose)
-            while (!res && k < levels.length) {
-                if (db[levels[k]]) {
-                    res = db[levels[k] - 1][element.hose[levels[k] - 1]];//atom['hose' + levels[k]]];
-                }
-                k++;
-            }
-            if (!res) {
-                res = { cs: null, ncs: 0, std: 0, min: 0, max: 0 };
-                k = 0;
-            }
+  const diaIds = molecule.diaId;
+  const atoms = molecule.atom;
+  const atomNumbers = Object.keys(atoms);
 
-            for (const atomNumber of element.atoms) {
-                //console.log(element)
-                let atom = {diaIDs: [element.oclID]};
-                atom.atomLabel = atomLabel;
-                atom.level = levels[k - 1];
-                if (use === 'median') {
-                    atom.delta = res.median;
-                } else if (use === 'mean') {
-                    atom.delta = res.mean;
-                }
-                //atom.integral = 1;
-                atom.atomIDs = [atomNumber];
-                atom.ncs = res.ncs;
-                atom.std = res.std;
-                atom.min = res.min;
-                atom.max = res.max;
-                atom.nbAtoms = 1;
-
-                if(options.hose)
-                    atom.hose = element.hose;
-
-                toReturn.push(atom);
-            }
+  const toReturn = [];
+  for (const element of diaIds) {
+    if (element.atomLabel === options.atomLabel && (!element.isLabile || !options.ignoreLabile)) {
+      let res;
+      let k = 0;
+      // console.log(element.hose)
+      while (!res && k < levels.length) {
+        if (db[levels[k]]) {
+          res = db[levels[k] - 1][element.hose[levels[k] - 1]];// atom['hose' + levels[k]]];
         }
-        
-    }
+        k++;
+      }
+      if (!res) {
+        res = { cs: null, ncs: 0, std: 0, min: 0, max: 0 };
+        k = 0;
+      }
 
-    return toReturn;
+      for (const atomNumber of element.atoms) {
+        // console.log(element)
+        let atom = { diaIDs: [element.oclID] };
+        atom.atomLabel = atomLabel;
+        atom.level = levels[k - 1];
+        if (use === 'median') {
+          atom.delta = res.median;
+        } else if (use === 'mean') {
+          atom.delta = res.mean;
+        }
+        // atom.integral = 1;
+        atom.atomIDs = [atomNumber];
+        atom.ncs = res.ncs;
+        atom.std = res.std;
+        atom.min = res.min;
+        atom.max = res.max;
+        atom.nbAtoms = 1;
+
+        if (options.hose) {
+          atom.hose = element.hose;
+        }
+
+        toReturn.push(atom);
+      }
+    }
+  }
+
+  return toReturn;
 }

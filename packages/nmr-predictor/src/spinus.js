@@ -15,7 +15,7 @@ import normalizeOptions from './normalizeOptions';
 export default function spinus(molecule, options) {
   options = Object.assign({}, { keepMolfile: true, distanceMatrix: true }, options);
   [molecule, options] = normalizeOptions(molecule, options);
-  return fromSpinus(molecule).then(prediction => {
+  return fromSpinus(molecule).then((prediction) => {
     return options.group ? group(prediction) : prediction;
   });
 }
@@ -24,8 +24,8 @@ function fromSpinus(molecule) {
   const request = superagent.post('https://www.nmrdb.org/service/predictor');
   request.field('molfile', molecule.molfile);
 
-  return request.then(response => {
-    //Convert to the ranges format and include the diaID for each atomID
+  return request.then((response) => {
+    // Convert to the ranges format and include the diaID for each atomID
     const data = spinusParser(response.text);
     const ids = data.ids;
     const jc = data.couplingConstants;
@@ -41,8 +41,8 @@ function fromSpinus(molecule) {
     var i, j, k, oclID, tmpCS;
     var csByOclID = {};
     for (j = diaIDs.length - 1; j >= 0; j--) {
-      if (diaIDs[j].atomLabel === "H") {
-        oclID = diaIDs[j].oclID + '';
+      if (diaIDs[j].atomLabel === 'H') {
+        oclID = `${diaIDs[j].oclID}`;
         for (k = diaIDs[j].atoms.length - 1; k >= 0; k--) {
           atoms[diaIDs[j].atoms[k]] = oclID;
           atomNumbers.push(diaIDs[j].atoms[k]);

@@ -7,5 +7,4 @@ export default function getOcleFromOptions(options) {
   } else {
     return require('openchemlib-extended');
   }
-
 }

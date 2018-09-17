@@ -98,21 +98,21 @@ function getDb(option, type) {
 }
 
 function setDb(db, type, dbName) {
-    const database = {
-        type,
-        url: null,
-        db: db,
-        fetching: false
-    };
-    databases[dbName] = database;
+  const database = {
+    type,
+    url: null,
+    db: db,
+    fetching: false
+  };
+  databases[dbName] = database;
 }
 
 export {
-    fetchProton,
-    fetchCarbon,
-    setDb,
-    proton,
-    carbon,
-    spinus,
-    twoD
+  fetchProton,
+  fetchCarbon,
+  setDb,
+  proton,
+  carbon,
+  spinus,
+  twoD
 };

@@ -455,6 +455,6 @@ export default class NMR extends SD {
   }
 }
 
-//node packages/nmr-learning/src/index.js
-//node --experimental-modules  packages/nmr-predictor/example/predict.js
-//node   packages/nmr-predictor/example/predict.js ./node_modules/.bin/jest -o packages/nmr-predictor/
+// node packages/nmr-learning/src/index.js
+// node --experimental-modules  packages/nmr-predictor/example/predict.js
+// node   packages/nmr-predictor/example/predict.js ./node_modules/.bin/jest -o packages/nmr-predictor/
