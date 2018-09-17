@@ -4,7 +4,7 @@ import OCLE from "openchemlib-extended-minimal";
 import autoassigner from '../src/index';
 import predictor from 'nmr-predictor';
 
-console.log( process.cwd());
+//console.log( process.cwd());
 function createSpectraData(filename, label, data) {
     var spectrum = SD.NMR.fromJcamp(
         FS.readFileSync(process.cwd() + filename).toString()
@@ -53,7 +53,7 @@ async function start() {
     })
 
     console.log('start assignment');
-    var result = autoassigner({
+    var result = await autoassigner({
             general: {molfile: molecule.toMolfileV3()},
             spectra: {
                 nmr: [{
@@ -74,7 +74,7 @@ async function start() {
             levels: [6, 5, 4, 3, 2]
         }
     );
-    console.log(result.getAssignments())
+    console.log(result)
     console.log(result.getAssignments().length)
 }
 start();

@@ -30,4 +30,4 @@ const spinSystem = simulation.SpinSystem.fromPrediction(prediction);
 spinSystem.ensureClusterSize(options1h);
 var spectrum = simulation.simulate1D(spinSystem, options1h);
 console.log(JSON.stringify(spectrum.x));// x in PPM
-//console.log(JSON.stringify(spectrum.y));// y in arbitrary units
+console.log(JSON.stringify(spectrum.y));// y in arbitrary units

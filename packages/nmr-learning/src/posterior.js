@@ -138,7 +138,7 @@ async function start() {
                         }
                     }
                     fastDB[level - 1][key].conf = confidence;
-                    if(confidence > 0 && confidence < 0.5) {
+                    if(confidence > 0 && confidence < 0.2) {
                         console.log(key + ":" + JSON.stringify(fastDB[level - 1][key]))
                         delete fastDB[level - 1][key];
                         deleted++;

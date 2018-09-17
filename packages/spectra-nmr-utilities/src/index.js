@@ -110,16 +110,17 @@ export function group(signals, options = {}) {
       signals[i].atomIDs = signals[i].atomIDs.concat(signals[i + 1].atomIDs);
       signals.splice(i + 1, 1);
     }
+  }
 
-    for (i = 0; i < signals.length; i++) {
-        j = signals[i].j;
-        if (j) {
-            for (k = 0; k < j.length; k++) {
-                j[k].multiplicity = patterns[j[k].assignment.length];
-            }
-            signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
-        }
+  for (i = 0; i < signals.length; i++) {
+    j = signals[i].j;
+    if (j) {
+      for (k = 0; k < j.length; k++) {
+        j[k].multiplicity = patterns[j[k].assignment.length];
+      }
+      //signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
     }
+    console.log(signals[i]);
     signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
   }
   return signals;

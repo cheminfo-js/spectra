@@ -30,7 +30,5 @@ Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
 M  END
 `;
 
-
 const h1 = predictor.proton(molfile, { db: db1H });
 const prediction = predictor.twoD(h1, h1, molfile, { minLength: 1, maxLength: 3 });
-
