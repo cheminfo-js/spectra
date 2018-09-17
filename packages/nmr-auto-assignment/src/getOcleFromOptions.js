@@ -4,8 +4,10 @@ let OCLE;
 module.exports = function getOcleFromOptions(options) {
   if (OCLE) return OCLE;
   if (options.OCLE) {
-    return OCLE = options.OCLE;
+    OCLE = options.OCLE;
+    return OCLE;
   } else {
-    return OCLE = require('openchemlib-extended');
+    OCLE = require('openchemlib-extended');
+    return OCLE;
   }
 };
