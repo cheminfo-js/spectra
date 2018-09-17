@@ -1,6 +1,7 @@
 const FS = require('fs');
+const path = require('path');
 
-const OCLE = require('openchemlib-extended-minimal');
+const OCLE = require('openchemlib-extended');
 const predictor = require('nmr-predictor');
 
 const autoassigner = require('../../nmr-auto-assignment/src/index');
@@ -12,7 +13,7 @@ const stats = require('./stats');
 
 
 function loadFile(filename) {
-  return FS.readFileSync(__dirname + filename).toString();
+  return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
 
 async function start() {
@@ -82,7 +83,7 @@ async function start() {
   maxIterations = 10;
   var convergence = false;
   try {
-    for (level of levels) {
+    for (let level of levels) {
       date = new Date();
       start = date.getTime();
       var count = 0;
@@ -107,7 +108,7 @@ async function start() {
           let hose5 = pred.hose[level - 1];
           if (pred.ncs > 4 && fastDB[level - 1][hose5]) {
             let found = false;
-            for (range of ranges) {
+            for (let range of ranges) {
               if (Math.abs((range.from + range.to) - (pred.min + pred.max)) < (Math.abs(range.from - range.to) + Math.abs(pred.min - pred.max))) {
                 if (!fastDB[level - 1][hose5].p) {
                   fastDB[level - 1][hose5].p = 1;

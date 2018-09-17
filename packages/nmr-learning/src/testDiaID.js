@@ -1,10 +1,11 @@
 
 const FS = require('fs');
+const path = require('path');
 
-const OCLE = require('openchemlib-extended-minimal');
+const OCLE = require('openchemlib-extended');
 
 function loadFile(filename) {
-  return FS.readFileSync(__dirname + filename).toString();
+  return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
 
 function start() {

@@ -1,7 +1,7 @@
-
 const FS = require('fs');
+const path = require('path');
 
-const OCLE = require('openchemlib-extended-minimal');
+const OCLE = require('openchemlib-extended');
 const predictor = require('nmr-predictor');
 
 const autoassigner = require('../../nmr-auto-assignment/src/index');
@@ -12,7 +12,7 @@ const compilePredictionTable = require('./compilePredictionTable');
 const stats = require('./stats');
 
 function loadFile(filename) {
-  return FS.readFileSync(__dirname + filename).toString();
+  return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
 
 const prior = JSON.parse(loadFile('/../data/histogram_0_15ppm.json'));

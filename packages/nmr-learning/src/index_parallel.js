@@ -1,6 +1,7 @@
 const FS = require('fs');
+const path = require('path');
 
-const OCLE = require('openchemlib-extended-minimal');
+const OCLE = require('openchemlib-extended');
 const predictor = require('nmr-predictor');
 
 const autoassigner = require('../../nmr-auto-assignment/src/index');
@@ -12,7 +13,7 @@ const stats = require('./stats');
 
 
 function loadFile(filename) {
-  return FS.readFileSync(__dirname + filename).toString();
+  return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
 
 async function start() {

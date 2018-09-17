@@ -1,6 +1,7 @@
 const FS = require('fs');
+const path = require('path');
 
-const OCLE = require('openchemlib-extended-minimal');
+const OCLE = require('openchemlib-extended');
 const predictor = require('nmr-predictor-dev');
 const Parallel = require('paralleljs');
 
@@ -13,8 +14,9 @@ const compilePredictionTable = require('./compilePredictionTable');
 const stats = require('./stats');
 
 function loadFile(filename) {
-  return FS.readFileSync(__dirname + filename).toString();
+  return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
+
 const maxIterations = 5; // Set the number of interations for training
 const ignoreLabile = true;// Set the use of labile protons during training
 const learningRatio = 0.8; // A number between 0 and 1
@@ -37,7 +39,7 @@ async function process(entry) {
       unassigned: 0
     }
   );
-  solutions = result.getAssignments();
+  let solutions = result.getAssignments();
   if (result.timeoutTerminated || result.nSolutions > solutions.length) {
     console.log(`${i} Too many solutions`);
   } else {
@@ -49,10 +51,10 @@ async function process(entry) {
       let assignment = solution.assignment;
       if (solutions.length > 1) {
         nAtoms = assignment.length;
-        for (j = 0; j < nAtoms; j++) {
+        for (let j = 0; j < nAtoms; j++) {
           let signalId = assignment[j];
           if (signalId !== '*') {
-            for (k = 1; k < solutions.length; k++) {
+            for (let k = 1; k < solutions.length; k++) {
               if (signalId !== solutions[k].assignment[j]) {
                 assignment[j] = '*';
                 break;

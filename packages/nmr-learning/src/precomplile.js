@@ -1,6 +1,7 @@
 const FS = require('fs');
+const path = require('path');
 
-const OCLE = require('openchemlib-extended-minimal');
+const OCLE = require('openchemlib-extended');
 const predictor = require('nmr-predictor-dev');
 const Parallel = require('paralleljs');
 
@@ -14,7 +15,7 @@ const compilePredictionTable = require('./compilePredictionTable');
 const stats = require('./stats');
 
 function loadFile(filename) {
-  return FS.readFileSync(__dirname + filename).toString();
+  return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
 const maxIterations = 5; // Set the number of interations for training
 const ignoreLabile = true;// Set the use of labile protons during training
