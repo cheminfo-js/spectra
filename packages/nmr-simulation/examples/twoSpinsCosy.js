@@ -15,6 +15,45 @@ const simulation = require('nmr-simulation');
 */
 const prediction = [{
     fromDiaID: 'A',
+    toDiaID: 'A',
+    fromAtoms: [8, 14],
+    toAtoms: [8, 14],
+    fromLabel: 'H',
+    toLabel: 'H',
+    pathLength: 0,
+    fromChemicalShift: 2,
+    toChemicalShift: 2,
+    fromAtomLabel: 'H',
+    toAtomLabel: 'H'
+},
+{
+    fromDiaID: 'B',
+    toDiaID: 'B',
+    fromAtoms: [9],
+    toAtoms: [9],
+    fromLabel: 'H',
+    toLabel: 'H',
+    pathLength: 0,
+    fromChemicalShift: 1,
+    toChemicalShift: 1,
+    fromAtomLabel: 'H',
+    toAtomLabel: 'H'
+},
+{
+    fromDiaID: 'C',
+    toDiaID: 'C',
+    fromAtoms: [10],
+    toAtoms: [10],
+    fromLabel: 'H',
+    toLabel: 'H',
+    pathLength: 0,
+    fromChemicalShift: 3,
+    toChemicalShift: 3,
+    fromAtomLabel: 'H',
+    toAtomLabel: 'H'
+},
+{
+    fromDiaID: 'A',
     toDiaID: 'B',
     fromAtoms: [8, 14],
     toAtoms: [9],
