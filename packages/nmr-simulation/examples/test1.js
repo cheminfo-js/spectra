@@ -27,7 +27,7 @@ M  END
 //const predictor = new NmrPredictor("spinus");
 predictor.spinus(molfile).then(prediction => {
   const spinSystem = sm.SpinSystem.fromPrediction(prediction);
-  console.log(spinSystem);
+  //console.log(spinSystem);
   console.time('simulating. It could take several minutes');
   var simulation = sm.simulate1D(spinSystem, {
     frequency: 400.082470657773,
