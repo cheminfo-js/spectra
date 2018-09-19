@@ -7,13 +7,18 @@
 
 NMR chemical shift predictor
 
+This library provide function for predicting nmr chemical shift for 1H and 13C. The predictions could be made from 2 different ways: 1. By the use of a local database of molecular fragments that are paired with is corresponding chemical shifts, and 2. by the use of Spinus too.
+The predictor accepts a molfile as input data, and produces a set of predictions for each of the atoms in the molecule. Prediction of coupling constants are supported aswell, by means of the Karplus equation.
+
 ## Installation
 
 ```
 $ npm install nmr-predictor
 ```
 
-## Example
+## Example: Prediction of 1H and 13C chemical shifts for the Ethylbenzene. 
+
+In this example, we made use of our local databases for the chemical shift prediction. If you don't have your own databases, you may use our precompiled libraries for 1H and 13C, available in our github project by means of the fecthProton and fetchCarbon functions. fetchCarbon retrieves a compiled version of NMRShiftDB2 database. fetchProton retrieves an inhouse beta library for 1H predictions.
 
 ```js
 'use strict';
