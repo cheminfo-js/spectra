@@ -30,14 +30,9 @@ Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
 M  END
 `;
 
-//const predictor = new NmrPredictor("spinus");
-//pred = await options.predictor.spinus(molecule, Object.assign({}, options));    
+//Predict and simulate 1H for Ethylbenzene
 predictor.spinus(molfile, { group: false }).then(prediction => {
-  console.log(JSON.stringify(prediction));
-  console.time('simulate');
-
   const spinSystem = sm.SpinSystem.fromPrediction(prediction);
-  console.log(spinSystem);
   var options = {
     frequency: 400.082470657773,
     from: 0,
@@ -47,8 +42,7 @@ predictor.spinus(molfile, { group: false }).then(prediction => {
     maxClusterSize: 8
   }
   spinSystem.ensureClusterSize(options);
-  var simulation = sm.simulate1D(spinSystem, options);
-  console.timeEnd('simulate');
-  //console.timeEnd(simulation);
+  var simulation1D = sm.simulate1D(spinSystem, options);
+
 }, reject => { console.log(reject) });
 

@@ -13,6 +13,7 @@ export default function simule2DNmrSpectrum(table, options) {
   const frequencyY = options.frequencyY || defOptions[toLabel].frequency;
   var lineWidthX = options.lineWidthX || defOptions[fromLabel].lineWidth;
   var lineWidthY = options.lineWidthY || defOptions[toLabel].lineWidth;
+  let symmetrize = options.symmetrize || false;
 
   var sigmaX = lineWidthX / frequencyX;
   var sigmaY = lineWidthY / frequencyY;
@@ -59,13 +60,16 @@ export default function simule2DNmrSpectrum(table, options) {
       widthY: unitsToArrayPoints(sigmaY + minY, minY, maxY, nbPointsY)
     };
     addPeak(spectraMatrix, peak);
+    if(symmetrize) {
+      addPeak(spectraMatrix, {x: peak.y, y: peak.x, z: peak.z, widthX: peak.widthY, widthY: peak.widthX});
+    }
     i++;
   }
   return spectraMatrix;
 }
 
 function unitsToArrayPoints(x, from, to, nbPoints) {
-  return ((x - from) * nbPoints - 1) / (to - from);
+  return ((x - from) * (nbPoints - 1)) / (to - from);
 }
 
 function addPeak(matrix, peak) {

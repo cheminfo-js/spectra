@@ -5,13 +5,13 @@ const simulation = require('nmr-simulation');
  * This should produce a pattern like the below one:
  *  x:   0.5 1.0 1.5 2.0 2.5 3.0 3.5
  * _____________________________________
- * 0.5 |  0   0   0   0   0   0   0   0
- * 1.0 |  0   0   1   0   1   0   0   0
- * 1.5 |  0   0   0   0   0   0   0   0
- * 2.0 |  0   0   1   0   1   0   1   0
- * 2.5 |  0   0   0   0   0   0   0   0
- * 3.0 |  0   0   0   0   1   0   1   0
- * 3.5 |  0   0   0   0   0   0   0   0  
+ * 0.5 |  0   0   0   0   0   0   0
+ * 1.0 |  0   1   0   1   0   0   0
+ * 1.5 |  0   0   0   0   0   0   0
+ * 2.0 |  0   1   0   1   0   1   0
+ * 2.5 |  0   0   0   0   0   0   0
+ * 3.0 |  0   0   0   1   0   1   0
+ * 3.5 |  0   0   0   0   0   0   0  
 */
 const prediction = [{
     fromDiaID: 'A',
@@ -74,7 +74,7 @@ const prediction = [{
     fromLabel: 'H',
     toLabel: 'H',
     pathLength: 3,
-    fromChemicalShift: 1,
+    fromChemicalShift: 2,
     toChemicalShift: 3,
     fromAtomLabel: 'H',
     toAtomLabel: 'H',
@@ -82,17 +82,22 @@ const prediction = [{
 }];
 
 var optionsCOSY = {
-    frequencyX: 400,
-    frequencyY: 400,
-    lineWidthX: 75, //Hz
-    lineWidthY: 75, //Hz
+    frequencyX: 1,
+    frequencyY: 1,
+    lineWidthX: 0.07, //Hz
+    lineWidthY: 0.07, //Hz
     firstX: 0.5,
-    toX: 3.5,
-    firsY: 0.5,
-    toY: 3.5,
-    nbPointsX: 8,
-    nbPointsY: 8
+    lastX: 3.5,
+    firstY: 0.5,
+    lastY: 3.5,
+    nbPointsX: 7,
+    nbPointsY: 7,
+    symmetrize: true
 };
 
 var spectrum = simulation.simulate2D(prediction, optionsCOSY);
+//Lets make a logical matrix. Small values are 0
+spectrum = spectrum.map(row => {
+    return row.map(value => value < 1e-10 ? 0 : 1);
+})
 console.log(spectrum);
