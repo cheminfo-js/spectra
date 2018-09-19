@@ -14,84 +14,42 @@ const simulation = require('nmr-simulation');
  * 3.5 |  0   0   0   0   0   0   0  
 */
 const prediction = [{
-    fromDiaID: 'A',
-    toDiaID: 'A',
-    fromAtoms: [8, 14],
-    toAtoms: [8, 14],
-    fromLabel: 'H',
-    toLabel: 'H',
-    pathLength: 0,
-    fromChemicalShift: 2,
-    toChemicalShift: 2,
-    fromAtomLabel: 'H',
-    toAtomLabel: 'H'
+    fromDiaID: 'A', toDiaID: 'A', fromAtoms: [8, 14], toAtoms: [8, 14],
+    fromLabel: 'H', toLabel: 'H', pathLength: 0,
+    fromChemicalShift: 2, toChemicalShift: 2,
+    fromAtomLabel: 'H', toAtomLabel: 'H'
 },
 {
-    fromDiaID: 'B',
-    toDiaID: 'B',
-    fromAtoms: [9],
-    toAtoms: [9],
-    fromLabel: 'H',
-    toLabel: 'H',
-    pathLength: 0,
-    fromChemicalShift: 1,
-    toChemicalShift: 1,
-    fromAtomLabel: 'H',
-    toAtomLabel: 'H'
+    fromDiaID: 'B', toDiaID: 'B', fromAtoms: [9], toAtoms: [9],
+    fromLabel: 'H', toLabel: 'H', pathLength: 0,
+    fromChemicalShift: 1, toChemicalShift: 1,
+    fromAtomLabel: 'H', toAtomLabel: 'H'
 },
 {
-    fromDiaID: 'C',
-    toDiaID: 'C',
-    fromAtoms: [10],
-    toAtoms: [10],
-    fromLabel: 'H',
-    toLabel: 'H',
-    pathLength: 0,
-    fromChemicalShift: 3,
-    toChemicalShift: 3,
-    fromAtomLabel: 'H',
-    toAtomLabel: 'H'
+    fromDiaID: 'C', toDiaID: 'C', fromAtoms: [10], toAtoms: [10],
+    fromLabel: 'H', toLabel: 'H', pathLength: 0,
+    fromChemicalShift: 3, toChemicalShift: 3,
+    fromAtomLabel: 'H', toAtomLabel: 'H'
 },
 {
-    fromDiaID: 'A',
-    toDiaID: 'B',
-    fromAtoms: [8, 14],
-    toAtoms: [9],
-    fromLabel: 'H',
-    toLabel: 'H',
-    pathLength: 3,
-    fromChemicalShift: 2,
-    toChemicalShift: 1,
-    fromAtomLabel: 'H',
-    toAtomLabel: 'H',
-    j: 7
+    fromDiaID: 'A', toDiaID: 'B', fromAtoms: [8, 14], toAtoms: [9],
+    fromLabel: 'H', toLabel: 'H', pathLength: 3,
+    fromChemicalShift: 2, toChemicalShift: 1,
+    fromAtomLabel: 'H', toAtomLabel: 'H', j: 7
 },
 {
-    fromDiaID: 'A',
-    toDiaID: 'C',
-    fromAtoms: [8, 14],
-    toAtoms: [10],
-    fromLabel: 'H',
-    toLabel: 'H',
-    pathLength: 3,
-    fromChemicalShift: 2,
-    toChemicalShift: 3,
-    fromAtomLabel: 'H',
-    toAtomLabel: 'H',
-    j: 16
+    fromDiaID: 'A', toDiaID: 'C', fromAtoms: [8, 14], toAtoms: [10],
+    fromLabel: 'H', toLabel: 'H', pathLength: 3,
+    fromChemicalShift: 2, toChemicalShift: 3,
+    fromAtomLabel: 'H', toAtomLabel: 'H', j: 16
 }];
 
 var optionsCOSY = {
-    frequencyX: 1,
-    frequencyY: 1,
-    lineWidthX: 0.07, //Hz
-    lineWidthY: 0.07, //Hz
-    firstX: 0.5,
-    lastX: 3.5,
-    firstY: 0.5,
-    lastY: 3.5,
-    nbPointsX: 7,
-    nbPointsY: 7,
+    frequencyX: 1, frequencyY: 1,
+    lineWidthX: 0.07, lineWidthY: 0.07, //Hz
+    firstX: 0.5, lastX: 3.5,
+    firstY: 0.5, lastY: 3.5,
+    nbPointsX: 7, nbPointsY: 7,
     symmetrize: true
 };
 
@@ -100,4 +58,3 @@ var spectrum = simulation.simulate2D(prediction, optionsCOSY);
 spectrum = spectrum.map(row => {
     return row.map(value => value < 1e-10 ? 0 : 1);
 })
-//console.log(spectrum);
