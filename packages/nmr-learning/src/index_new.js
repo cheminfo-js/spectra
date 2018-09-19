@@ -37,7 +37,7 @@ async function start() {
   var prevError = 0;
   var prevCont = 0;
   var dataset, max, ds, i, j, k, nAtoms;
-  var result, solutions;
+  var solutions;
   // var fastDB = [];
   var fastDB = JSON.parse(loadFile('/../data/h_13.json'));
   console.log(`Cheminfo All: ${dataset1.length}`);
@@ -90,10 +90,9 @@ async function start() {
       max = dataset.length;
       predictor.setDb(fastDB, 'proton', 'proton');
       // we could now loop on the sdf to add the int index
+      let promises = [];
       for (i = 0; i < max; i++) {
-        // console.log(dataset[i]);
-        // try {
-        result = await autoassigner(dataset[i], {
+        promises.push(autoassigner(dataset[i], {
           minScore: 1,
           unassigned: 1,
           maxSolutions: 2500,
@@ -107,38 +106,45 @@ async function start() {
           ignoreLabile: ignoreLabile,
           learningRatio: learningRatio,
           iteration: iteration
-        });
-        solutions = result.getAssignments();
-        if (result.timeoutTerminated || result.nSolutions > solutions.length) {
-          console.log(`${i} Too much solutions`);
-          continue;
-        }
-        // Get the unique assigments in the assignment variable.
-        // if(solutions.length > 0)
-        //    console.log(solutions.length)
-        let solution = null;
-        if (solutions !== null && solutions.length > 0) {
-          solution = solutions[0];
-          let assignment = solution.assignment;
-          if (solutions.length > 1) {
-            nAtoms = assignment.length;
-            for (j = 0; j < nAtoms; j++) {
-              let signalId = assignment[j];
-              if (signalId !== '*') {
-                for (k = 1; k < solutions.length; k++) {
-                  if (signalId !== solutions[k].assignment[j]) {
-                    assignment[j] = '*';
-                    break;
+        }));
+      }
+
+      await Promise.all(promises).then(results => {
+        for (let i = 0; i < max; i++) {
+          let result = results[i];
+          solutions = result.getAssignments();
+          if (result.timeoutTerminated || result.nSolutions > solutions.length) {
+            console.log(`${i} Too much solutions`);
+          }
+          else {
+            // Get the unique assigments in the assignment variable.
+            // if(solutions.length > 0)
+            //    console.log(solutions.length)
+            let solution = null;
+            if (solutions !== null && solutions.length > 0) {
+              solution = solutions[0];
+              let assignment = solution.assignment;
+              if (solutions.length > 1) {
+                nAtoms = assignment.length;
+                for (j = 0; j < nAtoms; j++) {
+                  let signalId = assignment[j];
+                  if (signalId !== '*') {
+                    for (k = 1; k < solutions.length; k++) {
+                      if (signalId !== solutions[k].assignment[j]) {
+                        assignment[j] = '*';
+                        break;
+                      }
+                    }
                   }
                 }
               }
             }
+            // Only save the last state
+            result.setAssignmentOnSample(dataset[i], solution);
+            // console.log(JSON.stringify(dataset[i].spectra.nmr[0]))
           }
         }
-        // Only save the last state
-        result.setAssignmentOnSample(dataset[i], solution);
-        // console.log(JSON.stringify(dataset[i].spectra.nmr[0]))
-      }
+      });
 
       // Create the fast prediction table. It contains the prediction at last iteration
       // Becasuse that, the iteration parameter has not effect on the stats
