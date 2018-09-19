@@ -30,7 +30,7 @@ Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
 M  END
 `;
 
-//Predict and simulate 1H for Ethylbenzene
+//Predict and simulate 1H and COSY for Ethylbenzene
 predictor.spinus(molfile, { group: false }).then(prediction => {
   const spinSystem = sm.SpinSystem.fromPrediction(prediction);
   var options = {
@@ -42,7 +42,27 @@ predictor.spinus(molfile, { group: false }).then(prediction => {
     maxClusterSize: 8
   }
   spinSystem.ensureClusterSize(options);
+
+  //Simulate 1H spectrum
   var simulation1D = sm.simulate1D(spinSystem, options);
 
+  //Predict 2D components. It will allow to observe interaction between atoms from 0 to 3 bond of distance
+  const prediction2D = predictor.twoD(prediction, prediction, molfile, { minLength: 0, maxLength: 3 });
+  var optionsCOSY = {
+    frequencyX: 400.08,
+    frequencyY: 400.08,
+    lineWidthX: 2, //Hz
+    lineWidthY: 2, //Hz
+    firstX: 0,
+    lastX: 11,
+    firstY: 0,
+    lastY: 11,
+    nbPointsX: 512,
+    nbPointsY: 512,
+    symmetrize: true
+  };
+
+  //Simulate COSY spectrum
+  var spectrum2D = sm.simulate2D(prediction2D, optionsCOSY);
 }, reject => { console.log(reject) });
 

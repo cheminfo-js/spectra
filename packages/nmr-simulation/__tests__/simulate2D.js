@@ -97,6 +97,7 @@ var optionsCOSY = {
     nbPointsY: 7,
     symmetrize: true
 };
+
 describe('Simulation from signals simple COSY', function () {
   it('simulation 1H-1H gives matrix data', function () {
     var spectrum = simulation.simulate2D(prediction, optionsCOSY);
