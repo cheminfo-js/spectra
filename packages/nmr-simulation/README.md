@@ -84,7 +84,10 @@ A plot of the output spectrum
 
  This example ilustrates the simulation of a sytste (B, AA, C ). Atoms of the group AA, resonating at 2ppm, are coupled with the atom B that resonates at 1ppm. The scalar coupling between them
  is 7 Hz. Atoms of the group AA are coupled with atom C, that resonates at 3ppm. The scalar coupling between then is 16Hz. There is not direct coupling between atom B and C.
- This should produce a pattern like the below one:
+ This should produce a pattern like the below in the code:
+
+```js
+/*
   x:   0.5 1.0 1.5 2.0 2.5 3.0 3.5
  ____________________________________
  0.5 |  0   0   0   0   0   0   0
@@ -95,8 +98,6 @@ A plot of the output spectrum
  3.0 |  0   0   0   1   0   1   0
  3.5 |  0   0   0   0   0   0   0  
 */
-
-```js
 const simulation = require('nmr-simulation');
 
 const prediction = [{
