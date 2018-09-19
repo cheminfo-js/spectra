@@ -37,7 +37,7 @@ The simulator will produce a spectrum at 400.082470657773 Mhz, from 1 to 1.5 ppm
 
 ## [API Documentation](https://mljs.github.io/spectra/packages/nmr-simulation)
 
-## Example
+## Example 1
 
 ```js
 
@@ -75,9 +75,143 @@ var spectrum = simulation.simulate1D(spinSystem, options1h);
 console.log(JSON.stringify(spectrum.x));// x in PPM
 console.log(JSON.stringify(spectrum.y));// y in arbitrary units
 ```
+
 A plot of the output spectrum
 
 <img width="300" alt="output" src="https://github.com/cheminfo-js/spectra/blob/master/packages/nmr-simulation/examples/spectrum.png"> 
+
+## Example 2: Simulating a 2D spectrum. 
+
+ This example ilustrates the simulation of a sytste (B, AA, C ). Atoms of the group AA, resonating at 2ppm, are coupled with the atom B that resonates at 1ppm. The scalar coupling between them
+ is 7 Hz. Atoms of the group AA are coupled with atom C, that resonates at 3ppm. The scalar coupling between then is 16Hz. There is not direct coupling between atom B and C.
+ This should produce a pattern like the below one:
+  x:   0.5 1.0 1.5 2.0 2.5 3.0 3.5
+ ____________________________________
+ 0.5 |  0   0   0   0   0   0   0
+ 1.0 |  0   1   0   1   0   0   0
+ 1.5 |  0   0   0   0   0   0   0
+ 2.0 |  0   1   0   1   0   1   0
+ 2.5 |  0   0   0   0   0   0   0
+ 3.0 |  0   0   0   1   0   1   0
+ 3.5 |  0   0   0   0   0   0   0  
+*/
+
+```js
+const simulation = require('nmr-simulation');
+
+const prediction = [{
+    fromDiaID: 'A', toDiaID: 'A', fromAtoms: [8, 14], toAtoms: [8, 14],
+    fromLabel: 'H', toLabel: 'H', pathLength: 0,
+    fromChemicalShift: 2, toChemicalShift: 2,
+    fromAtomLabel: 'H', toAtomLabel: 'H'
+},
+{
+    fromDiaID: 'B', toDiaID: 'B', fromAtoms: [9], toAtoms: [9],
+    fromLabel: 'H', toLabel: 'H', pathLength: 0,
+    fromChemicalShift: 1, toChemicalShift: 1,
+    fromAtomLabel: 'H', toAtomLabel: 'H'
+},
+{
+    fromDiaID: 'C', toDiaID: 'C', fromAtoms: [10], toAtoms: [10],
+    fromLabel: 'H', toLabel: 'H', pathLength: 0,
+    fromChemicalShift: 3, toChemicalShift: 3,
+    fromAtomLabel: 'H', toAtomLabel: 'H'
+},
+{
+    fromDiaID: 'A', toDiaID: 'B', fromAtoms: [8, 14], toAtoms: [9],
+    fromLabel: 'H', toLabel: 'H', pathLength: 3,
+    fromChemicalShift: 2, toChemicalShift: 1,
+    fromAtomLabel: 'H', toAtomLabel: 'H', j: 7
+},
+{
+    fromDiaID: 'A', toDiaID: 'C', fromAtoms: [8, 14], toAtoms: [10],
+    fromLabel: 'H', toLabel: 'H', pathLength: 3,
+    fromChemicalShift: 2, toChemicalShift: 3,
+    fromAtomLabel: 'H', toAtomLabel: 'H', j: 16
+}];
+
+var optionsCOSY = {
+    frequencyX: 1, frequencyY: 1,
+    lineWidthX: 0.07, lineWidthY: 0.07, //Hz
+    firstX: 0.5, lastX: 3.5,
+    firstY: 0.5, lastY: 3.5,
+    nbPointsX: 7, nbPointsY: 7,
+    symmetrize: true
+};
+
+var spectrum = simulation.simulate2D(prediction, optionsCOSY);
+//Lets make a logical matrix. Smaller values than 1e-1 are 0, greather that that are 1
+spectrum = spectrum.map(row => {
+    return row.map(value => value < 1e-1 ? 0 : 1);
+})
+console.log(spectrum);
+```
+
+
+## Example 3: Simulating 1H and COSY spectra for Ethylbenzene. 
+
+Chemical shift and coupling constants are predicted using Spinus, through our prediction library nmr-predictor
+
+```js
+'use strict';
+
+const sm = require('nmr-simulation');
+const predictor = require("nmr-predictor");
+
+var molfile = `Benzene, ethyl-, ID: C100414
+  NIST    16081116462D 1   1.00000     0.00000
+Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
+  8  8  0     0  0              1 V2000
+    0.5015    0.0000    0.0000 C   0  0  0  0  0  0           0  0  0
+    0.0000    0.8526    0.0000 C   0  0  0  0  0  0           0  0  0
+    1.5046    0.0000    0.0000 C   0  0  0  0  0  0           0  0  0
+    2.0062    0.8526    0.0000 C   0  0  0  0  0  0           0  0  0
+    3.0092    0.8526    0.0000 C   0  0  0  0  0  0           0  0  0
+    1.5046    1.7554    0.0000 C   0  0  0  0  0  0           0  0  0
+    0.5015    1.7052    0.0000 C   0  0  0  0  0  0           0  0  0
+    3.5108    0.0000    0.0000 C   0  0  0  0  0  0           0  0  0
+  1  2  2  0     0  0
+  3  1  1  0     0  0
+  2  7  1  0     0  0
+  4  3  2  0     0  0
+  4  5  1  0     0  0
+  6  4  1  0     0  0
+  5  8  1  0     0  0
+  7  6  2  0     0  0
+M  END
+`;
+
+//Predict and simulate 1H and COSY for Ethylbenzene
+predictor.spinus(molfile, { group: false }).then(prediction => {
+  const spinSystem = sm.SpinSystem.fromPrediction(prediction);
+  var options = {
+    frequency: 400.082470657773,
+    from: 0,
+    to: 11,
+    lineWidth: 1,
+    nbPoints: 16384,
+    maxClusterSize: 8
+  }
+  spinSystem.ensureClusterSize(options);
+
+  //Simulate 1H spectrum
+  var simulation1D = sm.simulate1D(spinSystem, options);
+
+  //Predict 2D components. It will allow to observe interaction between atoms from 0 to 3 bond of distance
+  const prediction2D = predictor.twoD(prediction, prediction, molfile, { minLength: 0, maxLength: 3 });
+  var optionsCOSY = {
+    frequencyX: 400.08, frequencyY: 400.08,
+    lineWidthX: 2, lineWidthY: 2, //Hz
+    firstX: 0, lastX: 11,
+    firstY: 0, lastY: 11,
+    nbPointsX: 512, nbPointsY: 512,
+    symmetrize: true
+  };
+
+  //Simulate COSY spectrum
+  var spectrum2D = sm.simulate2D(prediction2D, optionsCOSY);
+}, reject => { console.log(reject) });
+```
 
 
 ## License

@@ -100,4 +100,4 @@ var spectrum = simulation.simulate2D(prediction, optionsCOSY);
 spectrum = spectrum.map(row => {
     return row.map(value => value < 1e-10 ? 0 : 1);
 })
-console.log(spectrum);
+//console.log(spectrum);
