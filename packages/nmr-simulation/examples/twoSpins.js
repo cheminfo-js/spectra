@@ -1,4 +1,4 @@
-const simulation = require('nmr-simulation');
+const simulation = require('..');
 
 const prediction = [
     {

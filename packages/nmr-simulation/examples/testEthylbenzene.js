@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const sm = require('nmr-simulation');
+const sm = require('..');
 const predictor = require("nmr-predictor");
 
 

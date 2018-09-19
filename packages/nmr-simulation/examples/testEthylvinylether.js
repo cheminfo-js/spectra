@@ -4,7 +4,7 @@
 'use strict';
 
 const request = require('request');
-const sm = require('nmr-simulation');
+const sm = require('..');
 const predictor = require("nmr-predictor");
 
 var molfile = `ethylvinylether.mol

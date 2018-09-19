@@ -1,4 +1,4 @@
-const simulation = require('nmr-simulation');
+const simulation = require('..');
 /** 
  * This example ilustrates the simulation of a sytste (B, AA, C ). Atoms of the group AA, resonating at 2ppm, are coupled with the atom B that resonates at 1ppm. The scalar coupling between them
  * is 7 Hz. Atoms of the group AA are coupled with atom C, that resonates at 3ppm. The scalar coupling between then is 16Hz. There is not direct coupling between atom B and C.
