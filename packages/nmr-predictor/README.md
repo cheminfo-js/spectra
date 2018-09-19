@@ -16,6 +16,8 @@ The predictor accepts a molfile as input data, and produces a set of predictions
 $ npm install nmr-predictor
 ```
 
+# [API Documentation](https://cheminfo-js.github.io/spectra/packages/nmr-predictor/docs/)
+
 ## Example: Prediction of 1H and 13C chemical shifts for the Ethylbenzene. 
 
 In this example, we made use of our local databases for the chemical shift prediction. If you don't have your own databases, you may use our precompiled libraries for 1H and 13C, available in our github project by means of the fecthProton and fetchCarbon functions. fetchCarbon retrieves a compiled version of NMRShiftDB2 database. fetchProton retrieves an inhouse beta library for 1H predictions.
