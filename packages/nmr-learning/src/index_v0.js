@@ -17,18 +17,6 @@ function loadFile(filename) {
 
 const prior = JSON.parse(loadFile('/../data/histogram_0_15ppm.json'));
 
-const looksLike = function(id1, id2, signals, tolerance) {
-  if (id1 == id2) {
-    return true;
-  }
-  else {
-    if(Math.abs(signals[id1].signal[0].delta - signals[id2].signal[0].delta) < tolerance) {
-      return true;
-    }
-  }
-}
-
-
 async function start() {
   var maxIterations = 15; // Set the number of interations for training
   var ignoreLabile = true; // Set the use of labile protons during training
@@ -37,28 +25,24 @@ async function start() {
 
   var testSet = JSON.parse(loadFile('/../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
   // var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big4.json').toString());//JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
-  var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443.json').toString());
-  var dataset2 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/maybridge.json').toString());
-  var dataset3 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
-  var dataset4 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big1.json').toString());
-
-  var blackList = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/blackList.json').toString());
+  var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
+  var dataset2 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/maybridge_y.json').toString());
+  var dataset3 = []; // JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
 
   // dataset3.splice(0, 500)
 
-  var datasets = [dataset1, dataset2, dataset3, dataset4];
+  var datasets = [dataset1, dataset2, dataset3];
 
   var start, date;
   var prevError = 0;
   var prevCont = 0;
   var dataset, max, ds, i, j, k, nAtoms;
   var solutions;
-  
-  //var fastDB = [];
-  var fastDB = JSON.parse(loadFile('/../data/h_23.json'));
+  // var fastDB = [];
+  var fastDB = JSON.parse(loadFile('/../data/h_13.json'));
   console.log(`Cheminfo All: ${dataset1.length}`);
   console.log(`MayBridge All: ${dataset2.length}`);
-  console.log(`Other All: ${dataset3.length + dataset4.length}`);
+  console.log(`Other All: ${dataset3.length}`);
 
   // Remove the overlap molecules from train and test
   var removed = 0;
@@ -76,29 +60,26 @@ async function start() {
       }
     }
   }
+  if (start === 0) {
+    start += removed;
+  }
 
   for (ds = 0; ds < datasets.length; ds++) {
     dataset = datasets[ds];
     for (j = 0; j < dataset.length; j++) {
-      //Remove also the molecules in the black list
-      if(!blackList.includes(dataset[j].general.ocl.id)) {
-        trainDataset.push(dataset[j]);
-      } else {
-        removed++;
-      }
+      trainDataset.push(dataset[j]);
     }
   }
 
   console.log(`Cheminfo Final: ${dataset1.length}`);
   console.log(`MayBridge Final: ${dataset2.length}`);
-  console.log(`Other Final: ${dataset3.length + dataset4.length}`);
-  console.log(`Total Final: ${trainDataset.length}`);
+  console.log(`Other Final: ${dataset3.length}`);
   console.log(`Overlaped molecules: ${removed}.  They were removed from training datasets`);
 
   // Run the learning process. After each iteration the system has seen every single molecule once
   // We have to use another stop criteria like convergence
-  var iteration = 24;
-  maxIterations = 30;
+  var iteration = 14;
+  maxIterations = 20;
   var convergence = false;
   try {
     while (iteration < maxIterations && !convergence) {
@@ -116,7 +97,7 @@ async function start() {
           unassigned: 1,
           maxSolutions: 2500,
           timeout: 2000,
-          errorCS: -0.025,
+          errorCS: -0.01,
           predictor: predictor,
           condensed: true,
           OCLE: OCLE,
@@ -129,14 +110,11 @@ async function start() {
       }
 
       await Promise.all(promises).then(results => {
-        blackList = [];
         for (let i = 0; i < max; i++) {
           let result = results[i];
-          //console.log(dataset[i].general.ocl.id);
           solutions = result.getAssignments();
           if (result.timeoutTerminated || result.nSolutions > solutions.length) {
-            blackList.push(dataset[i].general.ocl.id);
-            //console.log(`${i} Too much solutions`);
+            console.log(`${i} Too much solutions`);
           }
           else {
             // Get the unique assigments in the assignment variable.
@@ -144,17 +122,15 @@ async function start() {
             //    console.log(solutions.length)
             let solution = null;
             if (solutions !== null && solutions.length > 0) {
-              let targetsConstains = result.spinSystem.targetsConstains;
               solution = solutions[0];
               let assignment = solution.assignment;
               if (solutions.length > 1) {
                 nAtoms = assignment.length;
                 for (j = 0; j < nAtoms; j++) {
                   let signalId = assignment[j];
-                  //let csi = dataset[i];
                   if (signalId !== '*') {
                     for (k = 1; k < solutions.length; k++) {
-                      if (!looksLike(signalId, solutions[k].assignment[j], targetsConstains, 0.25)) {
+                      if (signalId !== solutions[k].assignment[j]) {
                         assignment[j] = '*';
                         break;
                       }
@@ -170,9 +146,6 @@ async function start() {
         }
       });
 
-      //Print the black list
-      console.log("Too much solutions in " + blackList.length + " molecules");
-      FS.writeFileSync(`${__dirname}/../data/blackList.json`, JSON.stringify(blackList));
       // Create the fast prediction table. It contains the prediction at last iteration
       // Becasuse that, the iteration parameter has not effect on the stats
       fastDB = compilePredictionTable(dataset, { iteration, OCLE }).H;
@@ -189,6 +162,7 @@ async function start() {
 
       console.log(`Iteration ${iteration}`);
       console.log(`Time ${date.getTime() - start}`);
+      console.log(`New entries in the db: ${count}`);
 
       start = date.getTime();
       // var error = comparePredictors(datasetSim,{"db":db,"dataset":testSet,"iteration":"="+iteration});
@@ -198,7 +172,7 @@ async function start() {
         dataset: testSet,
         ignoreLabile: ignoreLabile,
         histParams: histParams,
-        levels: [5, 4],
+        levels: [5, 4, 3, 2],
         use: 'median',
         OCLE: OCLE
       });
