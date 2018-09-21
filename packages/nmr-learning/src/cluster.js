@@ -37,11 +37,13 @@ if (cluster.isMaster) {
             // Send a message from the master process to the worker.
             worker.send( { master: process.pid, i, j });
         }
+
+        Promise.all(responses);
     }
 }
 if (cluster.isWorker) {
 
-    console.log('Worker ' + process.pid + ' has started.');
+    
 
     // Receive messages from the master process.
     process.on('message', function (msg) {
