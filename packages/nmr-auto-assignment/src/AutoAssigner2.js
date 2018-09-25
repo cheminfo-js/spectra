@@ -346,7 +346,7 @@ class Assignment {
         partial[sourceAddress] = targetID;
         this.score = this.partialScore(partial, system.sourcesConstrains);
         // console.log(partial)
-        // console.log(this.score);
+        //console.log(this.score);
 
         if (this.score > 0) {
           // If there is no more sources or targets available, we have a solution for the assignment problem

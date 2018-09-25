@@ -109,8 +109,8 @@ async function cmp2asg(dataSet, predictor, options) {
   var max = 0;
   // var db = options.db;
   var hist = [];
-
-  for (var i = 0; i < dataSet.length; i++) {
+  var lng = dataSet.length;
+  for (var i = 0; i < lng; i++) {
     if (!dataSet[i].ocl) {
       var molecule = OCLE.Molecule.fromIDCode(dataSet[i].diaID);
       molecule.addImplicitHydrogens();
@@ -122,7 +122,6 @@ async function cmp2asg(dataSet, predictor, options) {
         }
         return a.atomLabel < b.atomLabel ? 1 : -1;
       });
-
       const linksOH = molecule.getAllPaths({
         fromLabel: 'H',
         toLabel: 'O',
@@ -189,7 +188,8 @@ async function cmp2asg(dataSet, predictor, options) {
 
 
     // console.log(dataSet[i].assignment);
-    // console.log(h1pred);
+   //console.log(h1pred);
+   //console.log(molecule.diaId);
     result = compare(h1pred, dataSet[i].assignment, hist);
     // console.log(result);
     avgError += result.error;

@@ -20,7 +20,7 @@ async function start() {
   var maxIterations = 15; // Set the number of interations for training
   var ignoreLabile = true;// Set the use of labile protons during training
   var learningRatio = 0.8; // A number between 0 and 1
-  const levels = [6, 5, 4, 3, 3];
+  const levels = [6, 5, 4, 3, 2];
 
   var testSet = JSON.parse(loadFile('/../data/assigned298.json'));// File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
   var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
@@ -38,7 +38,7 @@ async function start() {
   var dataset, max, ds, i, j, k, nAtoms;
   var result, solutions;
   // var fastDB = [];
-  var fastDB = JSON.parse(loadFile('/../data/h_21.json'));
+  var fastDB = JSON.parse(loadFile('/../data/h_44.json'));
   console.log(`Cheminfo All: ${dataset1.length}`);
   console.log(`MayBridge All: ${dataset2.length}`);
   console.log(`Other All: ${dataset3.length}`);

@@ -33,8 +33,8 @@ const looksLike = function (id1, id2, signals, tolerance) {
 if (cluster.isMaster) {
 
     const setup = {
-        iteration0: 15, iterationM: 25, ignoreLabile: true, learningRatio: 0.8,
-        levels: [5, 4, 3], dataPath: "/home/acastillo/Documents/data/", minScore: 1,
+        iteration0: 35, iterationM: 45, ignoreLabile: true, learningRatio: 0.8,
+        levels: [6, 5, 4, 3], dataPath: "/home/acastillo/Documents/data/", minScore: 1,
         errorCS: -0.25, timeout: 2000, maxSolutions: 2500, nUnassigned: 1
     };
 
@@ -101,7 +101,7 @@ if (cluster.isMaster) {
     var data = loadData(setup);
     //setup.predictor = predictor;
     //Initial value of db
-    let fastDB = []; //JSON.parse(loadFile('/../data/h_23.json'));
+    let fastDB = JSON.parse(loadFile('/../data/h_34.json'));
     let date = new Date();
     start = date.getTime();
     var responses = [];
@@ -131,7 +131,7 @@ if (cluster.isWorker) {
             predictor: predictor,
             condensed: true,
             OCLE: OCLE,
-            levels: [5],
+            levels: setup.levels,
             use: 'median',
             ignoreLabile: setup.ignoreLabile,
             learningRatio: setup.learningRatio,
@@ -141,7 +141,7 @@ if (cluster.isWorker) {
         let solutions = result.getAssignments();
         if (result.timeoutTerminated || result.nSolutions > solutions.length) {
             //blackList.push(dataset[i].general.ocl.id);
-            console.log("tms: " + entry.general.ocl.id);
+            console.log(entry.general.ocl.id);
         }
         else {
             // Get the unique assigments in the assignment variable.
@@ -157,7 +157,7 @@ if (cluster.isWorker) {
                         //let csi = dataset[i];
                         if (signalId !== '*') {
                             for (let k = 1; k < solutions.length; k++) {
-                                if (!looksLike(signalId, solutions[k].assignment[j], targetsConstains, 0.25)) {
+                                if (!looksLike(signalId, solutions[k].assignment[j], targetsConstains, 0.6)) {
                                     assignment[j] = '*';
                                     break;
                                 }
@@ -201,7 +201,7 @@ async function getPerformance(testSet, fastDB, setup) {
         dataset: testSet,
         ignoreLabile: setup.ignoreLabile,
         histParams: histParams,
-        levels: [5, 4, 3, 2],
+        levels: setup.levels,
         use: 'median',
         OCLE: OCLE
     });
@@ -233,11 +233,14 @@ function loadData(setup) {
     var dataset2 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/maybridge.json').toString()));
     var dataset3 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big0.json').toString()));
     var dataset4 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big1.json').toString()));
+    var dataset5 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big2.json').toString()));
+    var dataset6 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big3.json').toString()));
+    var dataset7 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big4.json').toString()));
     var blackList = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'blackList.json').toString()));
 
     var testSet = JSON.parse(loadFile('/../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
 
-    var datasets = [dataset1, dataset2, dataset3, dataset4];
+    var datasets = [dataset1, dataset2, dataset3, dataset4, dataset5, dataset6, dataset7];
 
     var i, j, k, ds, dataset;
     console.log(`Cheminfo All: ${dataset1.length}`);

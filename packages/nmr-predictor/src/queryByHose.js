@@ -20,9 +20,8 @@ export default function queryByHose(molecule, db, options) {
     if (element.atomLabel === options.atomLabel && (!element.isLabile || !options.ignoreLabile)) {
       let res;
       let k = 0;
-      // console.log(element.hose)
       while (!res && k < levels.length) {
-        if (db[levels[k]]) {
+        if (db[levels[k] - 1]) {
           res = db[levels[k] - 1][element.hose[levels[k] - 1]];// atom['hose' + levels[k]]];
         }
         k++;
