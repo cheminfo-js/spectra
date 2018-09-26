@@ -14,9 +14,10 @@ function compare(A, B, hist) {
       if (A[i].diaIDs[0] === B[j].diaIDs[0]) {
         if (typeof A[i].delta !== 'undefined' && typeof B[j].delta !== 'undefined') {
           tmp = Math.abs(A[i].delta - B[j].delta);
-          if (tmp > 4) {
-            // console.log(A[i].delta + " " + B[j].delta + " " + A[i].diaIDs[0]);
-          }
+          /*if (tmp > 2) {
+             //console.log(A[i].level + " " + A[i].delta + " " + B[j].delta + " " + A[i].diaIDs[0] + " " + A[i].hose[A[i].level - 1]);
+             console.log("delete fastDB["+ (A[i].level - 1)+"]["+ JSON.stringify(A[i].hose[A[i].level - 1]) + "];");
+          }*/
 
           hist.push(tmp);
           error += tmp;
@@ -183,7 +184,8 @@ async function cmp2asg(dataSet, predictor, options) {
     // console.log(molecule)
     h1pred = await predictor.proton(molecule, {
       ignoreLabile: options.ignoreLabile,
-      levels: options.levels
+      levels: options.levels,
+      hose: options.hose
     });
 
 
@@ -191,7 +193,9 @@ async function cmp2asg(dataSet, predictor, options) {
    //console.log(h1pred);
    //console.log(molecule.diaId);
     result = compare(h1pred, dataSet[i].assignment, hist);
-    // console.log(result);
+
+    //if(result.error > 1)
+    //  console.log(result.error + " " + JSON.stringify(h1pred));
     avgError += result.error;
     count += result.count;
     if (result.min < min) {

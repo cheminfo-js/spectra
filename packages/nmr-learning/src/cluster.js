@@ -33,7 +33,7 @@ const looksLike = function (id1, id2, signals, tolerance) {
 if (cluster.isMaster) {
 
     const setup = {
-        iteration0: 35, iterationM: 45, ignoreLabile: true, learningRatio: 0.8,
+        iteration0: 45, iterationM: 55, ignoreLabile: true, learningRatio: 0.8,
         levels: [6, 5, 4, 3], dataPath: "/home/acastillo/Documents/data/", minScore: 1,
         errorCS: -0.25, timeout: 2000, maxSolutions: 2500, nUnassigned: 1
     };
@@ -101,7 +101,7 @@ if (cluster.isMaster) {
     var data = loadData(setup);
     //setup.predictor = predictor;
     //Initial value of db
-    let fastDB = JSON.parse(loadFile('/../data/h_34.json'));
+    let fastDB = JSON.parse(loadFile('/../data/h_clean.json'));
     let date = new Date();
     start = date.getTime();
     var responses = [];
