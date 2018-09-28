@@ -128,7 +128,7 @@ function load(path, datasetName, options) {
         if (signals[j].from < 0 || signals[j].from > 11.8) {
           signals.splice(j, 1);
         } else {
-          if (signals[j].from > 2.48 && signals[j].to < 2.59 && signals[j].signal[0].multiplicity === 'quint') {
+          if (signals[j].from > 2.48 && signals[j].to < 2.59 ) {//&& signals[j].signal[0].multiplicity === 'quint') {
             signals.splice(j, 1);
           } else
           if (signals[j].from > 7.10 && signals[j].to < 7.30 && signals[j].signal[0].multiplicity === 's') {

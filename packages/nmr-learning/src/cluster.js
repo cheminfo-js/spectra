@@ -33,9 +33,9 @@ const looksLike = function (id1, id2, signals, tolerance) {
 if (cluster.isMaster) {
 
     const setup = {
-        iteration0: 45, iterationM: 55, ignoreLabile: true, learningRatio: 0.8,
+        iteration0: 28, iterationM: 40, ignoreLabile: true, learningRatio: 0.8,
         levels: [6, 5, 4, 3], dataPath: "/home/acastillo/Documents/data/", minScore: 1,
-        errorCS: -0.25, timeout: 2000, maxSolutions: 2500, nUnassigned: 1
+        errorCS: -0.03, timeout: 2000, maxSolutions: 2500, nUnassigned: 1
     };
 
     var numWorkers = require('os').cpus().length;
@@ -131,7 +131,7 @@ if (cluster.isWorker) {
             predictor: predictor,
             condensed: true,
             OCLE: OCLE,
-            levels: setup.levels,
+            levels: [6, 5, 4, 3],
             use: 'median',
             ignoreLabile: setup.ignoreLabile,
             learningRatio: setup.learningRatio,
@@ -141,7 +141,7 @@ if (cluster.isWorker) {
         let solutions = result.getAssignments();
         if (result.timeoutTerminated || result.nSolutions > solutions.length) {
             //blackList.push(dataset[i].general.ocl.id);
-            console.log(entry.general.ocl.id);
+            console.log(JSON.stringify(entry.general.ocl.id));
         }
         else {
             // Get the unique assigments in the assignment variable.
@@ -157,7 +157,7 @@ if (cluster.isWorker) {
                         //let csi = dataset[i];
                         if (signalId !== '*') {
                             for (let k = 1; k < solutions.length; k++) {
-                                if (!looksLike(signalId, solutions[k].assignment[j], targetsConstains, 0.6)) {
+                                if (!looksLike(signalId, solutions[k].assignment[j], targetsConstains, 0.5)) {
                                     assignment[j] = '*';
                                     break;
                                 }
@@ -229,8 +229,8 @@ async function getPerformance(testSet, fastDB, setup) {
 function loadData(setup) {
 
     // var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big4.json').toString());//JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
-    var dataset1 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/cheminfo443.json').toString()));
-    var dataset2 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/maybridge.json').toString()));
+    var dataset1 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/cheminfo443_no2.5.json').toString()));
+    var dataset2 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/maybridge_no2.5.json').toString()));
     var dataset3 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big0.json').toString()));
     var dataset4 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big1.json').toString()));
     var dataset5 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big2.json').toString()));

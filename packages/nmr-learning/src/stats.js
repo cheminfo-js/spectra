@@ -1,6 +1,6 @@
 const histogram = require('./histogram');
 
-function compare(A, B, hist) {
+function compare(A, B, hist, options) {
   var error = 0;
   var count = 0;
   var max = 0;
@@ -14,10 +14,10 @@ function compare(A, B, hist) {
       if (A[i].diaIDs[0] === B[j].diaIDs[0]) {
         if (typeof A[i].delta !== 'undefined' && typeof B[j].delta !== 'undefined') {
           tmp = Math.abs(A[i].delta - B[j].delta);
-          /*if (tmp > 2) {
+          if (options.hose && tmp > 2) {
              //console.log(A[i].level + " " + A[i].delta + " " + B[j].delta + " " + A[i].diaIDs[0] + " " + A[i].hose[A[i].level - 1]);
-             console.log("delete fastDB["+ (A[i].level - 1)+"]["+ JSON.stringify(A[i].hose[A[i].level - 1]) + "];");
-          }*/
+             console.log("delete fastDB["+ (A[i].level - 1)+"]["+ JSON.stringify(A[i].hose[A[i].level - 1]) + "]; //" + tmp + " " + A[i].delta + " " + B[j].delta);
+          }
 
           hist.push(tmp);
           error += tmp;
@@ -192,7 +192,7 @@ async function cmp2asg(dataSet, predictor, options) {
     // console.log(dataSet[i].assignment);
    //console.log(h1pred);
    //console.log(molecule.diaId);
-    result = compare(h1pred, dataSet[i].assignment, hist);
+    result = compare(h1pred, dataSet[i].assignment, hist, options);
 
     //if(result.error > 1)
     //  console.log(result.error + " " + JSON.stringify(h1pred));
