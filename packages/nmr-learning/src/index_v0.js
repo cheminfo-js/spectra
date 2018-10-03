@@ -25,8 +25,16 @@ async function start() {
 
   var testSet = JSON.parse(loadFile('/../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
   // var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big4.json').toString());//JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
-  var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
-  var dataset2 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/maybridge_y.json').toString());
+  var dataset1 = JSON.parse(
+    FS.readFileSync(
+      '/home/acastillo/Documents/data/procjson/cheminfo443_y.json'
+    ).toString()
+  );
+  var dataset2 = JSON.parse(
+    FS.readFileSync(
+      '/home/acastillo/Documents/data/procjson/maybridge_y.json'
+    ).toString()
+  );
   var dataset3 = []; // JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
 
   // dataset3.splice(0, 500)
@@ -51,7 +59,10 @@ async function start() {
     for (ds = 0; ds < datasets.length; ds++) {
       dataset = datasets[ds];
       for (j = dataset.length - 1; j >= 0; j--) {
-        if (dataset[j].general.ocl.hasLabile || testSet[i].diaID === dataset[j].general.ocl.id) {
+        if (
+          dataset[j].general.ocl.hasLabile ||
+          testSet[i].diaID === dataset[j].general.ocl.id
+        ) {
           // if (testSet[i].diaID === dataset[j].general.ocl.id) {
           dataset.splice(j, 1);
           removed++;
@@ -74,7 +85,9 @@ async function start() {
   console.log(`Cheminfo Final: ${dataset1.length}`);
   console.log(`MayBridge Final: ${dataset2.length}`);
   console.log(`Other Final: ${dataset3.length}`);
-  console.log(`Overlaped molecules: ${removed}.  They were removed from training datasets`);
+  console.log(
+    `Overlaped molecules: ${removed}.  They were removed from training datasets`
+  );
 
   // Run the learning process. After each iteration the system has seen every single molecule once
   // We have to use another stop criteria like convergence
@@ -92,31 +105,35 @@ async function start() {
       // we could now loop on the sdf to add the int index
       let promises = [];
       for (i = 0; i < max; i++) {
-        promises.push(autoassigner(dataset[i], {
-          minScore: 1,
-          unassigned: 1,
-          maxSolutions: 2500,
-          timeout: 2000,
-          errorCS: -0.01,
-          predictor: predictor,
-          condensed: true,
-          OCLE: OCLE,
-          levels: [5],
-          use: 'median',
-          ignoreLabile: ignoreLabile,
-          learningRatio: learningRatio,
-          iteration: iteration
-        }));
+        promises.push(
+          autoassigner(dataset[i], {
+            minScore: 1,
+            unassigned: 1,
+            maxSolutions: 2500,
+            timeout: 2000,
+            errorCS: -0.01,
+            predictor: predictor,
+            condensed: true,
+            OCLE: OCLE,
+            levels: [5],
+            use: 'median',
+            ignoreLabile: ignoreLabile,
+            learningRatio: learningRatio,
+            iteration: iteration
+          })
+        );
       }
 
-      await Promise.all(promises).then(results => {
+      await Promise.all(promises).then((results) => {
         for (let i = 0; i < max; i++) {
           let result = results[i];
           solutions = result.getAssignments();
-          if (result.timeoutTerminated || result.nSolutions > solutions.length) {
+          if (
+            result.timeoutTerminated ||
+            result.nSolutions > solutions.length
+          ) {
             console.log(`${i} Too much solutions`);
-          }
-          else {
+          } else {
             // Get the unique assigments in the assignment variable.
             // if(solutions.length > 0)
             //    console.log(solutions.length)
@@ -151,9 +168,16 @@ async function start() {
       fastDB = compilePredictionTable(dataset, { iteration, OCLE }).H;
       predictor.setDb(fastDB, 'proton', 'proton');
 
-      FS.writeFileSync(`${__dirname}/../data/h_${iteration}.json`, JSON.stringify(fastDB));
+      FS.writeFileSync(
+        `${__dirname}/../data/h_${iteration}.json`,
+        JSON.stringify(fastDB)
+      );
 
-      console.log(`${Object.keys(fastDB[1]).length} ${Object.keys(fastDB[2]).length} ${Object.keys(fastDB[3]).length} ${Object.keys(fastDB[4]).length} ${Object.keys(fastDB[5]).length}`);
+      console.log(
+        `${Object.keys(fastDB[1]).length} ${Object.keys(fastDB[2]).length} ${
+          Object.keys(fastDB[3]).length
+        } ${Object.keys(fastDB[4]).length} ${Object.keys(fastDB[5]).length}`
+      );
 
       // predictor.setDb(fastDB, 'proton', 'proton');
       // console.log(JSON.stringify(fastDB));
@@ -178,7 +202,11 @@ async function start() {
       });
       date = new Date();
 
-      console.log(`Error: ${error.error} count: ${error.count} min: ${error.min} max: ${error.max}`);
+      console.log(
+        `Error: ${error.error} count: ${error.count} min: ${error.min} max: ${
+          error.max
+        }`
+      );
 
       var data = error.hist;
       var sumHist = 0;
@@ -187,7 +215,9 @@ async function start() {
         if (sumHist > 0) {
           sumHist *= 1;
         }
-        console.log(`${data[k].x},${data[k].y},${data[k].y / error.count},${sumHist}`);
+        console.log(
+          `${data[k].x},${data[k].y},${data[k].y / error.count},${sumHist}`
+        );
       }
 
       console.log(`Time comparing ${date.getTime() - start}`);

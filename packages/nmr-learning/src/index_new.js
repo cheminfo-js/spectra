@@ -17,16 +17,15 @@ function loadFile(filename) {
 
 const prior = JSON.parse(loadFile('/../data/histogram_0_15ppm.json'));
 
-const looksLike = function(id1, id2, signals, tolerance) {
+const looksLike = function (id1, id2, signals, tolerance) {
   if (id1 == id2) {
     return true;
-  }
-  else {
-    if(Math.abs(signals[id1].signal[0].delta - signals[id2].signal[0].delta) < tolerance) {
+  } else {
+    if (Math.abs(signals[id1].signal[0].delta - signals[id2].signal[0].delta) < tolerance) {
       return true;
     }
   }
-}
+};
 
 
 async function start() {
@@ -53,8 +52,8 @@ async function start() {
   var prevCont = 0;
   var dataset, max, ds, i, j, k, nAtoms;
   var solutions;
-  
-  //var fastDB = [];
+
+  // var fastDB = [];
   var fastDB = JSON.parse(loadFile('/../data/h_23.json'));
   console.log(`Cheminfo All: ${dataset1.length}`);
   console.log(`MayBridge All: ${dataset2.length}`);
@@ -80,8 +79,8 @@ async function start() {
   for (ds = 0; ds < datasets.length; ds++) {
     dataset = datasets[ds];
     for (j = 0; j < dataset.length; j++) {
-      //Remove also the molecules in the black list
-      if(!blackList.includes(dataset[j].general.ocl.id)) {
+      // Remove also the molecules in the black list
+      if (!blackList.includes(dataset[j].general.ocl.id)) {
         trainDataset.push(dataset[j]);
       } else {
         removed++;
@@ -128,17 +127,16 @@ async function start() {
         }));
       }
 
-      await Promise.all(promises).then(results => {
+      await Promise.all(promises).then((results) => {
         blackList = [];
         for (let i = 0; i < max; i++) {
           let result = results[i];
-          //console.log(dataset[i].general.ocl.id);
+          // console.log(dataset[i].general.ocl.id);
           solutions = result.getAssignments();
           if (result.timeoutTerminated || result.nSolutions > solutions.length) {
             blackList.push(dataset[i].general.ocl.id);
-            //console.log(`${i} Too much solutions`);
-          }
-          else {
+            // console.log(`${i} Too much solutions`);
+          } else {
             // Get the unique assigments in the assignment variable.
             // if(solutions.length > 0)
             //    console.log(solutions.length)
@@ -151,7 +149,7 @@ async function start() {
                 nAtoms = assignment.length;
                 for (j = 0; j < nAtoms; j++) {
                   let signalId = assignment[j];
-                  //let csi = dataset[i];
+                  // let csi = dataset[i];
                   if (signalId !== '*') {
                     for (k = 1; k < solutions.length; k++) {
                       if (!looksLike(signalId, solutions[k].assignment[j], targetsConstains, 0.25)) {
@@ -170,8 +168,8 @@ async function start() {
         }
       });
 
-      //Print the black list
-      console.log("Too much solutions in " + blackList.length + " molecules");
+      // Print the black list
+      console.log(`Too much solutions in ${blackList.length} molecules`);
       FS.writeFileSync(`${__dirname}/../data/blackList.json`, JSON.stringify(blackList));
       // Create the fast prediction table. It contains the prediction at last iteration
       // Becasuse that, the iteration parameter has not effect on the stats

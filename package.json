@@ -9,7 +9,7 @@
     "eslint-fix": "npm run eslint -- --fix",
     "local-build": "node_modules/.bin/cheminfo build --entry builder/SD.js --root SD --out-name 'SD'",
     "prepare": "npm run bootstrap",
-    "test": "run-s build test-only eslint",
+    "test": "npm run build && npm run test-only && npm run eslint",
     "test-only": "jest",
     "test-watch": "jest --watch",
     "publish": "git pull --rebase && npm run test && lerna publish"
