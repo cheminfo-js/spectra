@@ -33,10 +33,10 @@
     "ml-simple-clustering": "0.1.0",
     "ml-sparse-matrix": "^0.2.1",
     "new-array": "^1.0.0",
-    "num-sort": "^1.0.0",
-    "should": "^13.2.3"
+    "num-sort": "^1.0.0"
   },
   "devDependencies": {
-    "nmr-predictor": "^1.1.8"
+    "nmr-predictor": "^1.1.8",
+    "should": "^13.2.3"
   }
 }

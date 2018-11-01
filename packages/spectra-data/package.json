@@ -28,12 +28,13 @@
     "testEnvironment": "node"
   },
   "devDependencies": {
-    "nmr-predictor": "^1.1.7"
+    "jsdoc": "^3.5.5",
+    "nmr-predictor": "^1.1.7",
+    "should": "^13.2.3"
   },
   "dependencies": {
     "brukerconverter": "^1.0.1",
     "jcampconverter": "^2.9.2",
-    "jsdoc": "^3.5.5",
     "lodash.round": "^4.0.4",
     "ml-array-max": "^1.0.1",
     "ml-array-median": "^1.0.0",
@@ -46,7 +47,6 @@
     "ml-matrix-peaks-finder": "^0.2.1",
     "ml-simple-clustering": "^0.1.0",
     "nmr-simulation": "^1.0.14",
-    "should": "^13.2.3",
     "spectra-data-ranges": "^1.1.2",
     "spectra-nmr-utilities": "^1.0.2"
   }

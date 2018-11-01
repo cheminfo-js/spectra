@@ -22,7 +22,9 @@
   "dependencies": {
     "lodash.round": "^4.0.4",
     "ml-stat": "^1.3.0",
-    "should": "^13.2.3",
     "spectra-nmr-utilities": "^1.0.2"
+  },
+  "devDependencies": {
+    "should": "^13.2.3"
   }
 }
