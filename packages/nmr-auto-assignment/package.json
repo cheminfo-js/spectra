@@ -1,6 +1,6 @@
 {
   "name": "nmr-auto-assignment",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Automatic assignment for Nuclear Magnetic Resonance spectra for small molecules ",
   "keywords": [
     "NMR",
@@ -32,15 +32,15 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-preset-babili": "^0.1.4",
     "cheminfo-tools": "^1.19.4",
+    "nmr-predictor": "^1.1.9",
     "openchemlib-extended": "^3.3.0",
     "should": "^13.2.3",
-    "nmr-predictor": "^1.1.8",
-    "spectra-data": "^3.4.2"
+    "spectra-data": "^3.4.3"
   },
   "dependencies": {
     "ml-matrix": "^2.3.0",
     "ml-stat": "^1.3.3",
     "ml-tree-set": "0.1.1",
-    "spectra-nmr-utilities": "^1.0.2"
+    "spectra-nmr-utilities": "^1.0.3"
   }
 }
