@@ -1,6 +1,6 @@
 {
   "name": "nmr-learning",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Learn a database of chemical shift and coupling constants assignments",
   "main": "src/index.js",
   "files": [
@@ -25,10 +25,10 @@
   },
   "homepage": "https://github.com/cheminfo-js/spectra/packages/nmr-learning#readme",
   "devDependencies": {
-    "nmr-predictor": "^1.1.9",
+    "nmr-predictor": "^1.1.10",
     "openchemlib-extended": "^3.3.0",
-    "spectra-data": "^3.4.3",
-    "spectra-nmr-utilities": "^1.0.3"
+    "spectra-data": "^3.4.4",
+    "spectra-nmr-utilities": "^1.0.4"
   },
   "dependencies": {
     "ml-matrix": "^2.3.0",
