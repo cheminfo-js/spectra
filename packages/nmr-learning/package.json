@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/cheminfo-js/spectra/packages/nmr-learning#readme",
   "devDependencies": {
-    "nmr-predictor": "^1.1.11",
+    "nmr-predictor": "^1.1.12",
     "openchemlib-extended": "^3.3.0",
     "spectra-data": "^3.4.5",
     "spectra-nmr-utilities": "^1.0.5"

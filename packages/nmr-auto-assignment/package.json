@@ -32,7 +32,7 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-preset-babili": "^0.1.4",
     "cheminfo-tools": "^1.19.4",
-    "nmr-predictor": "^1.1.11",
+    "nmr-predictor": "^1.1.12",
     "openchemlib-extended": "^3.3.0",
     "should": "^13.2.3",
     "spectra-data": "^3.4.5"
