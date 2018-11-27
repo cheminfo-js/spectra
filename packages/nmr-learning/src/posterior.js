@@ -4,12 +4,14 @@ const path = require('path');
 const OCLE = require('openchemlib-extended');
 const predictor = require('nmr-predictor');
 
-const autoassigner = require('../../nmr-auto-assignment/src/index');
+// // const autoassigner = require('../../nmr-auto-assignment/src/index');
+
+const logger = require('./logger');
 
 // const cheminfo = require('./preprocess/cheminfo');
 // const maybridge = require('./preprocess/maybridge');
-const compilePredictionTable = require('./compilePredictionTable');
-const stats = require('./stats');
+// const compilePredictionTable = require('./compilePredictionTable');
+// const stats = require('./stats');
 
 
 function loadFile(filename) {
@@ -17,9 +19,7 @@ function loadFile(filename) {
 }
 
 async function start() {
-  var maxIterations = 15; // Set the number of interations for training
   var ignoreLabile = true;// Set the use of labile protons during training
-  var learningRatio = 0.8; // A number between 0 and 1
   const levels = [6, 5, 4, 3, 2];
 
   var testSet = JSON.parse(loadFile('/../data/assigned298.json'));// File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
@@ -33,15 +33,12 @@ async function start() {
 
 
   var start, date;
-  var prevError = 0;
-  var prevCont = 0;
-  var dataset, max, ds, i, j, k, nAtoms;
-  var result, solutions;
+  var dataset, max, ds, i, j;
   // var fastDB = [];
   var fastDB = JSON.parse(loadFile('/../data/h_44.json'));
-  console.log(`Cheminfo All: ${dataset1.length}`);
-  console.log(`MayBridge All: ${dataset2.length}`);
-  console.log(`Other All: ${dataset3.length}`);
+  logger(`Cheminfo All: ${dataset1.length}`);
+  logger(`MayBridge All: ${dataset2.length}`);
+  logger(`Other All: ${dataset3.length}`);
 
 
   // Remove the overlap molecules from train and test
@@ -71,22 +68,18 @@ async function start() {
     }
   }
 
-  console.log(`Cheminfo Final: ${dataset1.length}`);
-  console.log(`MayBridge Final: ${dataset2.length}`);
-  console.log(`Other Final: ${dataset3.length}`);
-  console.log(`Overlaped molecules: ${removed}.  They were removed from training datasets`);
+  logger(`Cheminfo Final: ${dataset1.length}`);
+  logger(`MayBridge Final: ${dataset2.length}`);
+  logger(`Other Final: ${dataset3.length}`);
+  logger(`Overlaped molecules: ${removed}.  They were removed from training datasets`);
 
 
   // Run the learning process. After each iteration the system has seen every single molecule once
   // We have to use another stop criteria like convergence
-  var iteration = 0;
-  maxIterations = 10;
-  var convergence = false;
   try {
     for (let level of levels) {
       date = new Date();
       start = date.getTime();
-      var count = 0;
       dataset = trainDataset;// datasets[ds];
       max = dataset.length;
       predictor.setDb(fastDB, 'proton', 'proton');
@@ -101,7 +94,7 @@ async function start() {
           ignoreLabile: ignoreLabile,
           keepMolecule: true
         });
-        // console.log(i)
+        // logger(i)
         let ranges = dataset[i].spectra.nmr[0].range;
         for (let k = predictions.length - 1; k >= 0; k--) {
           let pred = predictions[k];
@@ -119,7 +112,7 @@ async function start() {
                 break;
               }
             }
-            // console.log(hose5)
+            // logger(hose5)
             if (!found) {
               if (!fastDB[level - 1][hose5].n) {
                 fastDB[level - 1][hose5].n = 1;
@@ -134,7 +127,7 @@ async function start() {
       }
       let keys = Object.keys(fastDB[level - 1]);
       var deleted = 0;
-      keys.forEach((key) => {
+      for (let key in keys) {
         let confidence = 0;
         if (fastDB[level - 1][key].p) {
           confidence = 1;
@@ -144,19 +137,19 @@ async function start() {
         }
         fastDB[level - 1][key].conf = confidence;
         if (confidence > 0 && confidence < 0.8) {
-          console.log(`${key}:${JSON.stringify(fastDB[level - 1][key])}`);
+          logger(`${key}:${JSON.stringify(fastDB[level - 1][key])}`);
           delete fastDB[level - 1][key];
           deleted++;
-          // console.log(fastDB[4][key]);
+          // logger(fastDB[4][key]);
         }
-      });
-      console.log(`Deleted at ${level}:${deleted}`);
+      }
+      logger(`Deleted at ${level}:${deleted}`);
     }
     FS.writeFileSync(`${__dirname}/../data/h_clean.json`, JSON.stringify(fastDB));
   } catch (e) {
-    console.log(e);
+    logger(e);
   }
-  console.log('Done');
+  logger('Done');
 }
 
 start();

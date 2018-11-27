@@ -3,10 +3,8 @@
  */
 const stat = require('ml-stat/array');
 
-function compilePredictionTable(samples, options) {
+function compilePredictionTable(samples) {
   let maxLevel = 5;// options.maxLevel;
-  let algorithm = 0;
-  let Util = options.OCLE.Util;
   let result = { H: [], C: [] };
   for (let i = 0; i <= maxLevel; i++) {
     result.H.push({});

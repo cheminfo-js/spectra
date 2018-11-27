@@ -60,8 +60,8 @@ export default function simule2DNmrSpectrum(table, options) {
       widthY: unitsToArrayPoints(sigmaY + minY, minY, maxY, nbPointsY)
     };
     addPeak(spectraMatrix, peak);
-    if(symmetrize) {
-      addPeak(spectraMatrix, {x: peak.y, y: peak.x, z: peak.z, widthX: peak.widthY, widthY: peak.widthX});
+    if (symmetrize) {
+      addPeak(spectraMatrix, { x: peak.y, y: peak.x, z: peak.z, widthX: peak.widthY, widthY: peak.widthX });
     }
     i++;
   }

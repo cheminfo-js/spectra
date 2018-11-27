@@ -5,15 +5,12 @@ export default function queryByHose(molecule, db, options) {
   const {
     atomLabel = 'H',
     use = null,
-    algorithm = 0,
     levels = [4, 3, 2, 1, 0]
   } = options;
 
   levels.sort(numSort.desc);
 
   const diaIds = molecule.diaId;
-  const atoms = molecule.atom;
-  const atomNumbers = Object.keys(atoms);
 
   const toReturn = [];
   for (const element of diaIds) {
