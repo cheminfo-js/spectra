@@ -118,7 +118,7 @@ function load(path, datasetName, options) {
         if (signals[j].from < 0 || signals[j].from > 11.8) {
           signals.splice(j, 1);
         } else {
-          if (signals[j].from > 2.48 && signals[j].to < 2.59 && signals[j].signal[0].multiplicity === 'quint') {
+          if (signals[j].from > 2.48 && signals[j].to < 2.59) { // && signals[j].signal[0].multiplicity === 'quint') {
             signals.splice(j, 1);
           } else
           if (signals[j].from > 7.10 && signals[j].to < 7.30 && signals[j].signal[0].multiplicity === 's') {
@@ -129,10 +129,10 @@ function load(path, datasetName, options) {
         }
       }
       // Restore the integral to nH
-      /* for (var j = signals.length - 1; j >= 0; j--) {
-                signals[j].integral *= nH / sum;
-            }*/
-      for (var j = signals.length - 2; j >= 0; j--) {
+      for (j = signals.length - 1; j >= 0; j--) {
+        signals[j].integral *= nH / sum;
+      }
+      for (j = signals.length - 2; j >= 0; j--) {
         if (Math.abs((signals[j].to + signals[j].from) - (signals[j + 1].to + signals[j + 1].from)) <
                     (Math.abs(signals[j].to - signals[j].from) + Math.abs(signals[j + 1].to - signals[j + 1].from))) {
           signals[j].from = Math.min(signals[j].from, signals[j + 1].from);
@@ -166,7 +166,7 @@ function load(path, datasetName, options) {
       result.push(sample);
       // }
       // catch (e) {
-      //    console.log("Could not load the entry " + p + " " + i + " " + e);
+      //    logger("Could not load the entry " + p + " " + i + " " + e);
       // }
     }
   }

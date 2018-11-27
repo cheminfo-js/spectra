@@ -5,24 +5,20 @@ export default function queryByHose(molecule, db, options) {
   const {
     atomLabel = 'H',
     use = null,
-    algorithm = 0,
     levels = [4, 3, 2, 1, 0]
   } = options;
 
   levels.sort(numSort.desc);
 
   const diaIds = molecule.diaId;
-  const atoms = molecule.atom;
-  const atomNumbers = Object.keys(atoms);
 
   const toReturn = [];
   for (const element of diaIds) {
     if (element.atomLabel === options.atomLabel && (!element.isLabile || !options.ignoreLabile)) {
       let res;
       let k = 0;
-      // console.log(element.hose)
       while (!res && k < levels.length) {
-        if (db[levels[k]]) {
+        if (db[levels[k] - 1]) {
           res = db[levels[k] - 1][element.hose[levels[k] - 1]];// atom['hose' + levels[k]]];
         }
         k++;

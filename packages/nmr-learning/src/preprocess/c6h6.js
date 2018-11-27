@@ -1,7 +1,7 @@
 
 const FS = require('fs');
 
-const SD = require('spectra-data');
+const logger = require('../logger');
 
 function loadFile(filename) {
   return FS.readFileSync(filename).toString();
@@ -13,16 +13,16 @@ function load(path, datasetName, options) {
   var result = [];
   var k = 0;
   var rows = JSON.parse(loadFile(path)).rows;
-  console.log(rows.length);
+  logger(rows.length);
   for (var p = 0; p < rows.length; p++) {
     var row = rows[p];
     if (p % 500 === 0) {
-      console.log(p);
+      logger(p);
     }
     if (row.value.nucleus === '1H') {
       try {
         var molecule = OCLE.Molecule.fromIDCode(row.value.idCode);
-        // console.log(p + " " +molecule.getIDCode());
+        // logger(p + " " +molecule.getIDCode());
         // let ocl = {value: molecule};
 
         molecule.addImplicitHydrogens();
@@ -122,7 +122,7 @@ function load(path, datasetName, options) {
           result = [];
         }
       } catch (e) {
-        console.log(`Could not load this molecule: ${row.value.idCode}`);
+        logger(`Could not load this molecule: ${row.value.idCode}`);
       }
     }
   }

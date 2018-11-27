@@ -1,6 +1,8 @@
 const histogram = require('./histogram');
+const logger = require('./logger');
 
-function compare(A, B, hist) {
+
+function compare(A, B, hist, options) {
   var error = 0;
   var count = 0;
   var max = 0;
@@ -14,8 +16,9 @@ function compare(A, B, hist) {
       if (A[i].diaIDs[0] === B[j].diaIDs[0]) {
         if (typeof A[i].delta !== 'undefined' && typeof B[j].delta !== 'undefined') {
           tmp = Math.abs(A[i].delta - B[j].delta);
-          if (tmp > 4) {
-            // console.log(A[i].delta + " " + B[j].delta + " " + A[i].diaIDs[0]);
+          if (options.hose && tmp > 2) {
+            // console.log(A[i].level + " " + A[i].delta + " " + B[j].delta + " " + A[i].diaIDs[0] + " " + A[i].hose[A[i].level - 1]);
+            logger(`delete fastDB[${A[i].level - 1}][${JSON.stringify(A[i].hose[A[i].level - 1])}]; //${tmp} ${A[i].delta} ${B[j].delta}`);
           }
 
           hist.push(tmp);
@@ -109,8 +112,8 @@ async function cmp2asg(dataSet, predictor, options) {
   var max = 0;
   // var db = options.db;
   var hist = [];
-
-  for (var i = 0; i < dataSet.length; i++) {
+  var lng = dataSet.length;
+  for (var i = 0; i < lng; i++) {
     if (!dataSet[i].ocl) {
       var molecule = OCLE.Molecule.fromIDCode(dataSet[i].diaID);
       molecule.addImplicitHydrogens();
@@ -122,7 +125,6 @@ async function cmp2asg(dataSet, predictor, options) {
         }
         return a.atomLabel < b.atomLabel ? 1 : -1;
       });
-
       const linksOH = molecule.getAllPaths({
         fromLabel: 'H',
         toLabel: 'O',
@@ -169,7 +171,7 @@ async function cmp2asg(dataSet, predictor, options) {
           }
         }
         for (const linkCl of linksClH) {
-          if (diaId.oclID === linkClH.fromDiaID) {
+          if (diaId.oclID === linkCl.fromDiaID) {
             diaId.isLabile = true;
             break;
           }
@@ -184,14 +186,18 @@ async function cmp2asg(dataSet, predictor, options) {
     // console.log(molecule)
     h1pred = await predictor.proton(molecule, {
       ignoreLabile: options.ignoreLabile,
-      levels: options.levels
+      levels: options.levels,
+      hose: options.hose
     });
 
 
     // console.log(dataSet[i].assignment);
     // console.log(h1pred);
-    result = compare(h1pred, dataSet[i].assignment, hist);
-    // console.log(result);
+    // console.log(molecule.diaId);
+    result = compare(h1pred, dataSet[i].assignment, hist, options);
+
+    // if(result.error > 1)
+    //  console.log(result.error + " " + JSON.stringify(h1pred));
     avgError += result.error;
     count += result.count;
     if (result.min < min) {

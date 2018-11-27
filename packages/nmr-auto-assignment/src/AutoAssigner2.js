@@ -155,13 +155,8 @@ class Assignment {
 
     if (solution !== null) {
       solution.assignment.forEach((signalId, diaIndex) => {
-        let range;
-        for (let i = 0; i < ranges.length; i++) {
-          if (ranges[i].signalID === signalId) {
-            range = ranges[i];
-            break;
-          }
-        }
+        let range = this.spinSystem.targetsConstains[signalId];
+
         if (range) {
           range.signal.forEach((signal) => {
             signal.diaID.push(this.sourcesIDs[diaIndex]);

@@ -3,6 +3,9 @@ const FS = require('fs');
 
 const SD = require('spectra-data');
 
+const logger = require('../logger');
+
+
 function loadFile(filename) {
   return FS.readFileSync(filename).toString();
 }
@@ -124,11 +127,11 @@ function load(path, datasetName, options) {
       );
 
       let sum = 0;
-      for (var j = signals.length - 1; j >= 0; j--) {
+      for (let j = signals.length - 1; j >= 0; j--) {
         if (signals[j].from < 0 || signals[j].from > 11.8) {
           signals.splice(j, 1);
         } else {
-          if (signals[j].from > 2.48 && signals[j].to < 2.59 && signals[j].signal[0].multiplicity === 'quint') {
+          if (signals[j].from > 2.48 && signals[j].to < 2.59) { // && signals[j].signal[0].multiplicity === 'quint') {
             signals.splice(j, 1);
           } else
           if (signals[j].from > 7.10 && signals[j].to < 7.30 && signals[j].signal[0].multiplicity === 's') {
@@ -139,13 +142,13 @@ function load(path, datasetName, options) {
         }
       }
       // Restore the integral to nH
-      /* for (var j = signals.length - 1; j >= 0; j--) {
-                signals[j].integral *= nH / sum;
-            }*/
+      for (let j = signals.length - 1; j >= 0; j--) {
+        signals[j].integral *= nH / sum;
+      }
       // It seems that the compiler makes crazy things some times. We need to join the signals in the same range
       for (var j = signals.length - 2; j >= 0; j--) {
         if (Math.abs((signals[j].to + signals[j].from) - (signals[j + 1].to + signals[j + 1].from)) <
-                    (Math.abs(signals[j].to - signals[j].from) + Math.abs(signals[j + 1].to - signals[j + 1].from))) {
+          (Math.abs(signals[j].to - signals[j].from) + Math.abs(signals[j + 1].to - signals[j + 1].from))) {
           signals[j].from = Math.min(signals[j].from, signals[j + 1].from);
           signals[j].to = Math.max(signals[j].to, signals[j + 1].to);
           signals[j].integral += signals[j + 1].integral;
@@ -159,13 +162,15 @@ function load(path, datasetName, options) {
         range.signalID = `1H_${index}`;
       });
 
-      // console.log(JSON.stringify(signals));
-      let sample = { general: { ocl: { id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH, hasLabile } }, // {ocl: ocl, molfile: molecule.toMolfileV3()},
-        spectra: { nmr: [{ nucleus: 'H', experiment: '1d', range: signals, solvent: spectraData1H.getParamString('.SOLVENT NAME', 'unknown') }] } };
+      // logger(JSON.stringify(signals));
+      let sample = {
+        general: { ocl: { id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH, hasLabile } }, // {ocl: ocl, molfile: molecule.toMolfileV3()},
+        spectra: { nmr: [{ nucleus: 'H', experiment: '1d', range: signals, solvent: spectraData1H.getParamString('.SOLVENT NAME', 'unknown') }] }
+      };
       // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}
       result.push(sample);
     } catch (e) {
-      // console.log('Could not load the entry ' + i + ' ' + e);
+      logger(`Could not load the entry ${i} ${e}`);
     }
   }
   return result;

@@ -11,9 +11,9 @@ let OCLE;
 
 async function autoAssign(entry, options) {
   if (entry && entry.spectra && entry.spectra.nmr && entry.spectra.nmr[0].range || entry.spectra.nmr[0].region) {
-    return await assignmentFromPeakPicking(entry, options);
+    return assignmentFromPeakPicking(entry, options);
   } else {
-    return await assignmentFromRaw(entry, options);
+    return assignmentFromRaw(entry, options);
   }
 }
 
@@ -119,14 +119,17 @@ async function predictByExperiment(molecule, nmr, options) {
 function getError(prediction, param) {
   // console.log(prediction)
   // Never use predictions with less than 3 votes
+  if (prediction.level === 5) {
+    return 0.2;
+  }
   if (prediction.std === 0 || prediction.ncs < 5) {
-    return 5;
+    return 2;
   } else {
     // factor is between 1 and +inf
     // console.log(prediction.ncs+" "+(param.iteration+1)+" "+param.learningRatio);
     var factor = 3 * prediction.std /
             (Math.pow(prediction.ncs, (param.iteration + 1) * param.learningRatio));// (param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
-    return 2 * prediction.std;
+    return 2 * prediction.std + factor;
   }
 }
 
