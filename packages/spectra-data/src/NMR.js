@@ -51,9 +51,9 @@ export default class NMR extends SD {
     spectraData.putParam('observefrequency', spectrum.observeFrequency);
     spectraData.putParam('.SOLVENTNAME', options.solvent || 'none');
     // eslint-disable-next-line camelcase
-    spectraData.putParam('.$SW_h', Math.abs(spectrum.lastX - spectrum.firstX) * spectrum.observeFrequency);
-    spectraData.putParam('.$SW', Math.abs(spectrum.lastX - spectrum.firstX));
-    spectraData.putParam('.$TD', spectrum.nbPoints);
+    spectraData.putParam('$SW_h', Math.abs(spectrum.lastX - spectrum.firstX) * spectrum.observeFrequency);
+    spectraData.putParam('$SW', Math.abs(spectrum.lastX - spectrum.firstX));
+    spectraData.putParam('$TD', spectrum.nbPoints);
     spectraData.sd.xType = options.nucleus || '1H';
     return new NMR(spectraData.sd);
   }

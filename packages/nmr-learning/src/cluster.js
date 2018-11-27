@@ -42,6 +42,7 @@ if (cluster.isMaster) {
   var numWorkers = require('os').cpus().length;
 
   logger(`Master cluster setting up ${numWorkers} workers...`);
+
   let workers = [];
   for (var i = 0; i < numWorkers; i++) {
     let worker = cluster.fork();
