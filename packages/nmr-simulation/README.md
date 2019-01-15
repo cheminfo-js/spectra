@@ -15,20 +15,46 @@ Coupling between atoms could be specified in the j array. Each element represent
 For a better explanation, we show in the example, a very simple spin system of 3 hydrogen atoms AXX: '11', '5' and '6'. There, the atoms '5' and '6' are chemically equivalent, thus, we have a only 2 entries in the array: The first one for the atom with atomIDs: ['11'] and the second one for the atoms with atomIDs: ['5', '6']. The atom '11' resonates at 1.2ppm and the atoms '5' and '6' that resonates at 1.3ppm. The atom '11' has a coupling constant with the other atoms of 7.4 Hz, and the distance between then is of 3 bonds.
 The simulator will produce a spectrum at 400.082470657773 Mhz, from 1 to 1.5 ppm, and 3Hz of linewidth. The spectrum will contain 512 points.
 
-## Parameters
+## simulate1d
+
+This function simulates a one dimensional nmr spectrum. This function returns an array contaning the relative intensities of the spectrum in the specified simulation window (from-to).
+
+### Parameters
 
 *spinSystem*: A JSON object describing a spinSystem ready for simulation. As this object is to complex to be defined manually, we created a helper that formats the systemSystem from a JSON definition.
 
-## Options
+### Options for simulate1d
 | Option | Description |
 | --- | --- |
-| **frequency** | The frequency in Mhz of the fake spectrometer that records the spectrum. 400 by default|
+| **frequency** | The frequency in hz of the fake spectrometer that records the spectrum. 400 by default|
 |**from** | The low limit of the ordinate variable. 0 by default|
 |**to** | The high limit of the ordinate variable. 10 by default|
 |**lineWidth** | The linewidth of the output spectrum, expresed in Hz. 1Hz by default|
 |**nbPoints** | Number of points of the output spectrum. 1024 by default|
 |**maxClusterSize** | Maximum number of atoms on each cluster that can be considered to be simulated together. It affects the the quality and speed of the simulation. 10 by default|
 |**output** | ['y' or 'xy'] it specify the output format. if 'y' is specified, the output of the simulation will be a single vector containing the y data of the spectrum. if 'xy' is specified, the output of the simulation will be an object containing {x,[], y:[]}, the x, y of the spectrum. 'y' by default|
+
+## simule2DNmrSpectrum
+
+This function simulates a bidimensional nmr spectrum. This function returns a matrix containing the relative intensities in the bidimensional simulation window.
+
+### Parameters
+
+*table*: A JSON object describing each existing interaction between pair of atoms(spins) in the molecule
+
+### Options for simule2DNmrSpectrum
+| Option | Description |
+| --- | --- |
+| **frequencyX** | The  spectrometer frequency for the direct dimension. Default: 400Mhz for 1H and 100 Mhz for 13C|
+| **frequencyY** | The  spectrometer frequency for the indirect dimension. Default: 400Mhz for 1H and 100 Mhz for 13C|
+|**firstX** | The low limit of the simulation window in the direct dimension. Minimum chemical shift for the direct dimension by default|
+|**lastX** | The upper limit of the simulation window in the direct dimension. Maximum chemical shift for the direct dimension by default|
+|**firstY** | The low limit of the simulation window in the indirect dimension. Minimum chemical shift for the indirect dimension by default|
+|**lastY** | The upper limit of the simulation window in the indirect dimension. Maximum chemical shift for the indirect dimension by default|
+|**lineWidthX** | The linewidth of the output spectrum in the direct dimesion, expresed in Hz. 10 Hz by default|
+|**lineWidthY** | The linewidth of the output spectrum in the indirect dimesion, expresed in Hz. 10 Hz by default|
+|**nbPointsX** | Number of points of the output spectrum in the direct dimesion. 512 by default|
+|**nbPointsY** | Number of points of the output spectrum in the indirect dimesion. 512 by default|
 
 
 ## Installation
