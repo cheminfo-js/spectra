@@ -253,6 +253,63 @@ predictor.spinus(molfile, { group: false }).then(prediction => {
 }, reject => { console.log(reject) });
 ```
 
+## Example 3: Simulating 1H for Ethylbenzene and store the result in a JCAMP-DX file. 
+```js
+'use strict';
+
+const sm = require('nmr-simulation');
+const predictor = require("nmr-predictor");
+const sd = require("spectra-data")
+
+var molfile = `Benzene, ethyl-, ID: C100414
+  NIST    16081116462D 1   1.00000     0.00000
+Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
+  8  8  0     0  0              1 V2000
+    0.5015    0.0000    0.0000 C   0  0  0  0  0  0           0  0  0
+    0.0000    0.8526    0.0000 C   0  0  0  0  0  0           0  0  0
+    1.5046    0.0000    0.0000 C   0  0  0  0  0  0           0  0  0
+    2.0062    0.8526    0.0000 C   0  0  0  0  0  0           0  0  0
+    3.0092    0.8526    0.0000 C   0  0  0  0  0  0           0  0  0
+    1.5046    1.7554    0.0000 C   0  0  0  0  0  0           0  0  0
+    0.5015    1.7052    0.0000 C   0  0  0  0  0  0           0  0  0
+    3.5108    0.0000    0.0000 C   0  0  0  0  0  0           0  0  0
+  1  2  2  0     0  0
+  3  1  1  0     0  0
+  2  7  1  0     0  0
+  4  3  2  0     0  0
+  4  5  1  0     0  0
+  6  4  1  0     0  0
+  5  8  1  0     0  0
+  7  6  2  0     0  0
+M  END
+`;
+
+//Predict and simulate 1H and COSY for Ethylbenzene
+predictor.spinus(molfile, { group: false }).then(prediction => {
+  const spinSystem = sm.SpinSystem.fromPrediction(prediction);
+  var options = {
+    frequency: 400.082470657773,
+    from: 0,
+    to: 11,
+    lineWidth: 1,
+    nbPoints: 16384,
+    maxClusterSize: 8, 
+    output: 'xy'
+  }
+  spinSystem.ensureClusterSize(options);
+
+  //Simulate 1H spectrum
+  var data = sm.simulate1D(spinSystem, options);
+  
+  //Create an spectra-data object from xy
+  spectrum = sd.NMR.fromXY(data.x, data.y, options);
+  
+  //Print the content of the jcamp-dx file
+  console.log(spectrum.toJcamp({ type: 'NTUPLES' }));
+
+}, reject => { console.log(reject) });
+```
+
 
 ## License
 
