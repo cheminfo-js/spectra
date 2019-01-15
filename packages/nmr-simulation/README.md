@@ -35,6 +35,19 @@ The simulator will produce a spectrum at 400.082470657773 Mhz, from 1 to 1.5 ppm
 
 `$ npm i nmr-simulation`
 
+## Deployment
+
+Install the npm package [cheminfo-tools](https://www.npmjs.com/package/cheminfo-tools)
+
+Build the nmr-simulation.js auto contained ECMA-5 javascript for the browser
+
+  `$ cheminfo build`
+
+Build and publish a new release of nmr-simulation on www.npmjs.com
+
+  `$ cheminfo publish`
+
+
 ## [API Documentation](https://mljs.github.io/spectra/packages/nmr-simulation)
 
 ## Example 1
