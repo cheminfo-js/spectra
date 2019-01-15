@@ -7,6 +7,20 @@ import getPauli from './pauli';
 
 const smallValue = 1e-2;
 
+
+/**
+ * This function simulates a one dimensional nmr spectrum. This function returns an array containing the relative intensities of the spectrum in the specified simulation window (from-to).
+ * @param {object} spinSystem - The SpinSystem object to be simulated
+ * @param {object} options
+ * @param {number} options.frequency - The frequency in Mhz of the fake spectrometer that records the spectrum. 400 by default
+ * @param {number} options.from - The low limit of the ordinate variable. 0 by default
+ * @param {number} options.to - The upper limit of the ordinate variable. 10 by default|
+ * @param {number} options.lineWidth - The linewidth of the output spectrum, expresed in Hz. 1Hz by default
+ * @param {number} options.nbPoints - Number of points of the output spectrum. 1024 by default
+ * @param {number} options.maxClusterSize - Maximum number of atoms on each cluster that can be considered to be simulated together. It affects the the quality and speed of the simulation. 10 by default
+ * @param {number} options.output - ['y' or 'xy'] it specify the output format. if 'y' is specified, the output of the simulation will be a single vector containing the y data of the spectrum. if 'xy' is specified, the output of the simulation will be an object containing {x,[], y:[]}, the x, y of the spectrum. 'y' by default
+ * @return {object}
+ */
 export default function simulate1d(spinSystem, options) {
   var i, j;
   var {
@@ -200,7 +214,16 @@ export default function simulate1d(spinSystem, options) {
   }
   throw new RangeError('wrong output option');
 }
-
+/**
+ * Add a new peak to the current array
+ * @param {Array} result - Array of numbers
+ * @param {number} freq - center of the peak
+ * @param {*} height - peak height
+ * @param {*} from - start point of the peak
+ * @param {*} to - end point of the peak
+ * @param {*} nbPoints - number of points to add
+ * @param {*} gaussian - Shape to fill with
+ */
 function addPeak(result, freq, height, from, to, nbPoints, gaussian) {
   const center = (nbPoints * (-freq - from) / (to - from)) | 0;
   const lnPoints = gaussian.length;
@@ -222,7 +245,15 @@ function triuTimesAbs(A, val) {
     return v;
   });
 }
-
+/**
+ * Create a hamiltonian matrix for the given spinsystem
+ * @param {Array} chemicalShifts - An array containing the chemical shift in Hz
+ * @param {Array} couplingConstants - An array containing the coupling constants in Hz
+ * @param {Array} multiplicity - An array specifiying the multiplicities of each scalar coupling
+ * @param {Array} conMatrix - A one step connectivity matrix for the given spin system 
+ * @param {Array} cluster - An binary array specifiying the spins to be considered for this hamiltonial
+ * @return {object}
+ */
 function getHamiltonian(chemicalShifts, couplingConstants, multiplicity, conMatrix, cluster) {
   let hamSize = 1;
   for (var i = 0; i < cluster.length; i++) {
