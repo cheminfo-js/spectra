@@ -17,7 +17,7 @@ The simulator will produce a spectrum at 400.082470657773 Mhz, from 1 to 1.5 ppm
 
 ## simulate1d
 
-This function simulates a one dimensional nmr spectrum. This function returns an array contaning the relative intensities of the spectrum in the specified simulation window (from-to).
+This function simulates a one dimensional nmr spectrum. This function returns an array containing the relative intensities of the spectrum in the specified simulation window (from-to).
 
 ### Parameters
 
@@ -26,9 +26,9 @@ This function simulates a one dimensional nmr spectrum. This function returns an
 ### Options for simulate1d
 | Option | Description |
 | --- | --- |
-| **frequency** | The frequency in hz of the fake spectrometer that records the spectrum. 400 by default|
+| **frequency** | The frequency in Mhz of the fake spectrometer that records the spectrum. 400 by default|
 |**from** | The low limit of the ordinate variable. 0 by default|
-|**to** | The high limit of the ordinate variable. 10 by default|
+|**to** | The upper limit of the ordinate variable. 10 by default|
 |**lineWidth** | The linewidth of the output spectrum, expresed in Hz. 1Hz by default|
 |**nbPoints** | Number of points of the output spectrum. 1024 by default|
 |**maxClusterSize** | Maximum number of atoms on each cluster that can be considered to be simulated together. It affects the the quality and speed of the simulation. 10 by default|
