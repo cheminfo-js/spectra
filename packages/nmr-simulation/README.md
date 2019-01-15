@@ -17,7 +17,7 @@ The simulator will produce a spectrum at 400.082470657773 Mhz, from 1 to 1.5 ppm
 
 ## simulate1d
 
-This function simulates a one dimensional nmr spectrum. This function returns an array contaning the relative intensities of the spectrum in the specified simulation window (from-to).
+This function simulates a one dimensional nmr spectrum. This function returns an array containing the relative intensities of the spectrum in the specified simulation window (from-to).
 
 ### Parameters
 
