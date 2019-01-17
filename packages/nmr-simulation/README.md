@@ -21,7 +21,7 @@ This function simulates a one dimensional nmr spectrum. This function returns an
 
 ### Parameters
 
-*spinSystem*: A JSON object describing a spinSystem ready for simulation. As this object is to complex to be defined manually, we created a helper that formats the systemSystem from a JSON definition.
+*spinSystem*: A JSON object describing a spinSystem ready for simulation. As this object is too complex to be defined manually, we created a helper that formats the systemSystem from a JSON definition.
 
 ### Options for simulate1d
 | Option | Description |
