@@ -8,9 +8,9 @@ Simulate NMR spectra from spin systems
 
 The computational cost for the simulation of NMR spectra grows exponentially with the number of nuclei. Today, the memory available to store the Hamiltonian limits the size of the system that can be studied. Modern computers enable to tackle systems containing up to 13 spins [1], which obviously does not allow to study most molecules of interest in research. This issue can be addressed by identifying groups of spins or fragments that are not or only weakly interacting together, i.e., that only share weakly coupled spin pairs. Such a fragmentation is only permitted in the weak coupling regime, i.e., when the coupling interaction is weak compared to the difference in chemical shift of the coupled spins. Here, we propose a procedure that removes weak coupling interactions in order to split the spin system efficiently and to correct a posteriori for the effect of the neglected couplings. This approach yields accurate spectra when the adequate interactions are removed, i.e., between spins only involved in weak coupling interactions, but fails otherwise. As a result, the computational time for the simulation of 1D spectra grows linearly with the size of the spin system.
 
-This library is a JavaScript implementation of such algorithm. The spin system is specified as a set of magnetically equivalent spins. The description of the input format is illustrated by means of the below example. There we have a spin system composed of 4 spins(11, 12, 5 and 6). Spins 11 and 12 are chemically equivalent, so they must be specified on the same group. nbAtoms stands for the number of atoms in the group. It should math the atomIDs.length. AtomLabel stands for the kind of atom of the group. It could be H, C, N, P refering to nuclei 1H, 13C, 15N and 31P respectively. 
+This library is a JavaScript implementation of such algorithm. The spin system is specified as a set of magnetically equivalent spins. The description of the input format is illustrated by means of the below example. There we have a spin system composed of 4 spins(11, 12, 5 and 6). Spins 11 and 12 are chemically equivalent, so they must be specified on the same group. nbAtoms stands for the number of atoms in the group. It should math the atomIDs.length. AtomLabel stands for the kind of atom of the group. It could be H, C, N, P referring to nuclei 1H, 13C, 15N and 31P respectively. 
 
-Coupling between atoms could be specified in the j array. Each element represent a coupling from the current group of atoms to the atoms specified by the 'assignment' property. The 'coupling' property stands for the scalar coupling constant in Hertz. The 'multiplicity' property stands for the number of equivalent atoms refered by the 'assignment' property. Actually only 'd' is supported, meaning that only a coupling to a single atom could be specified by each entry in the j array. The 'distance' parameter stands for the number of bonds that separate the atoms involved in the entanglement.
+Coupling between atoms could be specified in the j array. Each element represent a coupling from the current group of atoms to the atoms specified by the 'assignment' property. The 'coupling' property stands for the scalar coupling constant in Hertz. The 'multiplicity' property stands for the number of equivalent atoms referred by the 'assignment' property. Actually only 'd' is supported, meaning that only a coupling to a single atom could be specified by each entry in the j array. The 'distance' parameter stands for the number of bonds that separate the atoms involved in the entanglement.
 
 For a better explanation, we show in the example, a very simple spin system of 3 hydrogen atoms AXX: '11', '5' and '6'. There, the atoms '5' and '6' are chemically equivalent, thus, we have a only 2 entries in the array: The first one for the atom with atomIDs: ['11'] and the second one for the atoms with atomIDs: ['5', '6']. The atom '11' resonates at 1.2ppm and the atoms '5' and '6' that resonates at 1.3ppm. The atom '11' has a coupling constant with the other atoms of 7.4 Hz, and the distance between then is of 3 bonds.
 The simulator will produce a spectrum at 400.082470657773 Mhz, from 1 to 1.5 ppm, and 3Hz of linewidth. The spectrum will contain 512 points.
@@ -29,7 +29,7 @@ This function simulates a one dimensional nmr spectrum. This function returns an
 | **frequency** | The frequency in Mhz of the fake spectrometer that records the spectrum. 400 by default|
 |**from** | The low limit of the ordinate variable. 0 by default|
 |**to** | The upper limit of the ordinate variable. 10 by default|
-|**lineWidth** | The linewidth of the output spectrum, expresed in Hz. 1Hz by default|
+|**lineWidth** | The linewidth of the output spectrum, expressed in Hz. 1Hz by default|
 |**nbPoints** | Number of points of the output spectrum. 1024 by default|
 |**maxClusterSize** | Maximum number of atoms on each cluster that can be considered to be simulated together. It affects the the quality and speed of the simulation. 10 by default|
 |**output** | ['y' or 'xy'] it specify the output format. if 'y' is specified, the output of the simulation will be a single vector containing the y data of the spectrum. if 'xy' is specified, the output of the simulation will be an object containing {x,[], y:[]}, the x, y of the spectrum. 'y' by default|
@@ -51,10 +51,10 @@ This function simulates a bidimensional nmr spectrum. This function returns a ma
 |**lastX** | The upper limit of the simulation window in the direct dimension. Maximum chemical shift for the direct dimension by default|
 |**firstY** | The low limit of the simulation window in the indirect dimension. Minimum chemical shift for the indirect dimension by default|
 |**lastY** | The upper limit of the simulation window in the indirect dimension. Maximum chemical shift for the indirect dimension by default|
-|**lineWidthX** | The linewidth of the output spectrum in the direct dimesion, expresed in Hz. 10 Hz by default|
-|**lineWidthY** | The linewidth of the output spectrum in the indirect dimesion, expresed in Hz. 10 Hz by default|
-|**nbPointsX** | Number of points of the output spectrum in the direct dimesion. 512 by default|
-|**nbPointsY** | Number of points of the output spectrum in the indirect dimesion. 512 by default|
+|**lineWidthX** | The linewidth of the output spectrum in the direct dimension, expressed in Hz. 10 Hz by default|
+|**lineWidthY** | The linewidth of the output spectrum in the indirect dimension, expressed in Hz. 10 Hz by default|
+|**nbPointsX** | Number of points of the output spectrum in the direct dimension. 512 by default|
+|**nbPointsY** | Number of points of the output spectrum in the indirect dimension. 512 by default|
 
 
 ## Installation
@@ -121,7 +121,7 @@ A plot of the output spectrum
 
 ## Example 2: Simulating a 2D spectrum. 
 
- This example ilustrates the simulation of a sytste (B, AA, C ). Atoms of the group AA, resonating at 2ppm, are coupled with the atom B that resonates at 1ppm. The scalar coupling between them
+ This example illustrates the simulation of a system (B, AA, C ). Atoms of the group AA, resonating at 2 ppm, are coupled with the atom B that resonates at 1 ppm. The scalar coupling between them
  is 7 Hz. Atoms of the group AA are coupled with atom C, that resonates at 3ppm. The scalar coupling between then is 16Hz. There is not direct coupling between atom B and C.
  This should produce a pattern like the below in the code:
 
