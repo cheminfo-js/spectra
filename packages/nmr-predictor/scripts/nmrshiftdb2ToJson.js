@@ -10,6 +10,8 @@ const sdfParser = require('sdf-parser');
 const maxSphereSize = 5;
 
 const sdf = fs.readFileSync(`${__dirname}/nmrshiftdb2withsignals.sd`, 'utf8');
+// const sdf = fs.readFileSync(`${__dirname}/gg.sd`, 'utf8');
+
 const parsedSdf = sdfParser(sdf, { mixedEOL: true });
 
 const db13C = [];
@@ -19,6 +21,8 @@ for (let k = 0; k < maxSphereSize; k++) {
   db1H.push({});
 }
 
+console.log(parsedSdf.molecules.length);
+// for (let i = 0; i < 1; i++) {
 for (let i = 0; i < parsedSdf.molecules.length; i++) {
   if (i % 100 === 0) {
     console.log(i);
@@ -55,7 +59,11 @@ function getStats(entry) {
 }
 
 function fillDb(molecule, mol, fields, atomLabel, fieldLabel, db) {
-  if (atomLabel === 'H') return; // todo make it work with 1H
+  let extendedDiaIds = null;
+  if (atomLabel === 'H') {
+    extendedDiaIds = getExtendedDiaIds(mol);
+  }
+
   fields = fields.filter((field) => field.startsWith(fieldLabel));
   if (fields.length === 0) return;
   const allAssignments = fields
@@ -66,15 +74,16 @@ function fillDb(molecule, mol, fields, atomLabel, fieldLabel, db) {
       return result.concat(splitAssignments);
     }, []);
 
-  const diaIds = mol.getGroupedDiastereotopicAtomIDs({ atomLabel });
+  if (!molecule.oclIds) {
+    molecule.oclIds = mol.getGroupedDiastereotopicAtomIDs({ atomLabel: 'C' });
+  }
+
+  const diaIds = molecule.oclIds;
+
   const atoms = {};
   for (const diaId of diaIds) {
-    const hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, { maxSphereSize, type: 0 });
-    if (hoseCodes.length === 0) {
-      throw new Error('We can not find a hose code of level 1');
-    }
     for (const atom of diaId.atoms) {
-      atoms[atom] = { hoseCodes, values: [] };
+      atoms[atom] = { oclID: diaId.oclID, values: [] };
     }
   }
 
@@ -88,19 +97,76 @@ function fillDb(molecule, mol, fields, atomLabel, fieldLabel, db) {
     if (refAtom) refAtom.values.push(chemicalShift);
   }
 
-
+  let cache = {};
   for (const atom of Object.values(atoms)) {
     if (atom.values.length > 0) {
       const chemicalShift = stat.mean(atom.values);
-      for (let k = 0; k < maxSphereSize; k++) {
-        const hoseCode = atom.hoseCodes[k];
-        if (hoseCode) {
-          if (!db[k][hoseCode]) {
-            db[k][hoseCode] = [];
+      let oclIds = [atom.oclID];
+      if (atomLabel === 'H') {
+        oclIds = getHydrogensOf(atom.oclID, extendedDiaIds);
+      }
+      for (let oclId of oclIds) {
+        let hoseCodes = [];
+        if (cache[oclId]) {
+          hoseCodes = cache[oclId];
+        } else {
+          hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(oclId, { maxSphereSize, type: 0 });
+          cache[oclId] = hoseCodes;
+        }
+        for (let k = 0; k < maxSphereSize; k++) {
+          const hoseCode = hoseCodes[k];
+          if (hoseCode) {
+            if (!db[k][hoseCode]) {
+              db[k][hoseCode] = [];
+            }
+            db[k][hoseCode].push(chemicalShift);
           }
-          db[k][hoseCode].push(chemicalShift);
         }
       }
     }
+  }
+}
+
+function getHydrogensOf(oclId, extendedOclIds) {
+  for (let i = 0; i < extendedOclIds.length; i++) {
+    if (extendedOclIds[i].id === oclId) {
+      return extendedOclIds[i].hydrogenOCLIDs;
+    }
+  }
+  return [];
+}
+
+/**
+ * Extends the diasterotopic atom ids to include information about the neighbourhood of the atoms
+ * @param {OCLE.Molecule} mol - Input molecule
+ * @return {Array}
+ */
+function getExtendedDiaIds(mol) {
+  try {
+    let newDiaIDs = [];
+    let molecule = mol.getCompactCopy();
+    molecule.addImplicitHydrogens();
+    molecule.ensureHelperArrays(OCLE.Molecule.cHelperNeighbours);
+    let diaIDs = molecule.getDiastereotopicAtomIDs();
+
+    for (let i = 0; i < diaIDs.length; i++) {
+      let diaID = diaIDs[i];
+      let newDiaID = { id: diaID, atomLabel: molecule.getAtomLabel(i), atom: i, nbHydrogens: 0, hydrogenOCLIDs: [] };
+      let maxI = molecule.getAllConnAtoms(i);
+      for (let j = 0; j < maxI; j++) {
+        let atom = molecule.getConnAtom(i, j);
+        if (molecule.getAtomLabel(atom) === 'H') {
+          newDiaID.nbHydrogens++;
+          if (newDiaID.hydrogenOCLIDs.indexOf(diaIDs[atom]) < 0) {
+            newDiaID.hydrogenOCLIDs.push(diaIDs[atom]);
+          }
+        }
+      }
+      newDiaIDs.push(newDiaID);
+    }
+
+    return newDiaIDs;
+  } catch (e) {
+    return [];
   }
 }
