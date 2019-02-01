@@ -1,4 +1,6 @@
-/* module.exports = (message) => {
+/* eslint-disable no-console */
+
+module.exports = (message) => {
   console.log(message);
-};*/
-module.exports = (message) => message;
+};
+// module.exports = (message) => message;
