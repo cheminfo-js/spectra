@@ -34,7 +34,7 @@ const looksLike = function (id1, id2, signals, tolerance) {
 
 if (cluster.isMaster) {
   const setup = {
-    iteration0: 28, iterationM: 40, ignoreLabile: true, learningRatio: 0.8,
+    iteration0: 0, iterationM: 10, ignoreLabile: true, learningRatio: 0.8,
     levels: [6, 5, 4, 3], dataPath: '/home/acastillo/Documents/data/', minScore: 1,
     errorCS: -0.03, timeout: 2000, maxSolutions: 2500, nUnassigned: 1
   };
@@ -102,7 +102,7 @@ if (cluster.isMaster) {
   var data = loadData(setup);
   // setup.predictor = predictor;
   // Initial value of db
-  let fastDB = JSON.parse(loadFile('/../data/h_clean.json'));
+  let fastDB = JSON.parse(loadFile('../../nmr-predictor/data/nmrshiftdb2-1h.json'));
   let date = new Date();
   start = date.getTime();
   var responses = [];
@@ -227,11 +227,11 @@ function loadData(setup) {
   // var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big4.json').toString());//JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
   var dataset1 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/cheminfo443_no2.5.json').toString()));
   var dataset2 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/maybridge_no2.5.json').toString()));
-  var dataset3 = []; //JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big0.json').toString()));
-  var dataset4 = []; //JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big1.json').toString()));
-  var dataset5 = []; //JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big2.json').toString()));
-  var dataset6 = []; //JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big3.json').toString()));
-  var dataset7 = []; //JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big4.json').toString()));
+  var dataset3 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big0.json').toString()));
+  var dataset4 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big1.json').toString()));
+  var dataset5 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big2.json').toString()));
+  var dataset6 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big3.json').toString()));
+  var dataset7 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big4.json').toString()));
   var blackList = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'blackList.json').toString()));
 
   var testSet = JSON.parse(loadFile('/../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
