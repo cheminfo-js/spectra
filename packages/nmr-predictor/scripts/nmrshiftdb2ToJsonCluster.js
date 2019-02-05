@@ -45,6 +45,8 @@ if (cluster.isMaster) {
         mergeDB(db13C, message.c);
       }
       if (counter === max) {
+        fs.writeFileSync(`${__dirname}/../data/nmrshiftdb2-13c-full.json`, JSON.stringify(db13C));
+        fs.writeFileSync(`${__dirname}/../data/nmrshiftdb2-1h-full.json`, JSON.stringify(db1H));
         [db13C, db1H].forEach((db) => {
           db.forEach((hoseMap) => {
             for (const hose of Object.keys(hoseMap)) {
@@ -52,8 +54,8 @@ if (cluster.isMaster) {
             }
           });
         });
-        fs.writeFileSync(`${__dirname}/../data/nmrshiftdb2-13c-full.json`, JSON.stringify(db13C));
-        fs.writeFileSync(`${__dirname}/../data/nmrshiftdb2-1h-full.json`, JSON.stringify(db1H));
+        fs.writeFileSync(`${__dirname}/../data/nmrshiftdb2-13c.json`, JSON.stringify(db13C));
+        fs.writeFileSync(`${__dirname}/../data/nmrshiftdb2-1h.json`, JSON.stringify(db1H));
         logger('Process finished!');
       }
     }

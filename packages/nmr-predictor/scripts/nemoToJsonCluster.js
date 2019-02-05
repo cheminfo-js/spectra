@@ -241,7 +241,7 @@ function fillDb(molecule, mol, fields, atomLabel, fieldLabel, maxSphereSize) {
     const atomId = assignment.atomID;
     const refAtom = atoms[atomId];
     // Those 2 oclID should be the same, but they are not!. So we cannot rely on the oclIDs stored in the nmrSignal1D
-    // console.log(refAtom.oclID + ' --- ' + assignment.oclIds);
+    // console.log('ocl4.0.1: ' + refAtom.oclID + ' xml: ' + assignment.oclIds);
     // todo Add throw
     //  if (!refAtom) throw new Error(`could not identify atom ${atomId} in entry ${molecule['nmrshiftdb2 ID']}`);
     if (refAtom) refAtom.values.push(chemicalShift);
