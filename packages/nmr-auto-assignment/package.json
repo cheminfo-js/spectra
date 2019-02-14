@@ -35,7 +35,7 @@
     "nmr-predictor": "^1.1.12",
     "openchemlib-extended": "^3.3.0",
     "should": "^13.2.3",
-    "spectra-data": "^3.4.5"
+    "spectra-data": "^3.4.6"
   },
   "dependencies": {
     "ml-matrix": "^2.3.0",
