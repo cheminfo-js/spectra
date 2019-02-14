@@ -121,7 +121,7 @@ export function group(signals, options = {}) {
       // signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
     }
     // console.log(signals[i]);
-    signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
+    signals[i].multiplicity = compilePattern(signals[i], options.tolerance);
   }
   return signals;
 }
