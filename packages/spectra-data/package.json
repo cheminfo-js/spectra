@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "jsdoc": "^3.5.5",
-    "nmr-predictor": "^1.1.11",
+    "nmr-predictor": "^1.2.0",
     "should": "^13.2.3"
   },
   "dependencies": {
@@ -46,7 +46,7 @@
     "ml-matrix-peaks-finder": "^0.2.1",
     "ml-simple-clustering": "^0.1.0",
     "nmr-simulation": "^1.0.17",
-    "spectra-data-ranges": "^1.1.5",
-    "spectra-nmr-utilities": "^1.0.5"
+    "spectra-data-ranges": "^1.1.6",
+    "spectra-nmr-utilities": "^1.0.6"
   }
 }

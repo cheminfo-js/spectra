@@ -36,7 +36,7 @@
     "num-sort": "^1.0.0"
   },
   "devDependencies": {
-    "nmr-predictor": "^1.1.11",
+    "nmr-predictor": "^1.2.0",
     "should": "^13.2.3"
   }
 }

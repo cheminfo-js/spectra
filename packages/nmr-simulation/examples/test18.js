@@ -45,7 +45,8 @@ var body = `7	1	0.880	2	10	2	7.118	11	2	7.118
 //request.post("http://www.nmrdb.org/service/predictor",{form:{molfile:molfile}},function(error, response, body){
 //const predictor = new NmrPredictor("spinus");
 predictor.spinus(molfile).then(prediction => {
-  ;
+  console.log(JSON.stringify(prediction))
+
   const spinSystem = sm.SpinSystem.fromPrediction(prediction);    //console.log(spinSystem);
   //console.log(body.replace(/\t/g,"\\t"));
   var options = {
@@ -58,7 +59,7 @@ predictor.spinus(molfile).then(prediction => {
     output: "xy"
   }
   //spinSystem.ensureClusterSize(options);
-  console.log(spinSystem);
+  //console.log(spinSystem);
   console.time('simulate');
   var simulation = sm.simulate1D(spinSystem, options);
   console.timeEnd('simulate');
