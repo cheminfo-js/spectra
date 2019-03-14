@@ -1,6 +1,6 @@
 {
   "name": "spectra-data-ranges",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "",
   "main": "./lib/index.js",
   "module": "./src/index.js",
@@ -26,6 +26,6 @@
   "devDependencies": {
     "spectra-data": "^3.4.2",
     "should": "^13.2.3",
-    "spectra-nmr-utilities": "^1.0.6"
+    "spectra-nmr-utilities": "^1.0.7"
   }
 }
