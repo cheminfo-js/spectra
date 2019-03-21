@@ -58,7 +58,7 @@ predictor.spinus(molfile).then(prediction => {
     maxClusterSize: 6,
     output: "xy"
   }
-  //spinSystem.ensureClusterSize(options);
+  spinSystem.ensureClusterSize(options);
   //console.log(spinSystem);
   console.time('simulate');
   var simulation = sm.simulate1D(spinSystem, options);

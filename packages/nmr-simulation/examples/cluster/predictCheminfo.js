@@ -6,7 +6,7 @@ function loadFile(filename) {
     return FS.readFileSync(filename).toString();
 }
 
-function load(path, datasetName, options) {
+async function load(path, datasetName, options) {
     let OCLE = options.OCLE;
     var filter = { filter: '.mol' };
     if (typeof options.filter === 'object') {
@@ -20,24 +20,28 @@ function load(path, datasetName, options) {
     });
 
     var max = molFiles.length;
+    console.log("molecules " + max);
     var result = [];// new Array(max);
     // we could now loop on the sdf to add the int index
-    for (var i = 0; i < max; i++) {
+    for (let i = 0; i < max; i++) {
         try {
+            console.log(i+ " " +molFiles[i]);
             var molfile = loadFile(path + molFiles[i]);
             var molecule = OCLE.Molecule.fromMolfile(molfile);
             molecule.addImplicitHydrogens();
             molfile = molecule.toMolfile();
             let id = molecule.getIDCode()
-            predictor.spinus(molfile, { group: false }).then(prediction => {
-                FS.writeFileSync(`${__dirname}/spinus/${id}.mol`, molfile);
-                FS.writeFileSync(`${__dirname}/spinus/${id}.json`, JSON.stringify(prediction));
-            }).catch(reason => { return new Error(reason) });
+            //We cannot sent to many parallel request to the spinus server. 
+            let prediction = await predictor.spinus(molfile, { group: false });
+            //.then(prediction => {
+                FS.writeFileSync(`${__dirname}/spinus/ch_${molFiles[i]}`, molfile);
+                FS.writeFileSync(`${__dirname}/spinus/ch_${molFiles[i].replace(".mol", ".json")}`, JSON.stringify(prediction));
+            //}).catch(reason => { return new Error(reason) });
         }
         catch (e) {
-            //console.log(`Could not load the entry ${i} ${e}`);
+            console.log(`Could not load the entry ${i} ${e}`);
         }
     }
 }
 
-load('/home/acastillo/Documents/data/data/cheminfo443/', 'cheminfo', { keepMolecule: true, OCLE: OCLE });
+load('/home/acastillo/Documents/data/data/cheminfo443/', 'ch', { keepMolecule: true, OCLE: OCLE });

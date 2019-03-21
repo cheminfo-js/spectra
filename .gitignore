@@ -9,3 +9,7 @@ dist
 
 packages/nmr-learning/data/h*
 packages/nmr-learning/data_old
+packages/nmr-simulation/examples/cluster/spinus/
+packages/nmr-simulation/examples/cluster/spinus
+packages/nmr-simulation/examples/cluster/spinus/*
+packages/nmr-simulation/examples/cluster/spinus/**

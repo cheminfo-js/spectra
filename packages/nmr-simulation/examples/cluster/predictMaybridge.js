@@ -7,7 +7,7 @@ function loadFile(filename) {
     return FS.readFileSync(filename).toString();
 }
 
-function load(path, datasetName, options) {
+async function load(path, datasetName, options) {
     let OCLE = options.OCLE;
     // var keepMolfile = false || options.keepMolfile;
     // var keepMolecule = false || options.keepMolecule;
@@ -23,20 +23,27 @@ function load(path, datasetName, options) {
     for (var p = 0; p < parts.length; p++) {
         let fileContent = loadFile(path + parts[p]).split('\n');
         var max = fileContent.length - 1;
+        console.log("molecules " + max);
         // we could now loop on the sdf to add the int index
         for (var i = 1; i < max; i++) {
-            let row = fileContent[i].split('\t');
-            var molfile = row[1].replace(/\\n/g, '\n');
-            var molecule = OCLE.Molecule.fromMolfile(molfile);
-            molecule.addImplicitHydrogens();
-            molfile = molecule.toMolfile();
-            let id = molecule.getIDCode()
-            predictor.spinus(molfile, { group: false }).then(prediction => {
-                FS.writeFileSync(`${__dirname}/spinus/${id}.mol`, molfile);
-                FS.writeFileSync(`${__dirname}/spinus/${id}.json`, JSON.stringify(prediction));
-            }).catch(reason => { return new Error(reason) });
+            console.log(i);
+            try {
+                let row = fileContent[i].split('\t');
+                var molfile = row[1].replace(/\\n/g, '\n');
+                var molecule = OCLE.Molecule.fromMolfile(molfile);
+                molecule.addImplicitHydrogens();
+                molfile = molecule.toMolfile();
+                let id = molecule.getIDCode()
+                let prediction = await predictor.spinus(molfile, { group: false });//.then(prediction => {
+                    FS.writeFileSync(`${__dirname}/spinus/mb_${p}_${i}.mol`, molfile);
+                    FS.writeFileSync(`${__dirname}/spinus/mb_${p}_${i}.json`, JSON.stringify(prediction));
+                //}).catch(reason => { return new Error(reason) });
+            }
+            catch (e) {
+                console.log(`Could not load the entry ${i} ${e}`);
+            }
         }
     }
 }
 
-load('/home/acastillo/Documents/data/maybridge/', 'maybridge', { keepMolecule: true, OCLE: OCLE });
+load('/home/acastillo/Documents/data/data/maybridge/', 'mb', { keepMolecule: true, OCLE: OCLE });
