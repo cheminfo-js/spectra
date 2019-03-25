@@ -37,9 +37,10 @@ predictor.spinus(molfile).then(prediction => {
     };
 
     spinSystem.ensureClusterSize(options);
+    // eslint-disable-next-line no-console
     console.log(spinSystem);
-    console.time('simulate');
+    // eslint-disable-next-line no-console
     var simulation = sm.simulate1D(spinSystem, options);
+    // eslint-disable-next-line no-console
     console.timeEnd('simulate');
-    //console.log(JSON.stringify(simulation));
 });

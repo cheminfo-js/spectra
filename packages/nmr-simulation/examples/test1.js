@@ -28,6 +28,7 @@ M  END
 predictor.spinus(molfile).then(prediction => {
   const spinSystem = sm.SpinSystem.fromPrediction(prediction);
   //console.log(spinSystem);
+  // eslint-disable-next-line no-console
   console.time('simulating. It could take several minutes');
   var simulation = sm.simulate1D(spinSystem, {
     frequency: 400.082470657773,
@@ -37,5 +38,6 @@ predictor.spinus(molfile).then(prediction => {
     nbPoints: 16384,
     maxClusterSize: Infinity
   });
+  // eslint-disable-next-line no-console
   console.timeEnd('simulate');
 });

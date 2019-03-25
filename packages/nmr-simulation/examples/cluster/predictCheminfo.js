@@ -20,11 +20,13 @@ async function load(path, datasetName, options) {
     });
 
     var max = molFiles.length;
+    // eslint-disable-next-line no-console
     console.log("molecules " + max);
     var result = [];// new Array(max);
     // we could now loop on the sdf to add the int index
     for (let i = 0; i < max; i++) {
         try {
+            // eslint-disable-next-line no-console
             console.log(i+ " " +molFiles[i]);
             var molfile = loadFile(path + molFiles[i]);
             var molecule = OCLE.Molecule.fromMolfile(molfile);
@@ -39,6 +41,7 @@ async function load(path, datasetName, options) {
             //}).catch(reason => { return new Error(reason) });
         }
         catch (e) {
+            // eslint-disable-next-line no-console
             console.log(`Could not load the entry ${i} ${e}`);
         }
     }

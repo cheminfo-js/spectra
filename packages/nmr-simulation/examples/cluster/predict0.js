@@ -10,6 +10,7 @@ async function load(path, datasetName, options) {
     let OCLE = options.OCLE;
     var k = 0;
     var rows = JSON.parse(loadFile(path)).rows;
+    // eslint-disable-next-line no-console
     console.log("molecules " + rows.length);
     for (var p = 4847; p <= 5300; p++) {
         var row = rows[p];
@@ -26,6 +27,7 @@ async function load(path, datasetName, options) {
                 FS.writeFileSync(`${__dirname}/spinus/c6h6_${p}.json`, JSON.stringify(prediction));
             //}).catch(reason => { return new Error(reason) });
         } catch (e) {
+            // eslint-disable-next-line no-console
             console.log(`Could not load this molecule: ${row.value.idCode}`);
         }
     }

@@ -23,7 +23,7 @@ var spinus = FS.readdirSync(path + 'spinus/').filter((line) => {
   return line.indexOf(filter.filter) > 0;
 });
 
-
+// eslint-disable-next-line no-console
 console.log("n molecules " + spinus.length)
 let maxSize = 9;
 
@@ -47,6 +47,7 @@ for (let size = 9; size <= maxSize; size++) {
             let beta = maxBeta(value, betas);
             histogram[value.length].push(beta);
             if(beta > 5) {
+              // eslint-disable-next-line no-console
               console.log(path + 'spinus/' + spinus[p] + " " + beta);
             }
             break;

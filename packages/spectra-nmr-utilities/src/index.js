@@ -151,4 +151,4 @@ function compilePattern(signal, tolerance = 0.05) {
   return pattern;
 }
 
-module.exports = {compilePattern, group, joinCoupling, nmrJ};
+module.exports = { compilePattern, group, joinCoupling, nmrJ };

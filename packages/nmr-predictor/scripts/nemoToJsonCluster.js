@@ -2,6 +2,7 @@
 
 const cluster = require('cluster');
 const fs = require('fs');
+
 const OCLE = require('openchemlib-extended');
 const stat = require('ml-stat/array');
 const xml2js = require('xml2js');
@@ -48,7 +49,7 @@ if (cluster.isMaster) {
       }
       if (counter <= max) {
         mergeDB(db1H, message.h);
-      // mergeDB(db13C, message.c);
+        // mergeDB(db13C, message.c);
       }
       if (counter === max) {
         fs.writeFileSync(`${__dirname}/../data/nemo-1h-full.json`, JSON.stringify(db1H));
@@ -197,22 +198,25 @@ function fillDb(molecule, mol, fields, atomLabel, fieldLabel, maxSphereSize) {
     let nbLinks = parseInt(field.nbLinks, 10);
     let result = [];
     for (let i = 0; i < nbLinks; i++) {
-      var linkId = field['link' + i];
+      var linkId = field[`link${i}`];
       if (linkId) {
         // Look for this ID within the list of integral
-        let linkedIntegral = molecule.integrals.filter((integral) => integral.uniqueID === linkId );
+        // eslint-disable-next-line no-loop-func
+        let linkedIntegral = molecule.integrals.filter((integral) => integral.uniqueID === linkId);
         if (linkedIntegral && linkedIntegral.length > 0) {
           let nbLinksIntegral = parseInt(linkedIntegral[0].nbLinks, 10);
           for (let k = 0; k < nbLinksIntegral; k++) {
-            linkId = linkedIntegral[0]['link' + k];
+            linkId = linkedIntegral[0][`link${k}`];
             // Look for this ID within the list of atom directly
-            let assignedAtom = molecule.atoms.filter((atom) => atom.uniqueID === linkId );
+            // eslint-disable-next-line no-loop-func
+            let assignedAtom = molecule.atoms.filter((atom) => atom.uniqueID === linkId);
             if (assignedAtom && assignedAtom.length > 0) {
               result.push({ delta1: delta1, atomID: assignedAtom[0].atomID, oclIds });
             }
           }
         } else {
           // Look for this ID within the list of atom directly
+          // eslint-disable-next-line no-loop-func
           let assignedAtom = molecule.atoms.filter((atom) => atom.uniqueID === linkId);
           if (assignedAtom && assignedAtom.length > 0) {
             result.push({ delta1: delta1, atomID: assignedAtom[0].atomID, oclIds });

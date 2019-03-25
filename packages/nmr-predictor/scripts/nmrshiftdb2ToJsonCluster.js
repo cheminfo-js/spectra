@@ -2,6 +2,7 @@
 
 var cluster = require('cluster');
 const fs = require('fs');
+
 const OCLE = require('openchemlib-extended');
 const stat = require('ml-stat/array');
 const sdfParser = require('sdf-parser');

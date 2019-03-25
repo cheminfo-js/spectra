@@ -250,7 +250,7 @@ function triuTimesAbs(A, val) {
  * @param {Array} chemicalShifts - An array containing the chemical shift in Hz
  * @param {Array} couplingConstants - An array containing the coupling constants in Hz
  * @param {Array} multiplicity - An array specifiying the multiplicities of each scalar coupling
- * @param {Array} conMatrix - A one step connectivity matrix for the given spin system 
+ * @param {Array} conMatrix - A one step connectivity matrix for the given spin system
  * @param {Array} cluster - An binary array specifiying the spins to be considered for this hamiltonial
  * @return {object}
  */

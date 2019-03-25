@@ -12,17 +12,13 @@ function loadFile(filename) {
   return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
 
-function loadFile2(filename) {
-  return FS.readFileSync(filename).toString();
-}
-
 async function start() {
   var testSet = JSON.parse(loadFile('/../../data/assigned298.json'));// File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
   let fastDB = JSON.parse(loadFile('../../../nmr-predictor/data/nmrshiftdb2-1h.json'));
-  
+
   // var fastDB = JSON.parse(loadFile2('/home/acastillo/Documents/workspaces/cheminfo/nemo2/data/prediction/h1.json'));
   // fastDB.splice(0, 1);
-  
+
   // var fastDB = JSON.parse(loadFile2('/home/acastillo/Documents/data/data/h_clean.json'));/////'/../../data/h_clean.json'));
 
   logger(`${fastDB.length} ${Object.keys(fastDB[0]).length} ${Object.keys(fastDB[1]).length} ${Object.keys(fastDB[2]).length

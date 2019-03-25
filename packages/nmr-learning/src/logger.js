@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-
 module.exports = (message) => {
   console.log(message);
 };

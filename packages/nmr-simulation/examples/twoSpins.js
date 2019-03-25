@@ -29,5 +29,7 @@ var options1h = {
 const spinSystem = simulation.SpinSystem.fromPrediction(prediction);
 spinSystem.ensureClusterSize(options1h);
 var spectrum = simulation.simulate1D(spinSystem, options1h);
+// eslint-disable-next-line no-console
 console.log(JSON.stringify(spectrum.x));// x in PPM
+// eslint-disable-next-line no-console
 console.log(JSON.stringify(spectrum.y));// y in arbitrary units
