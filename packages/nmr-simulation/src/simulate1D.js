@@ -42,15 +42,21 @@ export default function simulate1d(spinSystem, options) {
     chemicalShifts[i] = chemicalShifts[i] * frequencyMHz;
   }
 
-  let lineWidthPoints = (nbPoints * lineWidth / Math.abs(to - from)) / 2.355;
-  let lnPoints = lineWidthPoints * 20;
+  //Prepare pseudo voigt
+  let lineWidthPointsG = (nbPoints * lineWidth / Math.abs(to - from)) / 2.355;
+  let lineWidthPointsL = (nbPoints * lineWidth / Math.abs(to - from)) / 2;
+  let lnPoints = lineWidthPointsL * 40;
 
   const gaussianLength = lnPoints | 0;
   const gaussian = new Array(gaussianLength);
   const b = lnPoints / 2;
-  const c = lineWidthPoints * lineWidthPoints * 2;
+  const c = lineWidthPointsG * lineWidthPointsG * 2;
+  const l2 = lineWidthPointsL * lineWidthPointsL;
+  const g2pi = lineWidthPointsG * Math.sqrt(2 * Math.PI);
   for (i = 0; i < gaussianLength; i++) {
-    gaussian[i] = 1e9 * Math.exp(-((i - b) * (i - b)) / c);
+    let x2 = (i - b) * (i - b); 
+    gaussian[i] = 10e9 * ( Math.exp(-x2 / c) / g2pi  +  lineWidthPointsL / ((x2 + l2) * Math.PI));
+    console.log(gaussian[i]);
   }
 
   var result = options.withNoise ? [...new Array(nbPoints)].map(() => Math.random() * noiseFactor) : new Array(nbPoints).fill(0);
@@ -187,7 +193,7 @@ export default function simulate1d(spinSystem, options) {
     const numFreq = frequencies.length;
     if (numFreq > 0) {
       weight = weight / sumI;
-      const diff = lineWidth / 32;
+      const diff = lineWidth / 64;
       let valFreq = frequencies[0];
       let inte = intensities[0];
       let count = 1;

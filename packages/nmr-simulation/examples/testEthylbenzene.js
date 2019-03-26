@@ -37,8 +37,8 @@ predictor.spinus(molfile, { group: false }).then(prediction => {
     frequency: 400.082470657773,
     from: 0,
     to: 11,
-    lineWidth: 1,
-    nbPoints: 16384,
+    lineWidth: 3,
+    nbPoints: 16384 * 4,
     maxClusterSize: 8
   }
   spinSystem.ensureClusterSize(options);
