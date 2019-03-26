@@ -45,7 +45,7 @@
     "ml-gsd": "^2.0.1",
     "ml-matrix-peaks-finder": "^0.2.1",
     "ml-simple-clustering": "^0.1.0",
-    "nmr-simulation": "^1.0.18",
+    "nmr-simulation": "^1.0.19",
     "spectra-data-ranges": "^1.1.8",
     "spectra-nmr-utilities": "^1.0.8"
   }
