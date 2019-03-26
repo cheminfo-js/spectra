@@ -54,9 +54,8 @@ export default function simulate1d(spinSystem, options) {
   const l2 = lineWidthPointsL * lineWidthPointsL;
   const g2pi = lineWidthPointsG * Math.sqrt(2 * Math.PI);
   for (i = 0; i < gaussianLength; i++) {
-    let x2 = (i - b) * (i - b); 
-    gaussian[i] = 10e9 * ( Math.exp(-x2 / c) / g2pi  +  lineWidthPointsL / ((x2 + l2) * Math.PI));
-    console.log(gaussian[i]);
+    let x2 = (i - b) * (i - b);
+    gaussian[i] = 10e9 * (Math.exp(-x2 / c) / g2pi + lineWidthPointsL / ((x2 + l2) * Math.PI));
   }
 
   var result = options.withNoise ? [...new Array(nbPoints)].map(() => Math.random() * noiseFactor) : new Array(nbPoints).fill(0);
