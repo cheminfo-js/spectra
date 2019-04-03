@@ -1,8 +1,8 @@
-import SD from 'spectra-data';
-import FS from 'fs';
-import OCLE from "openchemlib-extended-minimal";
-import autoassigner from '../src/index';
-import predictor from 'nmr-predictor';
+const SD = require('spectra-data');
+const FS = require('fs');
+const OCLE = require('openchemlib-extended');
+const autoassigner = require('../src/index');
+const predictor = require('nmr-predictor');
 
 //console.log( process.cwd());
 function createSpectraData(filename, label, data) {

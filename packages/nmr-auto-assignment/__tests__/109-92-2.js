@@ -2,11 +2,11 @@
  * Created by acastillo on 5/7/16.
  */
 
-const FS = require('fs');
-const OCLE = require('openchemlib-extended-minimal');
-const autoassigner = require('../src/index');
-const predictor = require('../../nmr-predictor/src/index');
 const SD = require('spectra-data');
+const FS = require('fs');
+const OCLE = require('openchemlib-extended');
+const autoassigner = require('../src/index');
+const predictor = require('nmr-predictor');
 
 require('should');
 
