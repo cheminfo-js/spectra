@@ -6,6 +6,7 @@ const OCLE = require('openchemlib-extended');
 const predictor = require('nmr-predictor');
 
 const logger = require('./logger');
+const dbutils = require('../../nmr-predictor/scripts/dbutils');
 
 // const autoassigner = require('../../nmr-auto-assignment/src/index');
 
@@ -34,12 +35,12 @@ const looksLike = function (id1, id2, signals, tolerance) {
 
 if (cluster.isMaster) {
   const setup = {
-    iteration0: 0, iterationM: 10, ignoreLabile: true, learningRatio: 0.8,
+    iteration0: 23, iterationM: 30, ignoreLabile: true, learningRatio: 0.8,
     levels: [6, 5, 4, 3], dataPath: '/home/acastillo/Documents/data/', minScore: 1,
-    errorCS: -0.03, timeout: 2000, maxSolutions: 2500, nUnassigned: 1
+    errorCS: -0.15, timeout: 2000, maxSolutions: 2500, nUnassigned: 1
   };
   var start = 0;
-  var numWorkers = require('os').cpus().length;
+  var numWorkers = require('os').cpus().length - 2;
 
   logger(`Master cluster setting up ${numWorkers} workers...`);
 
@@ -60,12 +61,18 @@ if (cluster.isMaster) {
 
       // Create the fast prediction table. It contains the prediction at last iteration
       // Becasuse that, the iteration parameter has not effect on the stats
-      let fastDB = compilePredictionTable(responses, { iteration, OCLE }).H;
+      
+      let fastDB = compilePredictionTable(responses).H;
       predictor.setDb(fastDB, 'proton', 'proton');
 
       FS.writeFileSync(`${__dirname}/../data/h_${iteration}.json`, JSON.stringify(fastDB));
 
       logger(`${Object.keys(fastDB[1]).length} ${Object.keys(fastDB[2]).length} ${Object.keys(fastDB[3]).length} ${Object.keys(fastDB[4]).length} ${Object.keys(fastDB[5]).length}`);
+      
+
+      // Save also the fulldb to merge with other dbs
+      let fullFastDB = compilePredictionTable(responses, {reduced: false}).H;
+      FS.writeFileSync(`${__dirname}/../data/h_full_${iteration}.json`, JSON.stringify(fullFastDB));
 
       date = new Date();
       // Evalueate the error
@@ -102,7 +109,10 @@ if (cluster.isMaster) {
   var data = loadData(setup);
   // setup.predictor = predictor;
   // Initial value of db
-  let fastDB = JSON.parse(loadFile('../../nmr-predictor/data/nmrshiftdb2-1h.json'));
+  //let fastDB = JSON.parse(loadFile('../../nmr-predictor/data/nmrshiftdb2-1h.json'));
+  let fastDB = JSON.parse(loadFile('../data/h_22.json'));
+
+
   let date = new Date();
   start = date.getTime();
   var responses = [];
@@ -225,11 +235,11 @@ async function getPerformance(testSet, fastDB, setup) {
 
 function loadData(setup) {
   // var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big4.json').toString());//JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
-  var dataset1 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/cheminfo443_no2.5.json').toString()));
-  var dataset2 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/maybridge_no2.5.json').toString()));
-  var dataset3 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big0.json').toString()));
-  var dataset4 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big1.json').toString()));
-  var dataset5 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big2.json').toString()));
+  var dataset1 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/cheminfo443_noSolvent1.json').toString()));
+  var dataset2 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/maybridge_noSolven1.json').toString()));
+  var dataset3 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big0.json').toString()));
+  var dataset4 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big1.json').toString()));
+  var dataset5 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big2.json').toString()));
   var dataset6 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big3.json').toString()));
   var dataset7 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big4.json').toString()));
   var blackList = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'blackList.json').toString()));

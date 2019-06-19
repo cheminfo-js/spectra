@@ -110,13 +110,14 @@ async function cmp2asg(dataSet, predictor, options) {
   var count = 0;
   var min = 9999999;
   var max = 0;
-  // var db = options.db;
+  var molfile = "";
   var hist = [];
   var lng = dataSet.length;
   for (var i = 0; i < lng; i++) {
     if (!dataSet[i].ocl) {
       var molecule = OCLE.Molecule.fromIDCode(dataSet[i].diaID);
       molecule.addImplicitHydrogens();
+      //molfile = molecule.toMolfile();
       var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') * 1;
       var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
       diaIDs.sort(function (a, b) {
@@ -177,13 +178,12 @@ async function cmp2asg(dataSet, predictor, options) {
           }
         }
       }
-
       dataSet[i].ocl = { id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH };
     }
 
     molecule = dataSet[i].ocl;
 
-    // console.log(molecule)
+    //console.log(i)
     h1pred = await predictor.proton(molecule, {
       ignoreLabile: options.ignoreLabile,
       levels: options.levels,

@@ -3,7 +3,7 @@
  */
 const stat = require('ml-stat/array');
 
-function compilePredictionTable(samples) {
+function compilePredictionTable(samples, options = {reduced: true}) {
   let maxLevel = 5;// options.maxLevel;
   let result = { H: [], C: [] };
   for (let i = 0; i <= maxLevel; i++) {
@@ -42,13 +42,15 @@ function compilePredictionTable(samples) {
     });
   });
 
-  [result.C, result.H].forEach((db) => {
-    db.forEach((hoseMap) => {
-      for (const hose of Object.keys(hoseMap)) {
-        hoseMap[hose] = getStats(hoseMap[hose]);
-      }
+  if (options.reduced) {
+    [result.C, result.H].forEach((db) => {
+      db.forEach((hoseMap) => {
+        for (const hose of Object.keys(hoseMap)) {
+          hoseMap[hose] = getStats(hoseMap[hose]);
+        }
+      });
     });
-  });
+  }
 
   return result;
 }
