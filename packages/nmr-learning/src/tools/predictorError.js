@@ -14,13 +14,20 @@ function loadFile(filename) {
 }
 
 const setup = {
-    iteration0: 23, iterationM: 30, ignoreLabile: true, learningRatio: 0.8,
-    levels: [6, 5, 4, 3], dataPath: '/home/acastillo/Documents/data/', minScore: 1,
-    errorCS: -0.15, timeout: 2000, maxSolutions: 2500, nUnassigned: 1
-  };
-  
+  iteration0: 23, iterationM: 30, ignoreLabile: true, learningRatio: 0.8,
+  levels: [6, 5, 4, 3, 2, 1], dataPath: '/home/acastillo/Documents/data/', minScore: 1,
+  errorCS: -0.15, timeout: 2000, maxSolutions: 2500, nUnassigned: 1
+};
+
 var data = loadData();
-let fastDB = JSON.parse(loadFile('../../../nmr-predictor/data/db-1h.json'));
+// let fastDB = JSON.parse(loadFile('../../../nmr-predictor/data/db-1h.json'));
+//let fastDB = JSON.parse(loadFile('../../data/h_clean.json'));
+
+// let fastDB = JSON.parse(FS.readFileSync('/home/acastillo/Documents/git/cheminfo-js/openchemlib-extended/kaggleCS.json').toString())['H'];
+let fastDB = JSON.parse(FS.readFileSync('../nmr-predictor/data/kaggleCS.json').toString())['H'];
+fastDB = dbutils.reduceDB(fastDB);
+FS.writeFileSync('/home/acastillo/Documents/git/cheminfo-js/openchemlib-extended/kaggleCS2-1h.json', JSON.stringify(fastDB));
+
 getPerformance(data, fastDB, setup);
 
 
