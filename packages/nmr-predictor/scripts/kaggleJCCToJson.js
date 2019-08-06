@@ -1,19 +1,19 @@
-'use strict';
 
 const fs = require('fs');
+
 const OCLE = require('../../../../core');
 const getAllPaths = require('../../getAllPaths');
 const getAllCouplings = require('../new/getAllCouplings');
 
 const dataFolder = '/home/acastillo/Documents/kaggle/champs-scalar-coupling/';
-const structuremol = dataFolder + "structuresmol/";
+const structuremol = `${dataFolder}structuresmol/`;
 
 var train = fs.readFileSync(`${dataFolder}train.csv`).toString().split('\n');
 let head = train[0];
 // console.log(head);
 let molid = '';
 let couplings = null;
-let max = train.length -1;
+let max = train.length - 1;
 let stats = {};
 let map = [];
 let db = {};
@@ -23,7 +23,7 @@ for (let i = 1; i < max; i++) {
   example[2] = Number(example[2]);
   example[3] = Number(example[3]);
   example[5] = Number(example[5]);
-  //console.log(example);
+  // console.log(example);
   if (!db[example[4]]) {
     db[example[4]] = [{}, {}, {}];
     stats[example[4]] = 0;
@@ -42,12 +42,12 @@ for (let i = 1; i < max; i++) {
     // Open the molecule
     let result = OCLE.Molecule.fromMolfileWithAtomMap(fs.readFileSync(`${structuremol + molid}.mol`).toString());
     map = result.map;
-    //console.log(fs.readFileSync(`${structuremol + molid}.mol`).toString());
-    //console.log(map)
-    //allPaths = result.molecule.getAllPaths({ fromLabel: 'H', maxLength: 3 });
+    // console.log(fs.readFileSync(`${structuremol + molid}.mol`).toString());
+    // console.log(map)
+    // allPaths = result.molecule.getAllPaths({ fromLabel: 'H', maxLength: 3 });
     couplings = getAllCouplings(result.molecule, { fromLabel: 'H', toLabel: '', maxLength: 3 });
-    //console.log(couplings)
-    //console.log(couplings[2].fromDiaID + '\n' + couplings[2].toDiaID + '\n' + couplings[2].code.join('\n'));
+    // console.log(couplings)
+    // console.log(couplings[2].fromDiaID + '\n' + couplings[2].toDiaID + '\n' + couplings[2].code.join('\n'));
   }
 
   let group = couplings.find((value) => {
@@ -67,8 +67,8 @@ for (let i = 1; i < max; i++) {
   group.kind = example[4];
 }
 
-//console.log(JSON.stringify(allPaths));
-//console.log(allPaths);
+// console.log(JSON.stringify(allPaths));
+// console.log(allPaths);
 storeData(couplings, db);
 console.log(JSON.stringify(db));
 

@@ -1,6 +1,6 @@
-'use strict';
 
 const fs = require('fs');
+
 const OCLE = require('openchemlib-extended');
 
 const maxSphereSize = 6;

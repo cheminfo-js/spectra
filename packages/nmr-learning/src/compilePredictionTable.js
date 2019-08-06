@@ -3,7 +3,7 @@
  */
 const stat = require('ml-stat/array');
 
-function compilePredictionTable(samples, options = {reduced: true}) {
+function compilePredictionTable(samples, options = { reduced: true }) {
   let maxLevel = 5;// options.maxLevel;
   let result = { H: [], C: [] };
   for (let i = 0; i <= maxLevel; i++) {

@@ -6,7 +6,6 @@ const predictor = require('nmr-predictor');
 
 const logger = require('../logger');
 const dbutils = require('../../../nmr-predictor/scripts/dbutils');
-
 const stats = require('../stats');
 
 function loadFile(filename) {
@@ -21,10 +20,10 @@ const setup = {
 
 var data = loadData();
 // let fastDB = JSON.parse(loadFile('../../../nmr-predictor/data/db-1h.json'));
-//let fastDB = JSON.parse(loadFile('../../data/h_clean.json'));
+// let fastDB = JSON.parse(loadFile('../../data/h_clean.json'));
 
 // let fastDB = JSON.parse(FS.readFileSync('/home/acastillo/Documents/git/cheminfo-js/openchemlib-extended/kaggleCS.json').toString())['H'];
-let fastDB = JSON.parse(FS.readFileSync('../nmr-predictor/data/kaggleCS.json').toString())['H'];
+let fastDB = JSON.parse(FS.readFileSync('../nmr-predictor/data/kaggleCS.json').toString()).H;
 fastDB = dbutils.reduceDB(fastDB);
 FS.writeFileSync('/home/acastillo/Documents/git/cheminfo-js/openchemlib-extended/kaggleCS2-1h.json', JSON.stringify(fastDB));
 

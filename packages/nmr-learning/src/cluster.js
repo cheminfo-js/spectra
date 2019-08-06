@@ -5,8 +5,9 @@ const path = require('path');
 const OCLE = require('openchemlib-extended');
 const predictor = require('nmr-predictor');
 
-const logger = require('./logger');
 const dbutils = require('../../nmr-predictor/scripts/dbutils');
+
+const logger = require('./logger');
 
 // const autoassigner = require('../../nmr-auto-assignment/src/index');
 
@@ -61,17 +62,17 @@ if (cluster.isMaster) {
 
       // Create the fast prediction table. It contains the prediction at last iteration
       // Becasuse that, the iteration parameter has not effect on the stats
-      
+
       let fastDB = compilePredictionTable(responses).H;
       predictor.setDb(fastDB, 'proton', 'proton');
 
       FS.writeFileSync(`${__dirname}/../data/h_${iteration}.json`, JSON.stringify(fastDB));
 
       logger(`${Object.keys(fastDB[1]).length} ${Object.keys(fastDB[2]).length} ${Object.keys(fastDB[3]).length} ${Object.keys(fastDB[4]).length} ${Object.keys(fastDB[5]).length}`);
-      
+
 
       // Save also the fulldb to merge with other dbs
-      let fullFastDB = compilePredictionTable(responses, {reduced: false}).H;
+      let fullFastDB = compilePredictionTable(responses, { reduced: false }).H;
       FS.writeFileSync(`${__dirname}/../data/h_full_${iteration}.json`, JSON.stringify(fullFastDB));
 
       date = new Date();
@@ -109,7 +110,7 @@ if (cluster.isMaster) {
   var data = loadData(setup);
   // setup.predictor = predictor;
   // Initial value of db
-  //let fastDB = JSON.parse(loadFile('../../nmr-predictor/data/nmrshiftdb2-1h.json'));
+  // let fastDB = JSON.parse(loadFile('../../nmr-predictor/data/nmrshiftdb2-1h.json'));
   let fastDB = JSON.parse(loadFile('../data/h_22.json'));
 
 

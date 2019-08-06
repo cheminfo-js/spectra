@@ -42,7 +42,7 @@ export default function simulate1d(spinSystem, options) {
     chemicalShifts[i] = chemicalShifts[i] * frequencyMHz;
   }
 
-  //Prepare pseudo voigt
+  // Prepare pseudo voigt
   let lineWidthPointsG = (nbPoints * lineWidth / Math.abs(to - from)) / 2.355;
   let lineWidthPointsL = (nbPoints * lineWidth / Math.abs(to - from)) / 2;
   let lnPoints = lineWidthPointsL * 40;
