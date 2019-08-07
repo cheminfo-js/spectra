@@ -32,13 +32,14 @@ export default class SpinSystem {
       for (j = 0; j < nCoup; j++) {
         var withID = tokens[4 + 3 * j] - 1;
         var idx = ids[withID];
-        jc[i][idx] = +tokens[6 + 3 * j];
+        // jc[i][idx] = +tokens[6 + 3 * j];
+        jc.set(i, idx, jc.get(i, idx)+tokens[6 + 3 * j]);
       }
     }
 
     for (var j = 0; j < nspins; j++) {
       for (var i = j; i < nspins; i++) {
-        jc[j][i] = jc[i][j];
+        jc.set(j, i, jc.get(i, j));
       }
     }
     return new SpinSystem(cs, jc, newArray(nspins, 2));
@@ -60,8 +61,10 @@ export default class SpinSystem {
       cs[i] = predictions[i].delta;
       j = predictions[i].j;
       for (k = 0; k < j.length; k++) {
-        jc[ids[predictions[i].atomIDs[0]]][ids[j[k].assignment]] = j[k].coupling;
-        jc[ids[j[k].assignment]][ids[predictions[i].atomIDs[0]]] = j[k].coupling;
+        // jc[ids[predictions[i].atomIDs[0]]][ids[j[k].assignment]] = j[k].coupling;
+        // jc[ids[j[k].assignment]][ids[predictions[i].atomIDs[0]]] = j[k].coupling;
+        jc.set(ids[predictions[i].atomIDs[0]], ids[j[k].assignment], j[k].coupling);
+        jc.set(ids[j[k].assignment], ids[predictions[i].atomIDs[0]], j[k].coupling);
       }
       multiplicity[i] = predictions[i].integral + 1;
     }

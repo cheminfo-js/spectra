@@ -142,10 +142,11 @@ export default function simulate1d(spinSystem, options) {
       let rhoip = Matrix.zeros(hamSize, hamSize);
       assignmentMatrix.forEachNonZero((i, j, v) => {
         if (v > 0) {
-          const row = V[j];
+          // const row = V[j];
           for (var k = 0; k < row.length; k++) {
             if (row[k] !== 0) {
-              rhoip.set(i, k, rhoip.get(i, k) + row[k]);
+              // rhoip.set(i, k, rhoip.get(i, k) + row[k]);
+              rhoip.set(i, k, rhoip.get(i, k) + V.get(j, K));
             }
           }
         }
@@ -155,10 +156,10 @@ export default function simulate1d(spinSystem, options) {
       let rhoip2 = rhoip.clone();
       assignmentMatrix.forEachNonZero((i, j, v) => {
         if (v < 0) {
-          const row = V[j];
+          // const row = V[j];
           for (var k = 0; k < row.length; k++) {
             if (row[k] !== 0) {
-              rhoip2.set(i, k, rhoip2.get(i, k) + row[k]);
+              rhoip2.set(i, k, rhoip2.get(i, k) + V.get(j, k));
             }
           }
         }
