@@ -1,5 +1,5 @@
 
-const fs = require('fs');
+import FS from 'fs';
 
 const OCLE = require('../../../../core');
 const getAllPaths = require('../../getAllPaths');

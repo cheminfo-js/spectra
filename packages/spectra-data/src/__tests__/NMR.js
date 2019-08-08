@@ -1,9 +1,8 @@
-
 require('should');
 const Data = require('..');
 
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import FS from 'fs';
 
 function createSpectraData(filename) {
   return Data.NMR.fromJcamp(
@@ -14,7 +13,9 @@ function createSpectraData(filename) {
 describe('spectra-data examples ethylvinylether/1h.jdx', () => {
   var spectrum;
   beforeEach(() => {
-    spectrum = createSpectraData('/../../../../data-test/ethylvinylether/1h.jdx');
+    spectrum = createSpectraData(
+      '/../../../../data-test/ethylvinylether/1h.jdx'
+    );
   });
 
   it('getNucleus', () => {
@@ -71,23 +72,52 @@ describe('spectra-data examples ethylvinylether/1h.jdx', () => {
   });
 
   it('Check peak-picking', () => {
-    var peakPicking = spectrum.getRanges({ nH: 8, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H', format: 'new', keepPeaks: true });
+    var peakPicking = spectrum.getRanges({
+      nH: 8,
+      realTop: true,
+      thresholdFactor: 1,
+      clean: 0.5,
+      compile: true,
+      idPrefix: '1H',
+      format: 'new',
+      keepPeaks: true
+    });
     peakPicking[0].signal[0].peak.length.should.equal(4);
   });
 
   it('Check peak-picking in zone', () => {
-    var peakPicking = spectrum.getRanges({ nH: 8, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H', format: 'new', from: 1, to: 2 });
+    var peakPicking = spectrum.getRanges({
+      nH: 8,
+      realTop: true,
+      thresholdFactor: 1,
+      clean: 0.5,
+      compile: true,
+      idPrefix: '1H',
+      format: 'new',
+      from: 1,
+      to: 2
+    });
     peakPicking.length.should.eql(1);
     peakPicking[0].signal[0].multiplicity.should.eql('t');
   });
 
   it('getVector', () => {
-    spectrum.getVector({ from: 0, to: 10, nbPoints: 4 * 1024 }).length.should.equal(4 * 1024);
+    spectrum
+      .getVector({ from: 0, to: 10, nbPoints: 4 * 1024 })
+      .length.should.equal(4 * 1024);
   });
 
   it('updateIntegrals', () => {
     var nH = 8;
-    var ranges = spectrum.getRanges({ nH: nH, realTop: true, thresholdFactor: 1, clean: 0.5, compile: true, idPrefix: '1H', format: 'new' });
+    var ranges = spectrum.getRanges({
+      nH: nH,
+      realTop: true,
+      thresholdFactor: 1,
+      clean: 0.5,
+      compile: true,
+      idPrefix: '1H',
+      format: 'new'
+    });
     ranges[0].to = 6.47;
     var integral0 = ranges[0].integral;
     spectrum.updateIntegrals(ranges, { nH: nH });

@@ -1,22 +1,21 @@
-require('should');
-const FS = require('fs');
-const path = require('path');
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-const spectraData = require('spectra-data');
+import spectraData from 'spectra-data';
 
 function createSpectraData(filename) {
   var spectrum = spectraData.NMR.fromJcamp(
-    FS.readFileSync(path.join(__dirname, filename)).toString()
+    readFileSync(join(__dirname, filename)).toString()
   );
   return spectrum;
 }
 
-describe('spectra-data examples peak picking in ACS format', function () {
+describe('spectra-data examples peak picking in ACS format', () => {
   var spectrum = createSpectraData(
     '/../../../../../data-test/ethylbenzene/h1_0.jdx'
   );
 
-  it('format ACS new input format', function () {
+  test('format ACS new input format', () => {
     var peakPicking2 = spectrum.createRanges({
       nH: 10,
       realTopDetection: true,
@@ -34,9 +33,8 @@ describe('spectra-data examples peak picking in ACS format', function () {
       frequencyObserved: spectrum.observeFrequencyX(),
       ascending: false
     });
-    acs.should.equal(
+    expect(acs).toBe(
       '<sup>1</sup>H NMR (400 MHz): δ 7.28 (2H, m), 7.20 (3H, m), 2.60 (2H, q, <i>J</i> = 7.7 Hz), 1.19 (3H, t, <i>J</i> = 7.7 Hz).'
     );
-    // acs.should.equal('<sup>1</sup>H NMR (400 MHz): δ 7.28 (2H, m), 7.20 (3H, m), 2.60 (2H, q, <i>J</i> = 7.6 Hz), 1.19 (3H, t, <i>J</i> = 7.6 Hz).'); // TODO change when it exist a good function to optimize
   });
 });

@@ -2,13 +2,13 @@
  * Created by acastillo on 5/7/16.
  */
 
-const FS = require('fs');
+import FS from 'fs';
 
-const SD = require('spectra-data');
-const OCLE = require('openchemlib-extended');
-const predictor = require('nmr-predictor');
+import SD from 'spectra-data';
+import OCLE from 'openchemlib-extended';
+import predictor from 'nmr-predictor';
 
-const autoassigner = require('../src/index');
+import autoassigner from '../src/index';
 
 require('should');
 
@@ -23,13 +23,14 @@ function loadFile(filename) {
   return FS.readFileSync(__dirname + filename).toString();
 }
 
-describe('Auto-assignment 109-92-2', function () {
+describe('Auto-assignment 109-92-2', function() {
   var spectrum = createSpectraData('/examples/109-92-2.jdx');
 
   var molecule = OCLE.Molecule.fromMolfile(loadFile('/examples/109-92-2.mol'));
   molecule.addImplicitHydrogens();
   var molfile = molecule.toMolfile();
-  var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') * 1;
+  var nH =
+    molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') * 1;
 
   var peakPicking = spectrum.getRanges({
     nH: nH,
@@ -40,7 +41,6 @@ describe('Auto-assignment 109-92-2', function () {
     format: 'new'
   });
 
-
   peakPicking.forEach((range, index) => {
     range.signalID = `1H_${index}`;
   });
@@ -50,31 +50,32 @@ describe('Auto-assignment 109-92-2', function () {
   const db = JSON.parse(loadFile('/../../nmr-predictor/data/h1.json'));
   predictor.setDb(db, 'proton', 'proton');
 
-  it('condensed for 109-92-2 from molfile', async function () {
-    const result = await autoassigner({
-      general: { molfile: molecule.toMolfileV3() },
-      spectra: {
-        nmr: [
-          {
-            nucleus: 'H',
-            experiment: '1d',
-            range: peakPicking,
-            solvent: 'unknown'
-          }
-        ]
+  it('condensed for 109-92-2 from molfile', async function() {
+    const result = await autoassigner(
+      {
+        general: { molfile: molecule.toMolfileV3() },
+        spectra: {
+          nmr: [
+            {
+              nucleus: 'H',
+              experiment: '1d',
+              range: peakPicking,
+              solvent: 'unknown'
+            }
+          ]
+        }
+      },
+      {
+        minScore: 0.9,
+        maxSolutions: 3000,
+        errorCS: -1.5,
+        predictor: predictor,
+        condensed: true,
+        OCLE: OCLE,
+        levels: [5, 4, 3, 2],
+        unassigned: 0
       }
-    },
-    {
-      minScore: 0.9,
-      maxSolutions: 3000,
-      errorCS: -1.5,
-      predictor: predictor,
-      condensed: true,
-      OCLE: OCLE,
-      levels: [5, 4, 3, 2],
-      unassigned: 0
-    }
-    );// .getAssignments();
+    ); // .getAssignments();
     /* console.log(result.setAssignmentOnRanges(peakPicking, 0));
         console.log(JSON.stringify(peakPicking));
         console.log(result.setAssignmentOnRanges(peakPicking, 1));

@@ -1,16 +1,15 @@
+import FS from 'fs';
+import path from 'path';
 
-const FS = require('fs');
-const path = require('path');
-
-const OCLE = require('openchemlib-extended');
+import OCLE from 'openchemlib-extended'
 
 function loadFile(filename) {
   return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
 
 function start() {
-  var testSet = JSON.parse(loadFile('/../data/assigned298.json'));// File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
-  testSet.forEach((row) => {
+  var testSet = JSON.parse(loadFile('/../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
+  testSet.forEach(row => {
     var molecule = OCLE.Molecule.fromMolfile(row.molfile.replace(/\\n/g, '\n'));
     molecule.addImplicitHydrogens();
 

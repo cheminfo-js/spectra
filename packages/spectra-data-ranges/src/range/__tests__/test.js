@@ -2,8 +2,6 @@ import * as spectraData from 'spectra-data';
 
 import Ranges from '../Ranges';
 
-require('should');
-
 const peakPicking2 = [
   {
     from: 7.259567221753428,
@@ -885,114 +883,110 @@ singleRange[0].signal = [
   }
 ];
 
-describe('Range tests: formating and parsing', function () {
-  it('ranges to vector', function () {
+describe('Range tests: formating and parsing', () => {
+  test('ranges to vector', () => {
     var fn = ranges.getVector();
-    fn.x[0].should.approximately(1.1657135299531254, 0.005);
-    fn.x[fn.x.length - 1].should.approximately(7.318545497368789, 0.005);
-    fn.y[0].should.greaterThan(0);
-    fn.y.length.should.equal(1024);
+    expect(fn.x[0]).to.approximately(1.1657135299531254, 0.005);
+    expect(fn.x[fn.x.length - 1]).to.approximately(7.318545497368789, 0.005);
+    expect(fn.y[0]).toBeGreaterThan(0);
+    expect(fn.y.length).toBe(1024);
     fn = ranges.getVector({
       from: 10,
       to: 0,
       functionName: 'Lorentzian',
       nbPoints: 101
     });
-    fn.x[0].should.equal(10);
-    fn.x[fn.x.length - 1].should.equal(0);
-    fn.x.length.should.equal(101);
+    expect(fn.x[0]).toBe(10);
+    expect(fn.x[fn.x.length - 1]).toBe(0);
+    expect(fn.x.length).toBe(101);
   });
 
-  it('ranges to peaks', function () {
+  test('ranges to peaks', () => {
     var fn = ranges.getPeakList();
-    fn[0].x.should.greaterThan(0);
-    fn[0].intensity.should.greaterThan(0);
-    fn[0].width.should.greaterThan(0);
+    expect(fn[0].x).toBeGreaterThan(0);
+    expect(fn[0].intensity).toBeGreaterThan(0);
+    expect(fn[0].width).toBeGreaterThan(0);
   });
 });
 
-describe('Prediction to ranges', function () {
-  it('10 spines with 4 ranges', function () {
+describe('Prediction to ranges', () => {
+  test('10 spines with 4 ranges', () => {
     var ranges = Ranges.fromSignals(signals, { lineWidth: 1 });
-    ranges.length.should.eql(3);
+    expect(ranges.length).toBe(3);
   });
 });
 
-describe('Update ranges', function () {
+describe('Update ranges', () => {
   var sum = 3;
-  it('change sum', function () {
+  test('change sum', () => {
     var ranges = new Ranges([{ integral: 1 }, { integral: 2 }]);
     ranges = ranges.updateIntegrals({ sum: sum * 2 });
-    ranges.should.eql(new Ranges([{ integral: 2 }, { integral: 4 }]));
+    expect(ranges).toEqual(new Ranges([{ integral: 2 }, { integral: 4 }]));
   });
 
-  it('change sum to 3, ignore solvent', function () {
+  test('change sum to 3, ignore solvent', () => {
     var ranges = new Ranges([
       { integral: 1 },
       { integral: 2, kind: 'solvent' }
     ]);
     ranges = ranges.updateIntegrals({ sum });
-    ranges.should.eql(
-      new Ranges([{ integral: 3 }, { integral: 6, kind: 'solvent' }])
-    );
+    expect(ranges).toEqual(new Ranges([{ integral: 3 }, { integral: 6, kind: 'solvent' }]));
   });
 
-  it('add an integral', function () {
+  test('add an integral', () => {
     var ranges = new Ranges([{ integral: 1 }, { integral: 2 }]);
     ranges.push({ integral: 3 });
     ranges = ranges.updateIntegrals({ sum: sum });
-    ranges.should.eql(
-      new Ranges([{ integral: 0.5 }, { integral: 1 }, { integral: 1.5 }])
-    );
+    expect(ranges).toEqual(new Ranges([{ integral: 0.5 }, { integral: 1 }, { integral: 1.5 }]));
   });
-  it('check sum', function () {
+  test('check sum', () => {
     var ranges = new Ranges([{ integral: 1 }, { integral: 2 }]);
-    ranges.sumOfIntegrals().should.eql(3);
+    expect(ranges.sumOfIntegrals()).toBe(3);
   });
 
-  it('check sum with a reference', function () {
+  test('check sum with a reference', () => {
     var ranges = new Ranges([
       { integral: 1, kind: 'reference' },
       { integral: 2 }
     ]);
-    ranges.sumOfIntegrals().should.eql(2);
+    expect(ranges.sumOfIntegrals()).toBe(2);
   });
 
-  it('check sum with a reference but sum all', function () {
+  test('check sum with a reference but sum all', () => {
     var ranges = new Ranges([
       { integral: 1, kind: 'reference' },
       { integral: 2 }
     ]);
-    ranges.sumOfIntegrals({ sumAll: true }).should.eql(3);
+    expect(ranges.sumOfIntegrals({ sumAll: true })).toBe(3);
   });
 
-  it('delete an integral', function () {
+  test('delete an integral', () => {
     var ranges = new Ranges([{ integral: 1 }]);
     ranges = ranges.updateIntegrals({ sum: sum });
-    ranges.should.eql(new Ranges([{ integral: 3 }]));
+    expect(ranges).toEqual(new Ranges([{ integral: 3 }]));
   });
-  it('change an integral', function () {
+  test('change an integral', () => {
     var ranges = new Ranges([{ integral: 1 }, { integral: 2 }]);
     ranges = ranges.updateIntegrals({ factor: 2 });
-    ranges.should.eql(new Ranges([{ integral: 2 }, { integral: 4 }]));
+    expect(ranges).toEqual(new Ranges([{ integral: 2 }, { integral: 4 }]));
   });
-  it('update multiplicity', function () {
+  test('update multiplicity', () => {
     var range = Ranges.fromSignals(signalsGrouped, { lineWidth: 1 });
     range.updateMultiplicity();
-    range[0].signal[0].multiplicity.should.equal('t');
-    range[2].signal[0].multiplicity.should.equal('m');
+    expect(range[0].signal[0].multiplicity).toBe('t');
+    expect(range[2].signal[0].multiplicity).toBe('m');
   });
 });
 
-describe('toIndex Test Case from differents sources', function () {
-  it('from ranges', function () {
+describe('toIndex Test Case from differents sources', () => {
+  test('from ranges', () => {
     var range = new Ranges(peakPicking2);
     var index = range.toIndex({ tolerance: 0.05 });
-    index[0].delta.should.greaterThan(7.2);
-    index[0].multiplicity.should.equal('m');
+    expect(index[0].delta).toBeGreaterThan(7.2);
+    expect(index[0].multiplicity).toBe('m');
   });
 
-  it('from Spectrum', function () {
+  test('from Spectrum', () => {
     var NbPoints = 101;
     var cs1 = 2;
     var intensity = 1;
@@ -1015,49 +1009,49 @@ describe('toIndex Test Case from differents sources', function () {
 
     var range = Ranges.fromSpectrum(spectrum, {});
     var index = range.toIndex({ tolerance: 0.05, joinCouplings: false });
-    index[0].delta.should.greaterThan(7.5);
-    index[0].multiplicity.should.eql('br s');
+    expect(index[0].delta).toBeGreaterThan(7.5);
+    expect(index[0].multiplicity).toBe('br s');
     index = range.toIndex({ tolerance: 0.05, joinCouplings: true });
-    index[0].multiplicity.should.equal('s'); // because inside of peakPicking information don't exist a j array for this signal and there is not information in signal object about that.
+    expect(index[0].multiplicity).toBe('s'); // because inside of peakPicking information don't exist a j array for this signal and there is not information in signal object about that.
   });
 
-  it('from Signals', function () {
+  test('from Signals', () => {
     var range = Ranges.fromSignals(prediction, { lineWidth: 1 });
     var index = range.toIndex({});
-    index.length.should.eql(4);
-    index[0].delta.should.eql(2.237);
-    index[0].multiplicity.should.eql('s');
+    expect(index.length).toBe(4);
+    expect(index[0].delta).toBe(2.237);
+    expect(index[0].multiplicity).toBe('s');
   });
 });
 
-describe('join couplings', function () {
-  it('joinCouplings with grouped signals', function () {
+describe('join couplings', () => {
+  test('joinCouplings with grouped signals', () => {
     var range = Ranges.fromSignals(signalsGrouped, { lineWidth: 1 });
-    range.length.should.eql(3);
+    expect(range.length).toBe(3);
     range.joinCouplings({ tolerance: 0.05 });
-    range[0].signal[0].multiplicity.should.eql('t');
-    range[0].integral.should.eql(3);
-    range[0].signal.length.should.eql(1);
-    range[1].signal[0].multiplicity.should.eql('q');
-    range[1].integral.should.eql(2);
-    range[1].signal.length.should.eql(1);
-    range[2].signal[0].multiplicity.should.eql('tt');
-    range[2].integral.should.eql(5);
-    range[2].signal.length.should.eql(3);
+    expect(range[0].signal[0].multiplicity).toBe('t');
+    expect(range[0].integral).toBe(3);
+    expect(range[0].signal.length).toBe(1);
+    expect(range[1].signal[0].multiplicity).toBe('q');
+    expect(range[1].integral).toBe(2);
+    expect(range[1].signal.length).toBe(1);
+    expect(range[2].signal[0].multiplicity).toBe('tt');
+    expect(range[2].integral).toBe(5);
+    expect(range[2].signal.length).toBe(3);
   });
-  it('joinCouplings with ungrouped signals', function () {
+  test('joinCouplings with ungrouped signals', () => {
     var range = Ranges.fromSignals(signals, { lineWidth: 1 });
-    range.length.should.eql(3);
+    expect(range.length).toBe(3);
     range.joinCouplings({ tolerance: 0.05 });
-    range[0].signal[0].multiplicity.should.eql('t');
-    range[0].integral.should.eql(3);
-    range[0].signal.length.should.eql(1);
-    range[1].signal[0].multiplicity.should.eql('q');
-    range[1].integral.should.eql(2);
-    range[1].signal.length.should.eql(1);
-    range[2].signal[0].multiplicity.should.eql('tt');
-    range[2].integral.should.eql(5);
-    range[2].signal.length.should.eql(3);
+    expect(range[0].signal[0].multiplicity).toBe('t');
+    expect(range[0].integral).toBe(3);
+    expect(range[0].signal.length).toBe(1);
+    expect(range[1].signal[0].multiplicity).toBe('q');
+    expect(range[1].integral).toBe(2);
+    expect(range[1].signal.length).toBe(1);
+    expect(range[2].signal[0].multiplicity).toBe('tt');
+    expect(range[2].integral).toBe(5);
+    expect(range[2].signal.length).toBe(3);
   });
 });
 

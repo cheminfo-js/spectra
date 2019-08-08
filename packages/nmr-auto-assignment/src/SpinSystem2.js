@@ -1,7 +1,7 @@
 /**
  * Created by acastillo on 9/2/16.
  */
-class SpinSystem {
+export default class SpinSystem {
   constructor(spectra, predictions) {
     // var options = Object.assign({}, opt);
     this.spectra = spectra;
@@ -10,9 +10,9 @@ class SpinSystem {
   }
 
   overlap(a, b) {
-    let midA = (a.from + a.to);
+    let midA = a.from + a.to;
     let wA = Math.abs(a.from - a.to);
-    let midB = (b.from + b.to);
+    let midB = b.from + b.to;
     let wB = Math.abs(b.from - b.to);
     if (Math.abs(midA - midB) <= wA + wB) {
       return true;
@@ -24,21 +24,21 @@ class SpinSystem {
     let rows = [];
     // console.log(JSON.stringify(region));
     // console.log(targetsConstains[targets[nucleus[0]][0]]);
-    targets[nucleus[0]].forEach((id) => {
+    targets[nucleus[0]].forEach(id => {
       if (this.overlap(region.fromTo[0], targetConstains[id])) {
         rows.push(id);
       }
     });
 
     let cols = [];
-    targets[nucleus[1]].forEach((id) => {
+    targets[nucleus[1]].forEach(id => {
       if (this.overlap(region.fromTo[1], targetConstains[id])) {
         cols.push(id);
       }
     });
 
-    rows.forEach((row) => {
-      cols.forEach((col) => {
+    rows.forEach(row => {
+      cols.forEach(col => {
         targetConstains[`${row} ${col}`] = region;
       });
     });
@@ -53,9 +53,9 @@ class SpinSystem {
     this.nSources = 0;
     this.sources = {};
     // console.log(this.predictions);
-    this.predictions.forEach((pred) => {
+    this.predictions.forEach(pred => {
       if (pred.length > 0 && typeof pred[0].atomLabel === 'string') {
-        pred.forEach((atomPred) => {
+        pred.forEach(atomPred => {
           this.sourcesConstrains[atomPred.diaIDs[0]] = atomPred;
           if (!this.sources[atomPred.atomLabel]) {
             this.sources[atomPred.atomLabel] = [atomPred.diaIDs[0]];
@@ -65,17 +65,19 @@ class SpinSystem {
         });
         this.nSources += pred.length;
       } else {
-        pred.forEach((atomPred) => {
-          this.sourcesConstrains[`${atomPred.fromDiaID} ${atomPred.toDiaID}`] = atomPred;
+        pred.forEach(atomPred => {
+          this.sourcesConstrains[
+            `${atomPred.fromDiaID} ${atomPred.toDiaID}`
+          ] = atomPred;
         });
       }
     });
 
     this.nTargets = 0;
     this.targets = {};
-    this.spectra.nmr.forEach((nmr) => {
+    this.spectra.nmr.forEach(nmr => {
       if (nmr.experiment === '1d') {
-        nmr.range.forEach((range) => {
+        nmr.range.forEach(range => {
           this.targetsConstains[range.signalID] = range;
           if (!this.targets[nmr.nucleus]) {
             this.targets[nmr.nucleus] = [range.signalID];
@@ -87,14 +89,17 @@ class SpinSystem {
       }
     });
 
-    this.spectra.nmr.forEach((nmr) => {
+    this.spectra.nmr.forEach(nmr => {
       if (nmr.experiment !== '1d') {
-        nmr.region.forEach((region) => {
-          this.include2DConstrains(region, this.targetsConstains, this.targets, nmr.nucleus);
+        nmr.region.forEach(region => {
+          this.include2DConstrains(
+            region,
+            this.targetsConstains,
+            this.targets,
+            nmr.nucleus
+          );
         });
       }
     });
   }
 }
-
-module.exports = SpinSystem;

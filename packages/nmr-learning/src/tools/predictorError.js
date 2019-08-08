@@ -1,8 +1,8 @@
-const FS = require('fs');
-const path = require('path');
+import FS from 'fs';
+import path from 'path';
 
-const OCLE = require('openchemlib-extended');
-const predictor = require('nmr-predictor');
+import OCLE from 'openchemlib-extended';
+import predictor from 'nmr-predictor';
 
 const logger = require('../logger');
 const dbutils = require('../../../nmr-predictor/scripts/dbutils');
@@ -13,9 +13,17 @@ function loadFile(filename) {
 }
 
 const setup = {
-  iteration0: 23, iterationM: 30, ignoreLabile: true, learningRatio: 0.8,
-  levels: [6, 5, 4, 3, 2, 1], dataPath: '/home/acastillo/Documents/data/', minScore: 1,
-  errorCS: -0.15, timeout: 2000, maxSolutions: 2500, nUnassigned: 1
+  iteration0: 23,
+  iterationM: 30,
+  ignoreLabile: true,
+  learningRatio: 0.8,
+  levels: [6, 5, 4, 3, 2, 1],
+  dataPath: '/home/acastillo/Documents/data/',
+  minScore: 1,
+  errorCS: -0.15,
+  timeout: 2000,
+  maxSolutions: 2500,
+  nUnassigned: 1
 };
 
 var data = loadData();
@@ -23,12 +31,16 @@ var data = loadData();
 // let fastDB = JSON.parse(loadFile('../../data/h_clean.json'));
 
 // let fastDB = JSON.parse(FS.readFileSync('/home/acastillo/Documents/git/cheminfo-js/openchemlib-extended/kaggleCS.json').toString())['H'];
-let fastDB = JSON.parse(FS.readFileSync('../nmr-predictor/data/kaggleCS.json').toString()).H;
+let fastDB = JSON.parse(
+  FS.readFileSync('../nmr-predictor/data/kaggleCS.json').toString()
+).H;
 fastDB = dbutils.reduceDB(fastDB);
-FS.writeFileSync('/home/acastillo/Documents/git/cheminfo-js/openchemlib-extended/kaggleCS2-1h.json', JSON.stringify(fastDB));
+FS.writeFileSync(
+  '/home/acastillo/Documents/git/cheminfo-js/openchemlib-extended/kaggleCS2-1h.json',
+  JSON.stringify(fastDB)
+);
 
 getPerformance(data, fastDB, setup);
-
 
 async function getPerformance(testSet, fastDB, setup) {
   let date = new Date();
@@ -48,7 +60,11 @@ async function getPerformance(testSet, fastDB, setup) {
 
   date = new Date();
 
-  logger(`Error: ${error.error} count: ${error.count} min: ${error.min} max: ${error.max}`);
+  logger(
+    `Error: ${error.error} count: ${error.count} min: ${error.min} max: ${
+      error.max
+    }`
+  );
 
   var data = error.hist;
   var sumHist = 0;
@@ -64,7 +80,6 @@ async function getPerformance(testSet, fastDB, setup) {
 
   return error;
 }
-
 
 function loadData() {
   return JSON.parse(loadFile('/../../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";

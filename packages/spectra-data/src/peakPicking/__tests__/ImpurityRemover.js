@@ -1,6 +1,6 @@
 require('should');
-const FS = require('fs');
-const path = require('path');
+import FS from 'fs';
+import path from 'path';
 
 const Data = require('../../..');
 
@@ -11,8 +11,8 @@ function createSpectraData(filename) {
   return spectrum;
 }
 
-describe('spectra-data examples getRanges', function () {
-  it('number of peaks', function () {
+describe('spectra-data examples getRanges', function() {
+  it('number of peaks', function() {
     var spectrum = createSpectraData(
       '/../../../../../data-test/indometacin/1h.dx'
     );

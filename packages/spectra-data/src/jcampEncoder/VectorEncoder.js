@@ -32,7 +32,7 @@ const MaxLinelength = 100;
  * @param {string} encoding: ('FIX','SQZ','DIF','DIFDUP','CVS','PAC') Default 'DIFDUP'
  * @return {string}
  */
-function encode(data, firstX, intervalX, encoding) {
+export function encode(data, firstX, intervalX, encoding) {
   switch (encoding) {
     case 'FIX':
       return fixEncoding(data, firstX, intervalX);
@@ -59,7 +59,7 @@ function encode(data, firstX, intervalX, encoding) {
  * @param {number} intervalX
  * @return {string}
  */
-function commaSeparatedValuesEncoding(data, firstX, intervalX) {
+export function commaSeparatedValuesEncoding(data, firstX, intervalX) {
   return fixEncoding(data, firstX, intervalX, ',');
 }
 
@@ -72,7 +72,7 @@ function commaSeparatedValuesEncoding(data, firstX, intervalX) {
  * @param {string} separator, The separator character
  * @return {string}
  */
-function fixEncoding(data, firstX, intervalX, separator) {
+export function fixEncoding(data, firstX, intervalX, separator) {
   if (!separator) {
     separator = ' ';
   }
@@ -105,7 +105,7 @@ function fixEncoding(data, firstX, intervalX, separator) {
  * @param {number} intervalX
  * @return {string}
  */
-function packedEncoding(data, firstX, intervalX) {
+export function packedEncoding(data, firstX, intervalX) {
   var outputData = '';
   var j = 0;
   var TD = data.length;
@@ -146,7 +146,7 @@ function packedEncoding(data, firstX, intervalX) {
  * @param {number} intervalX
  * @return {string}
  */
-function squeezedEncoding(data, firstX, intervalX) {
+export function squeezedEncoding(data, firstX, intervalX) {
   var outputData = '';
   // String outputData = new String();
   var j = 0;
@@ -179,7 +179,7 @@ function squeezedEncoding(data, firstX, intervalX) {
  * @param {number} intervalX
  * @return {string}
  */
-function differenceDuplicateEncoding(data, firstX, intervalX) {
+export function differenceDuplicateEncoding(data, firstX, intervalX) {
   var mult = 0;
   var index = 0;
   var charCount = 0;
@@ -249,7 +249,7 @@ function differenceDuplicateEncoding(data, firstX, intervalX) {
  * @param {number} intervalX
  * @return {string}
  */
-function differenceEncoding(data, firstX, intervalX) {
+export function differenceEncoding(data, firstX, intervalX) {
   var index = 0;
   var charCount = 0;
   var i;
@@ -354,12 +354,3 @@ function duplicateDigit(num) {
   return DUPdigit;
 }
 
-module.exports = {
-  encode,
-  fixEncoding,
-  commaSeparatedValuesEncoding,
-  packedEncoding,
-  squeezedEncoding,
-  differenceDuplicateEncoding,
-  differenceEncoding
-};

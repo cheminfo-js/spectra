@@ -1,16 +1,22 @@
 /**
  * Created by acastillo on 7/5/16.
  */
-const nmrUtilities = require('spectra-nmr-utilities');
+import nmrUtilities from 'spectra-nmr-utilities';
 
-const SpinSystem = require('./SpinSystem2');
-const AutoAssigner = require('./AutoAssigner2');
-const getOcleFromOptions = require('./getOcleFromOptions');
+import SpinSystem from './SpinSystem2';
+import AutoAssigner from './AutoAssigner2';
+import getOcleFromOptions from './getOcleFromOptions';
 
 let OCLE;
 
-async function autoAssign(entry, options) {
-  if (entry && entry.spectra && entry.spectra.nmr && entry.spectra.nmr[0].range || entry.spectra.nmr[0].region) {
+export default async function autoAssign(entry, options) {
+  if (
+    (entry &&
+      entry.spectra &&
+      entry.spectra.nmr &&
+      entry.spectra.nmr[0].range) ||
+    entry.spectra.nmr[0].region
+  ) {
     return assignmentFromPeakPicking(entry, options);
   } else {
     return assignmentFromRaw(entry, options);
@@ -34,7 +40,7 @@ async function assignmentFromPeakPicking(entry, options) {
     molecule = OCLE.Molecule.fromMolfile(entry.general.molfile);
     molecule.addImplicitHydrogens();
     diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
-    diaIDs.sort(function (a, b) {
+    diaIDs.sort(function(a, b) {
       if (a.atomLabel === b.atomLabel) {
         return b.counter - a.counter;
       }
@@ -58,7 +64,7 @@ async function assignmentFromPeakPicking(entry, options) {
     let aa = await predictByExperiment(molecule, nmr, options);
     prediction.push(aa);
     if (nmr.experiment === '1d') {
-      nmr.range.sort(function (a, b) {
+      nmr.range.sort(function(a, b) {
         return b.integral - a.integral;
       });
     }
@@ -79,27 +85,39 @@ async function predictByExperiment(molecule, nmr, options) {
     let pred;
     if (nmr.nucleus === 'H') {
       try {
-        pred = await options.predictor.proton(molecule, Object.assign({}, options));
+        pred = await options.predictor.proton(
+          molecule,
+          Object.assign({}, options)
+        );
       } catch (e) {
-        pred = await options.predictor.spinus(molecule, Object.assign({}, options));
+        pred = await options.predictor.spinus(
+          molecule,
+          Object.assign({}, options)
+        );
       }
       // pred = options.predictor.spinus(molecule, Object.assign({}, options, {ignoreLabile: false})).then(value => {console.log(value)});
     }
 
     if (nmr.nucleus === 'C') {
-      pred = await options.predictor.carbon(molecule, Object.assign({}, options));
+      pred = await options.predictor.carbon(
+        molecule,
+        Object.assign({}, options)
+      );
     }
     // console.log(pred.length)
     pred = nmrUtilities.group(pred);
     // console.log(pred.length)
 
-    var optionsError = { iteration: options.iteration || 1, learningRatio: options.learningRatio || 1 };
+    var optionsError = {
+      iteration: options.iteration || 1,
+      learningRatio: options.learningRatio || 1
+    };
 
     for (var j = 0; j < pred.length; j++) {
       pred[j].error = getError(pred[j], optionsError);
     }
 
-    pred.sort(function (a, b) {
+    pred.sort(function(a, b) {
       if (a.atomLabel === b.atomLabel) {
         return b.atomIDs.length - a.atomIDs.length;
       }
@@ -109,7 +127,12 @@ async function predictByExperiment(molecule, nmr, options) {
     return pred;
   } else {
     if (nmr.experiment === 'cosy') {
-      return molecule.getAllPaths({ fromLabel: 'H', toLabel: 'H', minLength: 0, maxLength: 3 });
+      return molecule.getAllPaths({
+        fromLabel: 'H',
+        toLabel: 'H',
+        minLength: 0,
+        maxLength: 3
+      });
     }
     return null;
     // TODO Add other 2D experiments
@@ -127,8 +150,9 @@ function getError(prediction, param) {
   } else {
     // factor is between 1 and +inf
     // console.log(prediction.ncs+" "+(param.iteration+1)+" "+param.learningRatio);
-    var factor = 3 * prediction.std /
-            (Math.pow(prediction.ncs, (param.iteration + 1) * param.learningRatio));// (param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
+    var factor =
+      (3 * prediction.std) /
+      Math.pow(prediction.ncs, (param.iteration + 1) * param.learningRatio); // (param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
     return 2 * prediction.std + factor;
   }
 }
@@ -150,5 +174,3 @@ function getError(prediction, param) {
         return 2 * prediction.std + factor;
     }*/
 // }
-
-module.exports = autoAssign;

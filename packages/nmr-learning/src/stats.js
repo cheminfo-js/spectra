@@ -1,7 +1,6 @@
 const histogram = require('./histogram');
 const logger = require('./logger');
 
-
 function compare(A, B, hist, options) {
   var error = 0;
   var count = 0;
@@ -14,11 +13,18 @@ function compare(A, B, hist, options) {
   for (i = A.length - 1; i >= 0; i--) {
     for (j = B.length - 1; j >= 0; j--) {
       if (A[i].diaIDs[0] === B[j].diaIDs[0]) {
-        if (typeof A[i].delta !== 'undefined' && typeof B[j].delta !== 'undefined') {
+        if (
+          typeof A[i].delta !== 'undefined' &&
+          typeof B[j].delta !== 'undefined'
+        ) {
           tmp = Math.abs(A[i].delta - B[j].delta);
           if (options.hose && tmp > 2) {
             // console.log(A[i].level + " " + A[i].delta + " " + B[j].delta + " " + A[i].diaIDs[0] + " " + A[i].hose[A[i].level - 1]);
-            logger(`delete fastDB[${A[i].level - 1}][${JSON.stringify(A[i].hose[A[i].level - 1])}]; //${tmp} ${A[i].delta} ${B[j].delta}`);
+            logger(
+              `delete fastDB[${A[i].level - 1}][${JSON.stringify(
+                A[i].hose[A[i].level - 1]
+              )}]; //${tmp} ${A[i].delta} ${B[j].delta}`
+            );
           }
 
           hist.push(tmp);
@@ -48,7 +54,10 @@ function addObserved(A, B) {
     A[i].delta2 = null;
     for (j = B.length - 1; j >= 0; j--) {
       if (A[i].diaIDs[0] === B[j].diaIDs[0]) {
-        if (typeof A[i].delta !== 'undefined' && typeof B[j].delta !== 'undefined') {
+        if (
+          typeof A[i].delta !== 'undefined' &&
+          typeof B[j].delta !== 'undefined'
+        ) {
           A[i].delta2 = B[j].delta;
         }
         break;
@@ -68,7 +77,7 @@ function countByLevel(A, result) {
     }
 }*/
 
-function hoseStats(dataSet, nmrShiftDBPred1H, options) {
+export function hoseStats(dataSet, nmrShiftDBPred1H, options) {
   // console.log(options);
   // var db = new DB.MySQL("localhost","mynmrshiftdb3","nmrshiftdb","xxswagxx");
   let ACT = options.ACT;
@@ -102,8 +111,7 @@ function hoseStats(dataSet, nmrShiftDBPred1H, options) {
   return { hoseStats: result, predictions: predictions };
 }
 
-
-async function cmp2asg(dataSet, predictor, options) {
+export async function cmp2asg(dataSet, predictor, options) {
   let OCLE = options.OCLE;
   var h1pred, result;
   var avgError = 0;
@@ -118,9 +126,11 @@ async function cmp2asg(dataSet, predictor, options) {
       var molecule = OCLE.Molecule.fromIDCode(dataSet[i].diaID);
       molecule.addImplicitHydrogens();
       // molfile = molecule.toMolfile();
-      var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') * 1;
+      var nH =
+        molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') *
+        1;
       var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
-      diaIDs.sort(function (a, b) {
+      diaIDs.sort(function(a, b) {
         if (a.atomLabel === b.atomLabel) {
           return b.counter - a.counter;
         }
@@ -178,7 +188,12 @@ async function cmp2asg(dataSet, predictor, options) {
           }
         }
       }
-      dataSet[i].ocl = { id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH };
+      dataSet[i].ocl = {
+        id: molecule.getIDCode(),
+        atom: atoms,
+        diaId: diaIDs,
+        nH: nH
+      };
     }
 
     molecule = dataSet[i].ocl;
@@ -189,7 +204,6 @@ async function cmp2asg(dataSet, predictor, options) {
       levels: options.levels,
       hose: options.hose
     });
-
 
     // console.log(dataSet[i].assignment);
     // console.log(h1pred);
@@ -210,7 +224,11 @@ async function cmp2asg(dataSet, predictor, options) {
 
   var histParams = options.histParams || { from: 0, to: 1, nBins: 100 };
   return {
-    error: avgError / dataSet.length, count: count, min: min, max: max, hist: histogram({
+    error: avgError / dataSet.length,
+    count: count,
+    min: min,
+    max: max,
+    hist: histogram({
       data: hist,
       bins: linspace(histParams.from, histParams.to, histParams.nBins)
     })
@@ -297,9 +315,3 @@ function linspace(a, b, n) {
   }
   return ret;
 }
-
-module.exports = {
-  cmp2asg: cmp2asg,
-  hoseStats: hoseStats
-  // comparePredictors: comparePredictors
-};

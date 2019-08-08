@@ -2,51 +2,46 @@
  * Created by acastillo on 5/7/16.
  */
 
-const FS = require('fs');
-const path = require('path');
+import FS from 'fs';
+import path from 'path';
 
-const OCLE = require('openchemlib-extended');
-const predictor = require('nmr-predictor');
-const SD = require('spectra-data');
+import OCLE from 'openchemlib-extended';
+import predictor from 'nmr-predictor';
+import SD from 'spectra-data';
 
 const autoassigner = require('../src/index');
-
 
 function loadFile(filename) {
   return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
 
 function createSpectraData(filename, label, data) {
-  var spectrum = SD.NMR.fromJcamp(
-    loadFile(filename)
-  );
+  var spectrum = SD.NMR.fromJcamp(loadFile(filename));
   return spectrum;
 }
 
 function createSpectraData2D(filename, label, data) {
-  var spectrum = SD.NMR2D.fromJcamp(
-    loadFile(filename)
-  );
+  var spectrum = SD.NMR2D.fromJcamp(loadFile(filename));
   return spectrum;
 }
 
 runExample();
 
 async function runExample() {
-  var spectrum = createSpectraData("/../../../data-test/ethylbenzene/h1_0.jdx");
+  var spectrum = createSpectraData('/../../../data-test/ethylbenzene/h1_0.jdx');
 
   var peakPicking = spectrum.getRanges({
-    "nH": 10,
+    nH: 10,
     realTop: true,
     thresholdFactor: 1,
     clean: 0.5,
     compile: true,
-    idPrefix: "1H",
-    format: "new"
+    idPrefix: '1H',
+    format: 'new'
   });
 
   peakPicking.forEach((range, index) => {
-    range.signalID = "1H_" + index;
+    range.signalID = '1H_' + index;
   });
 
   // console.log(JSON.stringify(peakPicking));
@@ -61,17 +56,18 @@ async function runExample() {
   molecule.addImplicitHydrogens();
   var molfile = molecule.toMolfile();
 
-  const db = JSON.parse(loadFile('/../../nmr-predictor/data/nmrshiftdb2-1h.json'));
+  const db = JSON.parse(
+    loadFile('/../../nmr-predictor/data/nmrshiftdb2-1h.json')
+  );
 
   predictor.setDb(db, 'proton', 'proton');
-  var result = await autoassigner({
-    general: { molfile: molfile },
-    spectra: {
-      nmr: [
-        { nucleus: 'H', experiment: '1d', range: peakPicking }
-      ]
-    }
-  },
+  var result = await autoassigner(
+    {
+      general: { molfile: molfile },
+      spectra: {
+        nmr: [{ nucleus: 'H', experiment: '1d', range: peakPicking }]
+      }
+    },
     {
       minScore: 0.8,
       maxSolutions: 3000,
@@ -82,8 +78,7 @@ async function runExample() {
       levels: [5, 4, 3, 2]
     }
   );
-  
+
   console.log(result.getAssignments().length);
   console.log(result.getAssignments()[0].score);
-
 }

@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 
 
-const fs = require('fs');
+import FS from 'fs';
 
-const OCLE = require('openchemlib-extended');
+import OCLE from 'openchemlib-extended'
 const stat = require('ml-stat/array');
 const sdfParser = require('sdf-parser');
 

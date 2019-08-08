@@ -11,8 +11,8 @@ This program can use as input the list of peaks given by the automatic peak pick
 ```
 'use strict';
 
-const SD = require('spectra-data');
-const FS = require('fs');
+import SD from 'spectra-data';
+import FS from 'fs';
 const OCLE = require("openchemlib-extended-minimal");
 const autoassigner = require('../src/index');
 const predictor = require("nmr-predictor");

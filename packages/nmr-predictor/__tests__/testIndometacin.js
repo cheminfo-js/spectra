@@ -2,7 +2,7 @@
 require('should');
 const predictor = require('..');
 
-const fs = require('fs');
+import FS from 'fs';
 
 const db = JSON.parse(fs.readFileSync(`${__dirname}/../data/h1.json`, 'utf8'));
 

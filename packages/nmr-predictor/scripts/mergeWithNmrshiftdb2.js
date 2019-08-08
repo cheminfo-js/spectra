@@ -1,5 +1,5 @@
 /** Merge 2 hose code databases in a single one*/
-const fs = require('fs');
+import FS from 'fs';
 
 const utils = require('./dbutils');
 

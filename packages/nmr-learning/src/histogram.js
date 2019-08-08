@@ -1,25 +1,25 @@
-function histogram(opts) {
+export default function histogram(opts) {
   var data = opts.data;
   var binsTemp = opts.bins;
   var i = binsTemp.length;
 
-  var bisector = function (f) {
+  var bisector = function(f) {
     return {
-      left: function (a, x, lo, hi) {
+      left: function(a, x, lo, hi) {
         if (arguments.length < 3) lo = 0;
         if (arguments.length < 4) hi = a.length;
         while (lo < hi) {
-          var mid = lo + hi >>> 1;
+          var mid = (lo + hi) >>> 1;
           if (f.call(a, a[mid], mid) < x) lo = mid + 1;
           else hi = mid;
         }
         return lo;
       },
-      right: function (a, x, lo, hi) {
+      right: function(a, x, lo, hi) {
         if (arguments.length < 3) lo = 0;
         if (arguments.length < 4) hi = a.length;
         while (lo < hi) {
-          var mid = lo + hi >>> 1;
+          var mid = (lo + hi) >>> 1;
           if (x < f.call(a, a[mid], mid)) hi = mid;
           else lo = mid + 1;
         }
@@ -28,14 +28,14 @@ function histogram(opts) {
     };
   };
 
-  var histBisector = bisector(function (d) {
+  var histBisector = bisector(function(d) {
     return d;
   });
-    // var bisectLeft = histBisector.left;
+  // var bisectLeft = histBisector.left;
   var bisectRight = histBisector.right;
   var bisect = bisectRight;
 
-  var minimum = function (array, f) {
+  var minimum = function(array, f) {
     let i = -1;
     var n = array.length;
     var a, b;
@@ -43,13 +43,15 @@ function histogram(opts) {
       while (++i < n && !((a = array[i]) != null)) a = undefined;
       while (++i < n) if ((b = array[i]) != null && a > b) a = b;
     } else {
-      while (++i < n && !((a = f.call(array, array[i], i)) != null)) a = undefined;
-      while (++i < n) if ((b = f.call(array, array[i], i)) != null && a > b) a = b;
+      while (++i < n && !((a = f.call(array, array[i], i)) != null))
+        a = undefined;
+      while (++i < n)
+        if ((b = f.call(array, array[i], i)) != null && a > b) a = b;
     }
     return a;
   };
 
-  var maximum = function (array, f) {
+  var maximum = function(array, f) {
     let i = -1;
     var n = array.length;
     var a, b;
@@ -57,30 +59,38 @@ function histogram(opts) {
       while (++i < n && !((a = array[i]) != null)) a = undefined;
       while (++i < n) if ((b = array[i]) != null && b > a) a = b;
     } else {
-      while (++i < n && !((a = f.call(array, array[i], i)) != null)) a = undefined;
-      while (++i < n) if ((b = f.call(array, array[i], i)) != null && b > a) a = b;
+      while (++i < n && !((a = f.call(array, array[i], i)) != null))
+        a = undefined;
+      while (++i < n)
+        if ((b = f.call(array, array[i], i)) != null && b > a) a = b;
     }
     return a;
   };
 
   function histFunctor(v) {
-    return typeof v === 'function' ? v : function () {
-      return v;
-    };
+    return typeof v === 'function'
+      ? v
+      : function() {
+          return v;
+        };
   }
 
   function binsF(x) {
     if (!arguments.length) return binner;
-    binner = typeof x === 'number'
-      ? function (range) {
-        return histLayoutHistogramBinFixed(range, x);
-      }
-      : histFunctor(x);
+    binner =
+      typeof x === 'number'
+        ? function(range) {
+            return histLayoutHistogramBinFixed(range, x);
+          }
+        : histFunctor(x);
     return histogram;
   }
 
   function histLayoutHistogramBinSturges(range, values) {
-    return histLayoutHistogramBinFixed(range, Math.ceil(Math.log(values.length) / Math.LN2 + 1));
+    return histLayoutHistogramBinFixed(
+      range,
+      Math.ceil(Math.log(values.length) / Math.LN2 + 1)
+    );
   }
 
   function histLayoutHistogramBinFixed(range, n) {
@@ -133,5 +143,3 @@ function histogram(opts) {
 
   return bins;
 }
-
-module.exports = histogram;

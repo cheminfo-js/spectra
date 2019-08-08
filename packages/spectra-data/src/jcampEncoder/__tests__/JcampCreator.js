@@ -1,6 +1,6 @@
 require('should');
-const FS = require('fs');
-const path = require('path');
+import FS from 'fs';
+import path from 'path';
 
 const Data = require('../../..');
 
@@ -18,11 +18,11 @@ var spectrum = createSpectraData(
 var createdJcamp0 = spectrum.toJcamp({ type: 'SIMPLE' });
 var createdJcamp1 = spectrum.toJcamp({ type: 'NTUPLES' });
 
-describe('toJcamp spectra-data examples', function () {
+describe('toJcamp spectra-data examples', function() {
   var spectrum0 = Data.NMR.fromJcamp(createdJcamp0, { fastParse: false });
   var spectrum1 = Data.NMR.fromJcamp(createdJcamp1, { fastParse: false });
 
-  it('getVector', function () {
+  it('getVector', function() {
     spectrum0
       .getVector({ from: 0.0, to: 10, nbPoints: 4 * 1024 })
       .length.should.equal(4 * 1024);
@@ -31,41 +31,41 @@ describe('toJcamp spectra-data examples', function () {
       .length.should.equal(4 * 1024);
   });
 
-  it('getNucleus', function () {
+  it('getNucleus', function() {
     spectrum0.getNucleus().should.equal('1H');
     spectrum1.getNucleus().should.equal('1H');
   });
-  it('getSolventName', function () {
+  it('getSolventName', function() {
     spectrum0.getSolventName().should.equal('DMSO');
     spectrum1.getSolventName().should.equal('DMSO');
   });
-  it('getFirstX', function () {
+  it('getFirstX', function() {
     spectrum0.getFirstX().should.equal(11.00659);
     spectrum1.getFirstX().should.equal(11.00659);
   });
 
-  it('getLastX', function () {
+  it('getLastX', function() {
     spectrum0.getLastX().should.equal(-1.009276326659311);
     spectrum1.getLastX().should.equal(-1.009276326659311);
   });
 
-  it('getFirstY', function () {
+  it('getFirstY', function() {
     spectrum0.getFirstY().should.equal(-119886);
     spectrum1.getFirstY().should.equal(-119886);
   });
 
-  it('getLastY', function () {
+  it('getLastY', function() {
     // console.log(spectrum.getLastY());
     spectrum0.getLastY().should.equal(-109159);
     spectrum1.getLastY().should.equal(-109159);
   });
 
-  it('getTitle', function () {
+  it('getTitle', function() {
     spectrum0.getTitle().should.equal('109-92-2');
     spectrum1.getTitle().should.equal('109-92-2');
   });
 
-  it.skip('Checking X array', function () {
+  it.skip('Checking X array', function() {
     var x = spectrum0.getXData();
     x.should.be.instanceof(Array).and.have.lengthOf(16384);
     x[0].should.equal(11.00659);
@@ -74,7 +74,7 @@ describe('toJcamp spectra-data examples', function () {
     x[0].should.equal(11.00659);
   });
 
-  it.skip('Checking Y array', function () {
+  it.skip('Checking Y array', function() {
     var y = spectrum0.getYData();
     y.should.be.instanceof(Array).and.have.lengthOf(16384);
     y[0].should.equal(-119886);
@@ -83,7 +83,7 @@ describe('toJcamp spectra-data examples', function () {
     y[0].should.equal(-119886);
   });
 
-  it.skip('Checking XY array', function () {
+  it.skip('Checking XY array', function() {
     var xy = spectrum0.getXYData();
     xy.should.be.instanceof(Array).and.have.lengthOf(2);
     xy[0].should.be.instanceof(Array).and.have.lengthOf(16384);
@@ -98,7 +98,7 @@ describe('toJcamp spectra-data examples', function () {
     xy[1][0].should.equal(-119886);
   });
 
-  it('Checking if is2D is false', function () {
+  it('Checking if is2D is false', function() {
     spectrum0.is2D().should.equal(false);
     spectrum1.is2D().should.equal(false);
   });

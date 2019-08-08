@@ -1,7 +1,7 @@
 
-const fs = require('fs');
+import FS from 'fs';
 
-const OCLE = require('openchemlib-extended');
+import OCLE from 'openchemlib-extended'
 
 const maxSphereSize = 6;
 

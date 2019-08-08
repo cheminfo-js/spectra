@@ -1,4 +1,4 @@
-import Encoder from './VectorEncoder';
+import {encode} from './VectorEncoder';
 
 const CRLF = '\r\n';
 const version = `Cheminfo tools ${require('../../package.json').version}`;
@@ -280,7 +280,7 @@ function ntuplesHead(spectraData, scale, scaleX, encodeFormat, userDefinedParams
         data[point] = Math.round((spectraData.getY(point) * scale));
       }
 
-      tempString += Encoder.encode(data,
+      tempString += encode(data,
         spectraData.getFirstX() * scaleX, spectraData.getDeltaX() * scaleX, encodeFormat);
       outString += tempString + CRLF;
     }
@@ -364,7 +364,7 @@ function simpleHead(spectraData, scale, scaleX, encodeFormat, userDefinedParams)
       data[point] = Math.round(spectraData.getY(point) * scale);
     }
 
-    tempString += Encoder.encode(data, spectraData.getFirstX() * scaleX, spectraData.getDeltaX() * scaleX, encodeFormat);
+    tempString += encode(data, spectraData.getFirstX() * scaleX, spectraData.getDeltaX() * scaleX, encodeFormat);
 
     outString += tempString + CRLF;
     outString += '##END= ';

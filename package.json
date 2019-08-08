@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "build": "npm run build-clean && lerna exec -- ../../node_modules/.bin/babel src --out-dir lib  --ignore __tests__ --quiet",
+    "build": "npm run build-clean && lerna exec -- rollup -c ../../rollup.config.js",
     "build-clean": "rimraf ./packages/*/lib/",
     "convert-nmrshiftdb": "node packages/nmr-predictor/scripts/nmrshiftdb2ToJson.js",
     "eslint": "eslint packages *.js --cache",
@@ -15,23 +15,17 @@
     "publish": "git pull --rebase && npm run test && lerna publish"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-jest": "^24.8.0",
-    "babel-plugin-remove-comments": "^2.0.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-    "babel-preset-babili": "^0.1.4",
-    "cheminfo-tools": "^1.23.3",
-    "eslint": "^5.0.1",
-    "eslint-config-cheminfo": "^1.18.0",
-    "eslint-plugin-no-only-tests": "^2.0.1",
+    "@babel/plugin-transform-modules-commonjs": "^7.5.0",
+    "eslint": "^6.1.0",
+    "eslint-config-cheminfo": "^2.0.3",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "^22.15.0",
     "jest": "^24.8.0",
-    "lerna": "^2.11.0",
+    "lerna": "^3.16.4",
     "npm-run-all": "^4.1.5",
-    "rimraf": "^2.6.2",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.19.4",
     "should": "^13.2.3"
   },
-  "dependencies": {
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jest": "^21.22.0"
-  }
+  "dependencies": {}
 }

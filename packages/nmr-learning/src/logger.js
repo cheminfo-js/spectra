@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-module.exports = (message) => {
+export default function logger(message) {
   console.log(message);
-};
-// module.exports = (message) => message;
+}

@@ -1,8 +1,8 @@
-const FS = require('fs');
+import FS from 'fs';
 const sm = require('../..');
 const stat = require('ml-stat/array');
 
-//const OCLE = require('openchemlib-extended');
+//import OCLE from 'openchemlib-extended'
 
 function loadFile(filename) {
   return FS.readFileSync(filename).toString();

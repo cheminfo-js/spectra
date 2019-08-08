@@ -1,11 +1,14 @@
-
 require('should');
-const predictor = require('nmr-predictor');
+import predictor from 'nmr-predictor';
 
-const fs = require('fs');
+import FS from 'fs';
 
-const db1H = JSON.parse(fs.readFileSync(`${__dirname}/../data/h1.json`, 'utf8'));
-const db13C = JSON.parse(fs.readFileSync(`${__dirname}/../data/nmrshiftdb2-13c.json`, 'utf8'));
+const db1H = JSON.parse(
+  fs.readFileSync(`${__dirname}/../data/h1.json`, 'utf8')
+);
+const db13C = JSON.parse(
+  fs.readFileSync(`${__dirname}/../data/nmrshiftdb2-13c.json`, 'utf8')
+);
 
 const molfile = `Benzene, ethyl-, ID: C100414
   NIST    16081116462D 1   1.00000     0.00000
@@ -31,6 +34,9 @@ M  END
 `;
 
 const h1 = predictor.proton(molfile, { db: db1H });
-const prediction = predictor.twoD(h1, h1, molfile, { minLength: 1, maxLength: 3 });
+const prediction = predictor.twoD(h1, h1, molfile, {
+  minLength: 1,
+  maxLength: 3
+});
 
 console.log(prediction);

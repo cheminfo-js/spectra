@@ -1,6 +1,5 @@
 const predictor = require('../lib/index.js');
-const fs = require('fs');
-
+import FS from 'fs';
 
 var molfile = `
 Actelion Java MolfileCreator 1.0
@@ -45,14 +44,21 @@ Actelion Java MolfileCreator 1.0
 M  END
 `;
 
-const db1H = JSON.parse(fs.readFileSync(__dirname + '/../data/h1.json', 'utf8'));
+const db1H = JSON.parse(
+  fs.readFileSync(__dirname + '/../data/h1.json', 'utf8')
+);
 
-predictor.spinus(molfile, {group: true}).then(prediction => {
-    console.log(JSON.stringify(prediction.length))
+predictor
+  .spinus(molfile, { group: true })
+  .then(prediction => {
+    console.log(JSON.stringify(prediction.length));
     //var a = simule2DNmrSpectrum(prediction, {nbPointsX: 100, nbPointsY: 100});
     //console.log(prediction)
     //API.createData("data", a.to2DArray());
-}).catch(reason => {return new Error(reason)});
+  })
+  .catch(reason => {
+    return new Error(reason);
+  });
 
 /*predictor.fetchProton().then(value => {
     const prediction = predictor.proton(molfile, {group: false});
@@ -60,10 +66,6 @@ predictor.spinus(molfile, {group: true}).then(prediction => {
     console.log(JSON.stringify(prediction))
 });*/
 
-
-const prediction = predictor.proton(molfile, {group: true, db: db1H});
-console.log("xx " + prediction.length);
+const prediction = predictor.proton(molfile, { group: true, db: db1H });
+console.log('xx ' + prediction.length);
 //console.log(JSON.stringify(prediction))
-
-
-

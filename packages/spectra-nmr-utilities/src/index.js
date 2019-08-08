@@ -1,7 +1,6 @@
-
 const patterns = ['s', 'd', 't', 'q', 'quint', 'h', 'sept', 'o', 'n'];
 
-function nmrJ(Js, options = {}) {
+export function nmrJ(Js, options = {}) {
   var jString = '';
   options = Object.assign({}, { separator: ', ', nbDecimal: 2 }, options);
   let j, i;
@@ -15,7 +14,7 @@ function nmrJ(Js, options = {}) {
   return jString;
 }
 
-function joinCoupling(signal, tolerance = 0.05) {
+export function joinCoupling(signal, tolerance = 0.05) {
   var jc = signal.j;
   if (jc && jc.length > 0) {
     var cont = jc[0].assignment ? jc[0].assignment.length : 1;
@@ -23,7 +22,7 @@ function joinCoupling(signal, tolerance = 0.05) {
     var newNmrJs = [];
     var diaIDs = [];
     var atoms = [];
-    jc.sort(function (a, b) {
+    jc.sort(function(a, b) {
       return b.coupling - a.coupling;
     });
     if (jc[0].diaID) {
@@ -81,16 +80,18 @@ function joinCoupling(signal, tolerance = 0.05) {
   return pattern;
 }
 
-function group(signals, options = {}) {
+export function group(signals, options = {}) {
   var i, k;
   for (i = 0; i < signals.length; i++) {
     var j = signals[i].j;
     if (j && j.length > 0) {
       for (k = j.length - 2; k >= 0; k--) {
         for (var m = j.length - 1; m > k; m--) {
-          if (j[k].diaID === j[m].diaID &&
+          if (
+            j[k].diaID === j[m].diaID &&
             j[k].coupling === j[m].coupling &&
-            j[k].distance === j[m].distance) {
+            j[k].distance === j[m].distance
+          ) {
             j[k].assignment = j[k].assignment.concat(j[m].assignment);
             j.splice(m, 1);
           }
@@ -118,20 +119,18 @@ function group(signals, options = {}) {
       for (k = 0; k < j.length; k++) {
         j[k].multiplicity = patterns[j[k].assignment.length];
       }
-      // signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
     }
-    // console.log(signals[i]);
     signals[i].multiplicity = compilePattern(signals[i], options.tolerance);
   }
   return signals;
 }
 
-function compilePattern(signal, tolerance = 0.05) {
+export function compilePattern(signal, tolerance = 0.05) {
   var jc = signal.j;
   var pattern = '';
   if (jc && jc.length > 0) {
     var cont = jc[0].assignment ? jc[0].assignment.length : 0;
-    jc.sort(function (a, b) {
+    jc.sort(function(a, b) {
       return b.coupling - a.coupling;
     });
     for (var i = 0; i < jc.length - 1; i++) {
@@ -150,5 +149,3 @@ function compilePattern(signal, tolerance = 0.05) {
   }
   return pattern;
 }
-
-module.exports = { compilePattern, group, joinCoupling, nmrJ };

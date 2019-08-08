@@ -1,9 +1,9 @@
 var cluster = require('cluster');
-const FS = require('fs');
-const path = require('path');
+import FS from 'fs';
+import path from 'path';
 
-const OCLE = require('openchemlib-extended');
-const predictor = require('nmr-predictor');
+import OCLE from 'openchemlib-extended';
+import predictor from 'nmr-predictor';
 
 const dbutils = require('../../nmr-predictor/scripts/dbutils');
 
@@ -22,23 +22,33 @@ function loadFile(filename) {
 
 // const prior = JSON.parse(loadFile('/../data/histogram_0_15ppm.json'));
 
-const looksLike = function (id1, id2, signals, tolerance) {
+const looksLike = function(id1, id2, signals, tolerance) {
   if (id1 === id2) {
     return true;
   } else {
-    if (Math.abs(signals[id1].signal[0].delta - signals[id2].signal[0].delta) < tolerance) {
+    if (
+      Math.abs(signals[id1].signal[0].delta - signals[id2].signal[0].delta) <
+      tolerance
+    ) {
       return true;
     }
   }
   return false;
 };
 
-
 if (cluster.isMaster) {
   const setup = {
-    iteration0: 23, iterationM: 30, ignoreLabile: true, learningRatio: 0.8,
-    levels: [6, 5, 4, 3], dataPath: '/home/acastillo/Documents/data/', minScore: 1,
-    errorCS: -0.15, timeout: 2000, maxSolutions: 2500, nUnassigned: 1
+    iteration0: 23,
+    iterationM: 30,
+    ignoreLabile: true,
+    learningRatio: 0.8,
+    levels: [6, 5, 4, 3],
+    dataPath: '/home/acastillo/Documents/data/',
+    minScore: 1,
+    errorCS: -0.15,
+    timeout: 2000,
+    maxSolutions: 2500,
+    nUnassigned: 1
   };
   var start = 0;
   var numWorkers = require('os').cpus().length - 2;
@@ -51,7 +61,7 @@ if (cluster.isMaster) {
     workers.push(worker);
   }
 
-  cluster.on('message', async function (worker, message) {
+  cluster.on('message', async function(worker, message) {
     responses.push(message);
 
     if (responses.length === setup.max) {
@@ -66,14 +76,23 @@ if (cluster.isMaster) {
       let fastDB = compilePredictionTable(responses).H;
       predictor.setDb(fastDB, 'proton', 'proton');
 
-      FS.writeFileSync(`${__dirname}/../data/h_${iteration}.json`, JSON.stringify(fastDB));
+      FS.writeFileSync(
+        `${__dirname}/../data/h_${iteration}.json`,
+        JSON.stringify(fastDB)
+      );
 
-      logger(`${Object.keys(fastDB[1]).length} ${Object.keys(fastDB[2]).length} ${Object.keys(fastDB[3]).length} ${Object.keys(fastDB[4]).length} ${Object.keys(fastDB[5]).length}`);
-
+      logger(
+        `${Object.keys(fastDB[1]).length} ${Object.keys(fastDB[2]).length} ${
+          Object.keys(fastDB[3]).length
+        } ${Object.keys(fastDB[4]).length} ${Object.keys(fastDB[5]).length}`
+      );
 
       // Save also the fulldb to merge with other dbs
       let fullFastDB = compilePredictionTable(responses, { reduced: false }).H;
-      FS.writeFileSync(`${__dirname}/../data/h_full_${iteration}.json`, JSON.stringify(fullFastDB));
+      FS.writeFileSync(
+        `${__dirname}/../data/h_full_${iteration}.json`,
+        JSON.stringify(fullFastDB)
+      );
 
       date = new Date();
       // Evalueate the error
@@ -92,27 +111,25 @@ if (cluster.isMaster) {
     }
   });
 
-  cluster.on('online', function (worker) {
+  cluster.on('online', function(worker) {
     logger(`Worker ${worker.process.pid} is online`);
   });
 
-  cluster.on('exit', function (worker) {
+  cluster.on('exit', function(worker) {
     logger(`Starting a new worker ${worker.process.id}`);
     cluster.fork();
   });
 
   // Be notified when worker processes die.
-  cluster.on('death', function (worker) {
+  cluster.on('death', function(worker) {
     logger(`Worker ${worker.process.pid} died.`);
   });
-
 
   var data = loadData(setup);
   // setup.predictor = predictor;
   // Initial value of db
   // let fastDB = JSON.parse(loadFile('../../nmr-predictor/data/nmrshiftdb2-1h.json'));
   let fastDB = JSON.parse(loadFile('../data/h_22.json'));
-
 
   let date = new Date();
   start = date.getTime();
@@ -125,11 +142,10 @@ if (cluster.isMaster) {
 if (cluster.isWorker) {
   // Receive messages from the master process.
   const autoassigner = require('../../nmr-auto-assignment/src/index');
-  const OCLE = require('openchemlib-extended');
-  const predictor = require('nmr-predictor');
+  import OCLE from 'openchemlib-extended';
+  import predictor from 'nmr-predictor';
 
-
-  process.on('message', async function (msg) {
+  process.on('message', async function(msg) {
     let entry = msg.entry;
     let setup = msg.setup;
     predictor.setDb(msg.fastDB, 'proton', 'proton');
@@ -167,7 +183,14 @@ if (cluster.isWorker) {
             // let csi = dataset[i];
             if (signalId !== '*') {
               for (let k = 1; k < solutions.length; k++) {
-                if (!looksLike(signalId, solutions[k].assignment[j], targetsConstains, 0.5)) {
+                if (
+                  !looksLike(
+                    signalId,
+                    solutions[k].assignment[j],
+                    targetsConstains,
+                    0.5
+                  )
+                ) {
                   assignment[j] = '*';
                   break;
                 }
@@ -191,7 +214,12 @@ async function nextIteration(dataset, fastDB, setup, workers) {
     // logger(predictor.databases);
     // we could now loop on the sdf to add the int index
     for (let i = 0; i < setup.max; i++) {
-      workers[i % workers.length].send({ entry: dataset[i], setup: setup, fastDB: fastDB, iteration: setup.iteration });
+      workers[i % workers.length].send({
+        entry: dataset[i],
+        setup: setup,
+        fastDB: fastDB,
+        iteration: setup.iteration
+      });
     }
   } catch (e) {
     logger(e);
@@ -216,7 +244,11 @@ async function getPerformance(testSet, fastDB, setup) {
 
   date = new Date();
 
-  logger(`Error: ${error.error} count: ${error.count} min: ${error.min} max: ${error.max}`);
+  logger(
+    `Error: ${error.error} count: ${error.count} min: ${error.min} max: ${
+      error.max
+    }`
+  );
 
   var data = error.hist;
   var sumHist = 0;
@@ -233,21 +265,46 @@ async function getPerformance(testSet, fastDB, setup) {
   return error;
 }
 
-
 function loadData(setup) {
   // var dataset1 = JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big4.json').toString());//JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/cheminfo443_y.json').toString());
-  var dataset1 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/cheminfo443_noSolvent1.json').toString()));
-  var dataset2 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/maybridge_noSolven1.json').toString()));
-  var dataset3 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big0.json').toString()));
-  var dataset4 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big1.json').toString()));
-  var dataset5 = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big2.json').toString()));
+  var dataset1 = JSON.parse(
+    FS.readFileSync(
+      path
+        .join(setup.dataPath, 'procjson/cheminfo443_noSolvent1.json')
+        .toString()
+    )
+  );
+  var dataset2 = JSON.parse(
+    FS.readFileSync(
+      path.join(setup.dataPath, 'procjson/maybridge_noSolven1.json').toString()
+    )
+  );
+  var dataset3 = JSON.parse(
+    FS.readFileSync(path.join(setup.dataPath, 'procjson/big0.json').toString())
+  );
+  var dataset4 = JSON.parse(
+    FS.readFileSync(path.join(setup.dataPath, 'procjson/big1.json').toString())
+  );
+  var dataset5 = JSON.parse(
+    FS.readFileSync(path.join(setup.dataPath, 'procjson/big2.json').toString())
+  );
   var dataset6 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big3.json').toString()));
   var dataset7 = []; // JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'procjson/big4.json').toString()));
-  var blackList = JSON.parse(FS.readFileSync(path.join(setup.dataPath, 'blackList.json').toString()));
+  var blackList = JSON.parse(
+    FS.readFileSync(path.join(setup.dataPath, 'blackList.json').toString())
+  );
 
   var testSet = JSON.parse(loadFile('/../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
 
-  var datasets = [dataset1, dataset2, dataset3, dataset4, dataset5, dataset6, dataset7];
+  var datasets = [
+    dataset1,
+    dataset2,
+    dataset3,
+    dataset4,
+    dataset5,
+    dataset6,
+    dataset7
+  ];
 
   var i, j, ds, dataset;
   logger(`Cheminfo All: ${dataset1.length}`);
@@ -261,7 +318,10 @@ function loadData(setup) {
     for (ds = 0; ds < datasets.length; ds++) {
       dataset = datasets[ds];
       for (j = dataset.length - 1; j >= 0; j--) {
-        if (dataset[j].general.ocl.hasLabile || testSet[i].diaID === dataset[j].general.ocl.id) {
+        if (
+          dataset[j].general.ocl.hasLabile ||
+          testSet[i].diaID === dataset[j].general.ocl.id
+        ) {
           // if (testSet[i].diaID === dataset[j].general.ocl.id) {
           dataset.splice(j, 1);
           removed++;
@@ -287,7 +347,9 @@ function loadData(setup) {
   logger(`MayBridge Final: ${dataset2.length}`);
   logger(`Other Final: ${dataset3.length + dataset4.length}`);
   logger(`Total Final: ${trainDataset.length}`);
-  logger(`Overlaped molecules: ${removed}.  They were removed from training datasets`);
+  logger(
+    `Overlaped molecules: ${removed}.  They were removed from training datasets`
+  );
 
   return { train: trainDataset, test: testSet, blackList: blackList };
 }

@@ -1,5 +1,4 @@
-
-const FS = require('fs');
+import FS from 'fs';
 
 const logger = require('../logger');
 
@@ -7,7 +6,7 @@ function loadFile(filename) {
   return FS.readFileSync(filename).toString();
 }
 
-function load(path, datasetName, options) {
+export function load(path, datasetName, options) {
   let OCLE = options.OCLE;
 
   var result = [];
@@ -26,9 +25,12 @@ function load(path, datasetName, options) {
         // let ocl = {value: molecule};
 
         molecule.addImplicitHydrogens();
-        var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') * 1;
+        var nH =
+          molecule
+            .getMolecularFormula()
+            .formula.replace(/.*H([0-9]+).*/, '$1') * 1;
         var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
-        diaIDs.sort(function (a, b) {
+        diaIDs.sort(function(a, b) {
           if (a.atomLabel === b.atomLabel) {
             return b.counter - a.counter;
           }
@@ -102,7 +104,15 @@ function load(path, datasetName, options) {
         });
 
         let sample = {
-          general: { ocl: { id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH, hasLabile } }, // : molecule.toMolfile()},
+          general: {
+            ocl: {
+              id: molecule.getIDCode(),
+              atom: atoms,
+              diaId: diaIDs,
+              nH: nH,
+              hasLabile
+            }
+          }, // : molecule.toMolfile()},
           spectra: {
             nmr: [
               {
@@ -118,7 +128,10 @@ function load(path, datasetName, options) {
         result.push(sample);
 
         if (result.length === 1000) {
-          FS.writeFileSync(`${__dirname}/big${k++}.json`, JSON.stringify(result));
+          FS.writeFileSync(
+            `${__dirname}/big${k++}.json`,
+            JSON.stringify(result)
+          );
           result = [];
         }
       } catch (e) {
@@ -132,5 +145,3 @@ function load(path, datasetName, options) {
 
   return result;
 }
-
-module.exports = { load: load };

@@ -1,7 +1,5 @@
-
-require('should');
-const FS = require('fs');
-const path = require('path');
+import FS from 'fs';
+import path from 'path';
 
 const spectraData = require('spectra-data');
 
@@ -12,39 +10,45 @@ function createSpectraData(filename) {
   return spectrum;
 }
 
-
-describe('spectra-data examples peak picking ', function () {
+describe('spectra-data examples peak picking ', () => {
   var nH = 8;
-  var spectrum = createSpectraData('/../../../../../data-test/ethylvinylether/1h.jdx');
-  var peakPicking = spectrum.getRanges({ nH: nH, realTopDetection: true, thresholdFactor: 1, clean: 0.5, compile: true });
-  it('patterns for ethylvinylether (OLD)', function () {
+  var spectrum = createSpectraData(
+    '/../../../../../data-test/ethylvinylether/1h.jdx'
+  );
+  var peakPicking = spectrum.getRanges({
+    nH: nH,
+    realTopDetection: true,
+    thresholdFactor: 1,
+    clean: 0.5,
+    compile: true
+  });
+  test('patterns for ethylvinylether (OLD)', () => {
     for (var i = 0; i < peakPicking.length; i++) {
       var signal = peakPicking[i].signal[0];
       if (Math.abs(signal.delta1 - 1.308) < 0.01) {
-        signal.multiplicity.should.equal('t');
+        expect(signal.multiplicity).toBe('t');
       }
       if (Math.abs(signal.delta1 - 3.77) < 0.01) {
-        signal.multiplicity.should.equal('q');
+        expect(signal.multiplicity).toBe('q');
       }
       if (Math.abs(signal.delta1 - 3.99) < 0.01) {
-        signal.multiplicity.should.equal('dd');
+        expect(signal.multiplicity).toBe('dd');
       }
       if (Math.abs(signal.delta1 - 4.2) < 0.01) {
-        signal.multiplicity.should.equal('dd');
+        expect(signal.multiplicity).toBe('dd');
       }
       if (Math.abs(signal.delta1 - 6.47) < 0.01) {
-        signal.multiplicity.should.equal('dd');
+        expect(signal.multiplicity).toBe('dd');
       }
     }
   });
 
-  it('Number of patterns', function () {
-    peakPicking.length.should.equal(5);
+  test('Number of patterns', () => {
+    expect(peakPicking.length).toBe(5);
   });
 
-  it('examples integration and multiplet limits', function () {
-    peakPicking[4].from.should.lessThan(1.290);
-    peakPicking[4].to.should.greaterThan(1.325);
+  test('examples integration and multiplet limits', () => {
+    expect(peakPicking[4].from).toBeLessThan(1.29);
+    expect(peakPicking[4].to).toBeGreaterThan(1.325);
   });
 });
-

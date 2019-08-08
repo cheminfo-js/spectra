@@ -1,12 +1,19 @@
-
 /**
  * Created by acastillo on 9/2/16.
  */
-const treeSet = require('ml-tree-set');
+import treeSet from 'ml-tree-set';
 
-const defaultOptions = { minScore: 1, maxSolutions: 100, errorCS: -1, onlyCount: false, timeout: 6000, condensed: true, unassigned: 0 };
+const defaultOptions = {
+  minScore: 1,
+  maxSolutions: 100,
+  errorCS: -1,
+  onlyCount: false,
+  timeout: 6000,
+  condensed: true,
+  unassigned: 0
+};
 
-class Assignment {
+export default class Assignment {
   constructor(spinSystem, opt) {
     var options = Object.assign({}, defaultOptions, opt);
     this.spinSystem = spinSystem;
@@ -14,7 +21,7 @@ class Assignment {
 
     this.sourcesIDs = [];
     this.targetIDs = [];
-    this.keys.forEach((key) => {
+    this.keys.forEach(key => {
       this.sourcesIDs = this.sourcesIDs.concat(this.spinSystem.sources[key]);
       this.targetIDs = this.targetIDs.concat(this.spinSystem.targets[key]);
     });
@@ -37,32 +44,33 @@ class Assignment {
 
     this.solutions = null;
 
-    this.comparator = function (a, b) {
+    this.comparator = function(a, b) {
       return b.score - a.score;
     };
     this.generateExpandMap();
   }
 
   /**
-     * This is a very important function. It tells who can be assigned to who
-     *  We will use the simplest restrictions to generate this map.
-     *  We consider the integration and chemical shift restrictions
-     */
+   * This is a very important function. It tells who can be assigned to who
+   *  We will use the simplest restrictions to generate this map.
+   *  We consider the integration and chemical shift restrictions
+   */
   generateExpandMap() {
     this.expandMap = {};
     let errorAbs = Math.abs(this.errorCS);
-    this.keys.forEach((key) => {
+    this.keys.forEach(key => {
       let sourcesIDs = this.spinSystem.sources[key];
       let targetIDs = this.spinSystem.targets[key];
-      sourcesIDs.forEach((sourceID) => {
+      sourcesIDs.forEach(sourceID => {
         let source = this.spinSystem.sourcesConstrains[sourceID];
         source.error = Math.abs(source.error);
         this.expandMap[sourceID] = [];
         if (targetIDs) {
-          targetIDs.forEach((targetID) => {
+          targetIDs.forEach(targetID => {
             let target = this.spinSystem.targetsConstains[targetID];
             if (source.atomIDs.length - target.integral < 1) {
-              if (this.errorCS === 0 || typeof source.delta === 'undefined') { // Chemical shift is not a restriction
+              if (this.errorCS === 0 || typeof source.delta === 'undefined') {
+                // Chemical shift is not a restriction
                 this.expandMap[sourceID].push(targetID);
               } else {
                 let tmp = (target.from + target.to) / 2;
@@ -71,8 +79,10 @@ class Assignment {
                   error = Math.max(error, source.error);
                 }
 
-                if (Math.abs(source.delta - tmp) < (error
-                                    + Math.abs(target.from - target.to)) / 2 + errorAbs) {
+                if (
+                  Math.abs(source.delta - tmp) <
+                  (error + Math.abs(target.from - target.to)) / 2 + errorAbs
+                ) {
                   this.expandMap[sourceID].push(targetID);
                 }
               }
@@ -83,7 +93,6 @@ class Assignment {
       });
     });
   }
-
 
   buildAssignments() {
     var date = new Date();
@@ -148,7 +157,7 @@ class Assignment {
 
     // Clean up any previous assignment
     for (let i = 0; i < ranges.length; i++) {
-      ranges[i].signal.forEach((signal) => {
+      ranges[i].signal.forEach(signal => {
         signal.diaID = [];
       });
     }
@@ -158,7 +167,7 @@ class Assignment {
         let range = this.spinSystem.targetsConstains[signalId];
 
         if (range) {
-          range.signal.forEach((signal) => {
+          range.signal.forEach(signal => {
             signal.diaID.push(this.sourcesIDs[diaIndex]);
           });
         }
@@ -170,7 +179,7 @@ class Assignment {
   }
 
   setAssignmentOnSample(sample, index) {
-    sample.spectra.nmr.forEach((nmr) => {
+    sample.spectra.nmr.forEach(nmr => {
       if (nmr.experiment === '1d') {
         this.setAssignmentOnRanges(nmr.range, index);
       }
@@ -181,7 +190,9 @@ class Assignment {
     if (targetID === '*') {
       return true;
     }
-    return this.partialScore(partial, sourceConstrains, sourceID, targetID) > 0 ? true : false;
+    return this.partialScore(partial, sourceConstrains, sourceID, targetID) > 0
+      ? true
+      : false;
   }
 
   partialScore(partial) {
@@ -231,13 +242,16 @@ class Assignment {
       partial.forEach((targetID, index) => {
         if (targetID && targetID !== '*') {
           count++;
-          let source = this.spinSystem.sourcesConstrains[this.sourcesIDs[index]];
+          let source = this.spinSystem.sourcesConstrains[
+            this.sourcesIDs[index]
+          ];
           let target = this.spinSystem.targetsConstains[targetID];
           let error = this.errorCS;
           if (source.error) {
             error = Math.max(source.error, this.errorCS);
           }
-          if (typeof source.delta === 'undefined') { // Chemical shift is not a restriction
+          if (typeof source.delta === 'undefined') {
+            // Chemical shift is not a restriction
             chemicalShiftScore += 1;
           } else {
             let tmp = (target.from + target.to) / 2;
@@ -266,7 +280,9 @@ class Assignment {
         let sourceI = this.sourcesIDs[activeDomainOnSource[i]];
         for (let j = i + 1; j < activeDomainOnSource.length; j++) {
           let sourceJ = this.sourcesIDs[activeDomainOnSource[j]];
-          let sourceConstrain = this.spinSystem.sourcesConstrains[`${sourceI} ${sourceJ}`];
+          let sourceConstrain = this.spinSystem.sourcesConstrains[
+            `${sourceI} ${sourceJ}`
+          ];
           let partialI = partial[activeDomainOnSource[i]];
           let partialJ = partial[activeDomainOnSource[j]];
           if (partialI !== partialJ) {
@@ -275,13 +291,18 @@ class Assignment {
               keyOnTargerMap = `${partialJ} ${partialI}`;
             }
 
-            let targetConstrain = this.spinSystem.targetsConstains[keyOnTargerMap];
+            let targetConstrain = this.spinSystem.targetsConstains[
+              keyOnTargerMap
+            ];
             let value = this.verifyConstrains(sourceConstrain, targetConstrain);
 
             if (!andConstrains[keyOnTargerMap]) {
               andConstrains[keyOnTargerMap] = value;
             } else {
-              andConstrains[keyOnTargerMap] = Math.max(andConstrains[keyOnTargerMap], value);
+              andConstrains[keyOnTargerMap] = Math.max(
+                andConstrains[keyOnTargerMap],
+                value
+              );
             }
           }
         }
@@ -289,11 +310,13 @@ class Assignment {
 
       let andKeys = Object.keys(andConstrains);
       let sumAnd = 0;
-      andKeys.forEach((key) => {
+      andKeys.forEach(key => {
         sumAnd += andConstrains[key];
       });
 
-      scoreOn2D = sumAnd / (activeDomainOnTarget.length * (activeDomainOnTarget.length - 1) / 2);
+      scoreOn2D =
+        sumAnd /
+        ((activeDomainOnTarget.length * (activeDomainOnTarget.length - 1)) / 2);
       if (chemicalShiftScore === 0) {
         return scoreOn2D - penaltyByStarts;
       }
@@ -315,7 +338,7 @@ class Assignment {
   }
 
   scoreIntegration(partial) {
-    partial.forEach((targetID) => {
+    partial.forEach(targetID => {
       if (targetID !== null) {
         // let source = this.spinSystem.sourcesConstrains[this.sourcesIDs[index]];
         // let target = this.spinSystem.targetsConstains[targetID];
@@ -328,7 +351,7 @@ class Assignment {
     if (sourceAddress < system.nSources) {
       // Force a return if the loop time is longer than the given timeout
       const d = new Date();
-      if ((d.getTime() - this.timeStart) > this.timeout) {
+      if (d.getTime() - this.timeStart > this.timeout) {
         this.timeoutTerminated = true;
         return;
       }
@@ -337,7 +360,7 @@ class Assignment {
       // let source = system.sourcesConstrains[sourceID];//The 1D prediction to be assigned
       let expand = this.expandMap[sourceID];
       // console.log("X "+JSON.stringify(expand));
-      expand.forEach((targetID) => {
+      expand.forEach(targetID => {
         partial[sourceAddress] = targetID;
         this.score = this.partialScore(partial, system.sourcesConstrains);
         // console.log(partial)
@@ -345,10 +368,16 @@ class Assignment {
 
         if (this.score > 0) {
           // If there is no more sources or targets available, we have a solution for the assignment problem
-          if (sourceAddress === system.nSources - 1 && this.score >= this.lowerBound) {
+          if (
+            sourceAddress === system.nSources - 1 &&
+            this.score >= this.lowerBound
+          ) {
             // console.log(this.score + ' Found ' + JSON.stringify(partial));
             this.nSolutions++;
-            var solution = { assignment: this._cloneArray(partial), score: this.score };
+            var solution = {
+              assignment: this._cloneArray(partial),
+              score: this.score
+            };
             if (this.solutions.length >= this.maxSolutions) {
               if (this.score > this.solutions.last().score) {
                 this.solutions.pollLast();
@@ -358,7 +387,11 @@ class Assignment {
               this.solutions.add(solution);
             }
           } else {
-            this.exploreTreeRec(system, sourceAddress + 1, JSON.parse(JSON.stringify(partial)));
+            this.exploreTreeRec(
+              system,
+              sourceAddress + 1,
+              JSON.parse(JSON.stringify(partial))
+            );
           }
         } else {
           if (targetID === '*') {
@@ -373,4 +406,3 @@ class Assignment {
     return JSON.parse(JSON.stringify(data));
   }
 }
-module.exports = Assignment;

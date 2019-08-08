@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 
 const cluster = require('cluster');
-const fs = require('fs');
+import FS from 'fs';
 
-const OCLE = require('openchemlib-extended');
+import OCLE from 'openchemlib-extended'
 const stat = require('ml-stat/array');
 const xml2js = require('xml2js');
 
@@ -87,7 +87,7 @@ if (cluster.isMaster) {
 }
 if (cluster.isWorker) {
   // Receive messages from the master process.
-  const OCLE = require('openchemlib-extended');
+  import OCLE from 'openchemlib-extended'
 
   process.on('message', function (msg) {
     if (msg && msg.fileName) {

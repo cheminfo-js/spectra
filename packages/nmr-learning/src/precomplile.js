@@ -1,6 +1,6 @@
-const FS = require('fs');
+import FS from 'fs';
 
-const OCLE = require('openchemlib-extended');
+import OCLE from 'openchemlib-extended'
 
 
 const cheminfo = require('./preprocess/cheminfo');

@@ -1,28 +1,34 @@
-const FS = require('fs');
-const path = require('path');
+import FS from 'fs';
+import path from 'path';
 
-const OCLE = require('openchemlib-extended');
-const predictor = require('nmr-predictor');
+import OCLE from 'openchemlib-extended';
+import predictor from 'nmr-predictor';
 
 const stats = require('../stats');
 const logger = require('../logger');
-
 
 function loadFile(filename) {
   return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
 
 async function start() {
-  var testSet = JSON.parse(loadFile('/../../data/assigned298.json'));// File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
-  let fastDB = JSON.parse(loadFile('../../../nmr-predictor/data/nmrshiftdb2-1h.json'));
+  var testSet = JSON.parse(loadFile('/../../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
+  let fastDB = JSON.parse(
+    loadFile('../../../nmr-predictor/data/nmrshiftdb2-1h.json')
+  );
 
   // var fastDB = JSON.parse(loadFile2('/home/acastillo/Documents/workspaces/cheminfo/nemo2/data/prediction/h1.json'));
   // fastDB.splice(0, 1);
 
   // var fastDB = JSON.parse(loadFile2('/home/acastillo/Documents/data/data/h_clean.json'));/////'/../../data/h_clean.json'));
 
-  logger(`${fastDB.length} ${Object.keys(fastDB[0]).length} ${Object.keys(fastDB[1]).length} ${Object.keys(fastDB[2]).length
-  } ${Object.keys(fastDB[3]).length} ${Object.keys(fastDB[4]).length}`);//  + " " + Object.keys(fastDB[5]).length);
+  logger(
+    `${fastDB.length} ${Object.keys(fastDB[0]).length} ${
+      Object.keys(fastDB[1]).length
+    } ${Object.keys(fastDB[2]).length} ${Object.keys(fastDB[3]).length} ${
+      Object.keys(fastDB[4]).length
+    }`
+  ); //  + " " + Object.keys(fastDB[5]).length);
 
   // logger(fastDB[3]);
   let setup = { ignoreLabile: true, levels: [5, 4, 3, 2] };
@@ -31,7 +37,10 @@ async function start() {
 
   try {
     predictor.setDb(fastDB, 'proton', 'proton');
-    getPerformance(testSet, fastDB, { ignoreLabile: true, levels: setup.levels });
+    getPerformance(testSet, fastDB, {
+      ignoreLabile: true,
+      levels: setup.levels
+    });
     /* var error = getPerformance(testSet, fastDB, { ignoreLabile: true, levels: setup.levels });
     for (let level of setup.levels) {
       logger("Level. " + level);
@@ -63,7 +72,11 @@ async function getPerformance(testSet, fastDB, setup) {
 
   date = new Date();
 
-  logger(`Error: ${error.error} count: ${error.count} min: ${error.min} max: ${error.max}`);
+  logger(
+    `Error: ${error.error} count: ${error.count} min: ${error.min} max: ${
+      error.max
+    }`
+  );
 
   var data = error.hist;
   var sumHist = 0;

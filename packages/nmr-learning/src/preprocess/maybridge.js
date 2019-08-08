@@ -1,13 +1,12 @@
+import FS from 'fs';
 
-const FS = require('fs');
-
-const SD = require('spectra-data');
+import SD from 'spectra-data';
 
 function loadFile(filename) {
   return FS.readFileSync(filename).toString();
 }
 
-function load(path, datasetName, options) {
+export function load(path, datasetName, options) {
   let OCLE = options.OCLE;
   // var keepMolfile = false || options.keepMolfile;
   // var keepMolecule = false || options.keepMolecule;
@@ -16,7 +15,7 @@ function load(path, datasetName, options) {
     filter = options.filter;
   }
 
-  var parts = FS.readdirSync(path).filter((line) => {
+  var parts = FS.readdirSync(path).filter(line => {
     return line.indexOf(filter.filter) > 0;
   });
 
@@ -35,9 +34,11 @@ function load(path, datasetName, options) {
       // let ocl = {value: molecule};
 
       molecule.addImplicitHydrogens();
-      var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') * 1;
+      var nH =
+        molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') *
+        1;
       var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
-      diaIDs.sort(function (a, b) {
+      diaIDs.sort(function(a, b) {
         if (a.atomLabel === b.atomLabel) {
           return b.counter - a.counter;
         }
@@ -101,27 +102,29 @@ function load(path, datasetName, options) {
         }
       }
       var spectraData1H = SD.NMR.fromJcamp(row[2].replace(/\\n/g, '\n'));
-      var signals = spectraData1H.getRanges(
-        {
-          nH: nH,
-          realTop: true,
-          thresholdFactor: 1,
-          // minMaxRatio:0.020,
-          clean: true,
-          compile: true,
-          format: 'new'
-        }
-      );
+      var signals = spectraData1H.getRanges({
+        nH: nH,
+        realTop: true,
+        thresholdFactor: 1,
+        // minMaxRatio:0.020,
+        clean: true,
+        compile: true,
+        format: 'new'
+      });
 
       let sum = 0;
       for (var j = signals.length - 1; j >= 0; j--) {
         if (signals[j].from < 0 || signals[j].from > 11.8) {
           signals.splice(j, 1);
         } else {
-          if (signals[j].from > 2.48 && signals[j].to < 2.59) { // && signals[j].signal[0].multiplicity === 'quint') {
+          if (signals[j].from > 2.48 && signals[j].to < 2.59) {
+            // && signals[j].signal[0].multiplicity === 'quint') {
             signals.splice(j, 1);
-          } else
-          if (signals[j].from > 7.10 && signals[j].to < 7.30 && signals[j].signal[0].multiplicity === 's') {
+          } else if (
+            signals[j].from > 7.1 &&
+            signals[j].to < 7.3 &&
+            signals[j].signal[0].multiplicity === 's'
+          ) {
             signals.splice(j, 1);
           } else {
             sum += signals[j].integral;
@@ -133,8 +136,15 @@ function load(path, datasetName, options) {
         signals[j].integral *= nH / sum;
       }
       for (j = signals.length - 2; j >= 0; j--) {
-        if (Math.abs((signals[j].to + signals[j].from) - (signals[j + 1].to + signals[j + 1].from)) <
-                    (Math.abs(signals[j].to - signals[j].from) + Math.abs(signals[j + 1].to - signals[j + 1].from))) {
+        if (
+          Math.abs(
+            signals[j].to +
+              signals[j].from -
+              (signals[j + 1].to + signals[j + 1].from)
+          ) <
+          Math.abs(signals[j].to - signals[j].from) +
+            Math.abs(signals[j + 1].to - signals[j + 1].from)
+        ) {
           signals[j].from = Math.min(signals[j].from, signals[j + 1].from);
           signals[j].to = Math.max(signals[j].to, signals[j + 1].to);
           signals[j].integral += signals[j + 1].integral;
@@ -149,7 +159,15 @@ function load(path, datasetName, options) {
       });
 
       let sample = {
-        general: { ocl: { id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH, hasLabile } },
+        general: {
+          ocl: {
+            id: molecule.getIDCode(),
+            atom: atoms,
+            diaId: diaIDs,
+            nH: nH,
+            hasLabile
+          }
+        },
         spectra: {
           nmr: [
             {
@@ -172,5 +190,3 @@ function load(path, datasetName, options) {
   }
   return result;
 }
-
-module.exports = { load: load };

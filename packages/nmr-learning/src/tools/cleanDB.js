@@ -1,21 +1,19 @@
-const FS = require('fs');
-const path = require('path');
+import FS from 'fs';
+import path from 'path';
 
-const OCLE = require('openchemlib-extended');
-const predictor = require('nmr-predictor');
+import OCLE from 'openchemlib-extended';
+import predictor from 'nmr-predictor';
 
 const logger = require('../logger');
 const stats = require('../stats');
-
 
 function loadFile(filename) {
   return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
 
 async function start() {
-  var testSet = JSON.parse(loadFile('/../../data/assigned298.json'));// File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
+  var testSet = JSON.parse(loadFile('/../../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
   var fastDB = JSON.parse(loadFile('/../../data/h_27.json'));
-
 
   let setup = { ignoreLabile: true, levels: [6, 5, 4, 3] };
   delete fastDB[3]['gOxHFIeIfRzPhC~dPHeT']; // 2.75072 3.78928 6.54
@@ -144,11 +142,17 @@ async function start() {
   delete fastDB[4]['dcnDPBFPfUBDfYnTfWYjYih@iB@bUP']; // 3.2023099999999998 3.81769 7.02
   delete fastDB[4]['dmvD`FIPfTfYnrZZfB`C~dHBIU@']; // 4.43725 2.15275 6.59
 
-  FS.writeFileSync(`${__dirname}/../../data/h_clean.json`, JSON.stringify(fastDB));
+  FS.writeFileSync(
+    `${__dirname}/../../data/h_clean.json`,
+    JSON.stringify(fastDB)
+  );
 
   try {
     predictor.setDb(fastDB, 'proton', 'proton');
-    getPerformance(testSet, fastDB, { ignoreLabile: true, levels: setup.levels });
+    getPerformance(testSet, fastDB, {
+      ignoreLabile: true,
+      levels: setup.levels
+    });
     /* var error = getPerformance(testSet, fastDB, { ignoreLabile: true, levels: setup.levels });
     logger(error);
      for (let level of setup.levels) {
@@ -181,7 +185,11 @@ async function getPerformance(testSet, fastDB, setup) {
 
   date = new Date();
 
-  logger(`Error: ${error.error} count: ${error.count} min: ${error.min} max: ${error.max}`);
+  logger(
+    `Error: ${error.error} count: ${error.count} min: ${error.min} max: ${
+      error.max
+    }`
+  );
 
   var data = error.hist;
   var sumHist = 0;
