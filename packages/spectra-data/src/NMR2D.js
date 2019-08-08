@@ -6,7 +6,7 @@ import { simulate2D as simule2DNmrSpectrum } from 'nmr-simulation';
 import SD from './SD';
 import peakPicking2D from './peakPicking/peakPicking2D';
 import PeakOptimizer from './peakPicking/peakOptimizer';
-import Filters from './filters/Filters.js';
+import * as Filters from './filters/Filters.js';
 
 
 export default class NMR2D extends SD {
