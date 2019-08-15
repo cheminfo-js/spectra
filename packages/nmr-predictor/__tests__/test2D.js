@@ -1,5 +1,4 @@
 
-require('should');
 const predictor = require('..');
 
 import FS from 'fs';
@@ -70,7 +69,7 @@ describe('2D prediction', function () {
         count++;
       }
     });
-    prediction.length.should.equal(count);
+    expect(prediction.length).toBe(count);
   });
 
   it('HSQC', function () {
@@ -79,8 +78,8 @@ describe('2D prediction', function () {
     // console.log(c13);
     // console.log(h1);
     const prediction = predictor.twoD(h1, c13, molfile, { minLength: 1, maxLength: 4 });
-    prediction.length.should.equal(24);
-    prediction[0].fromChemicalShift.should.greaterThan(0);
-    prediction[0].toChemicalShift.should.greaterThan(0);
+    expect(prediction.length).toBe(24);
+    expect(prediction[0].fromChemicalShift).toBeGreaterThan(0);
+    expect(prediction[0].toChemicalShift).toBeGreaterThan(0);
   });
 });

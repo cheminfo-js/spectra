@@ -1,5 +1,4 @@
 
-require('should');
 const nmr = require('..');
 
 const prediction1h = [
@@ -75,19 +74,19 @@ describe('Simulation from signals', function () {
     const spinSystem = nmr.SpinSystem.fromPrediction(prediction1h);
     spinSystem.ensureClusterSize(options1h);
     var simulation = nmr.simulate1D(spinSystem, options1h);
-    simulation.should.have.property('x');
-    simulation.should.have.property('y');
-    simulation.x.length.should.eql(16384);
-    expect(simulation).toMatchSnapshot();
+    expect(simulation).toHaveProperty('x');
+    expect(simulation).toHaveProperty('y');
+    expect(simulation.x.length).toBe(16384);
+    expect(simulation).to.toMatchSnapshot();
   });
 
   it('simulation 13C gives {x,y} data', function () {
     const spinSystem = nmr.SpinSystem.fromPrediction(prediction13c);
     spinSystem.ensureClusterSize(options13c);
     var simulation = nmr.simulate1D(spinSystem, options13c);
-    simulation.should.have.property('x');
-    simulation.should.have.property('y');
-    simulation.x.length.should.eql(16384);
-    expect(simulation).toMatchSnapshot();
+    expect(simulation).toHaveProperty('x');
+    expect(simulation).toHaveProperty('y');
+    expect(simulation.x.length).toBe(16384);
+    expect(simulation).to.toMatchSnapshot();
   });
 });

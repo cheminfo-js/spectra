@@ -1,4 +1,3 @@
-require('should');
 import path from 'path';
 import FS from 'fs';
 
@@ -19,28 +18,26 @@ describe('spectra-data examples Filters', function() {
       .digitalFilter({ nbPoints: 67 })
       .fourierTransform();
     spectrum.phaseCorrection(-Math.PI / 2, 0);
-    spectrum.getXUnits().should.equal('PPM');
+    expect(spectrum.getXUnits()).toBe('PPM');
   });
   it('zeroFilling nbPoints', function() {
     var spectrum = createSpectraData('../../../../../data-test/fftTest/FID.dx');
-    spectrum
+    expect(spectrum
       .zeroFilling(10)
-      .getNbPoints()
-      .should.equal(10);
-    spectrum
+      .getNbPoints()).toBe(10);
+    expect(spectrum
       .zeroFilling(20)
-      .getNbPoints()
-      .should.equal(20);
+      .getNbPoints()).toBe(20);
   });
   it('absoluteValue', function() {
     var spectrum = createSpectraData(
       '../../../../../data-test/ethylvinylether/1h.jdx'
     );
     let absValue = spectrum.getMagnitude();
-    absValue.sd.spectra.length.should.equal(1);
+    expect(absValue.sd.spectra.length).toBe(1);
     let re = Math.pow(spectrum.getY(10), 2);
     spectrum.setActiveElement(1);
     let im = Math.pow(spectrum.getY(10), 2);
-    absValue.getY(10).should.equal(Math.sqrt(re + im));
+    expect(absValue.getY(10)).toBe(Math.sqrt(re + im));
   });
 });

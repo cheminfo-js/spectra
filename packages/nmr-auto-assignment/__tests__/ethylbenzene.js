@@ -11,8 +11,6 @@ import predictor from 'nmr-predictor';
 
 const autoassigner = require('../src/index');
 
-require('should');
-
 function loadFile(filename) {
   return FS.readFileSync(path.join(__dirname, filename)).toString();
 }
@@ -381,8 +379,8 @@ describe('Auto assignment tests', function() {
         levels: [5, 4, 3, 2]
       }
     );
-    result.getAssignments().length.should.equal(2);
-    result.getAssignments()[0].score.should.greaterThan(0.8);
+    expect(result.getAssignments().length).toBe(2);
+    expect(result.getAssignments()[0].score).toBeGreaterThan(0.8);
   });
 
   it('Ethylbenzene 1H + COSY from molfile + no Chemical shift', async function() {
@@ -406,8 +404,8 @@ describe('Auto assignment tests', function() {
         OCLE: OCLE
       }
     );
-    result.getAssignments().length.should.equal(4);
-    result.getAssignments()[0].score.should.greaterThan(0.9);
+    expect(result.getAssignments().length).toBe(4);
+    expect(result.getAssignments()[0].score).toBeGreaterThan(0.9);
   });
 
   it('Ethylbenzene 1H from molfile', async function() {
@@ -435,7 +433,7 @@ describe('Auto assignment tests', function() {
         levels: [5, 4, 3, 2]
       }
     );
-    result.getAssignments().length.should.equal(12);
-    result.getAssignments()[0].score.should.equal(1);
+    expect(result.getAssignments().length).toBe(12);
+    expect(result.getAssignments()[0].score).toBe(1);
   });
 });

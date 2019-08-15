@@ -1,5 +1,4 @@
 
-require('should');
 const predictor = require('..');
 
 import FS from 'fs';
@@ -68,11 +67,11 @@ M  END
 describe('Ask Erno prediction indometacin', function () {
   it('1H chemical shift prediction no labile', function () {
     const prediction = predictor.proton(molfile, { db });
-    prediction.length.should.eql(15);
+    expect(prediction.length).toBe(15);
   });
 
   it('1H chemical shift prediction with labile', function () {
     const prediction = predictor.proton(molfile, { ignoreLabile: false, db });
-    prediction.length.should.eql(16);
+    expect(prediction.length).toBe(16);
   });
 });

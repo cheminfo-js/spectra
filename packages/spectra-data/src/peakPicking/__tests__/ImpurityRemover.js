@@ -1,4 +1,3 @@
-require('should');
 import FS from 'fs';
 import path from 'path';
 
@@ -25,6 +24,6 @@ describe('spectra-data examples getRanges', function() {
       idPrefix: '1H',
       removeImpurity: { solvent: 'DMSO', nH: 16 }
     });
-    ranges.length.should.equal(8);
+    expect(ranges.length).toBe(8);
   });
 });

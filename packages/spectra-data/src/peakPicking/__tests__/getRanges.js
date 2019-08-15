@@ -1,7 +1,7 @@
+import {toBeDeepCloseTo,toMatchCloseTo} from 'jest-matcher-deep-close-to';
+expect.extend({toBeDeepCloseTo, toMatchCloseTo});
 
 import NMR from '../../NMR';
-
-require('should');
 
 var NbPoints = 101;
 var cs1 = 2;
@@ -54,9 +54,9 @@ function xRange(start, end, NbPoints) {
 
 describe('mixed spectrum with small and big peaks', function () {
   it('sum of integral is correct', function () {
-    totalIntegral.should.approximately(options.nH, 0.1);
+    expect(totalIntegral).to.approximately(options.nH, 0.1);
   });
   it('peakPicking', function () {
-    ranges.length.should.equal(2);
+    expect(ranges.length).toBe(2);
   });
 });

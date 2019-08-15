@@ -1,4 +1,3 @@
-require('should');
 import FS from 'fs';
 import path from 'path';
 
@@ -23,83 +22,83 @@ describe('toJcamp spectra-data examples', function() {
   var spectrum1 = Data.NMR.fromJcamp(createdJcamp1, { fastParse: false });
 
   it('getVector', function() {
-    spectrum0
+    expect(spectrum0
       .getVector({ from: 0.0, to: 10, nbPoints: 4 * 1024 })
-      .length.should.equal(4 * 1024);
-    spectrum1
+      .length).toBe(4 * 1024);
+    expect(spectrum1
       .getVector({ from: 0.0, to: 10, nbPoints: 4 * 1024 })
-      .length.should.equal(4 * 1024);
+      .length).toBe(4 * 1024);
   });
 
   it('getNucleus', function() {
-    spectrum0.getNucleus().should.equal('1H');
-    spectrum1.getNucleus().should.equal('1H');
+    expect(spectrum0.getNucleus()).toBe('1H');
+    expect(spectrum1.getNucleus()).toBe('1H');
   });
   it('getSolventName', function() {
-    spectrum0.getSolventName().should.equal('DMSO');
-    spectrum1.getSolventName().should.equal('DMSO');
+    expect(spectrum0.getSolventName()).toBe('DMSO');
+    expect(spectrum1.getSolventName()).toBe('DMSO');
   });
   it('getFirstX', function() {
-    spectrum0.getFirstX().should.equal(11.00659);
-    spectrum1.getFirstX().should.equal(11.00659);
+    expect(spectrum0.getFirstX()).toBe(11.00659);
+    expect(spectrum1.getFirstX()).toBe(11.00659);
   });
 
   it('getLastX', function() {
-    spectrum0.getLastX().should.equal(-1.009276326659311);
-    spectrum1.getLastX().should.equal(-1.009276326659311);
+    expect(spectrum0.getLastX()).toBe(-1.009276326659311);
+    expect(spectrum1.getLastX()).toBe(-1.009276326659311);
   });
 
   it('getFirstY', function() {
-    spectrum0.getFirstY().should.equal(-119886);
-    spectrum1.getFirstY().should.equal(-119886);
+    expect(spectrum0.getFirstY()).toBe(-119886);
+    expect(spectrum1.getFirstY()).toBe(-119886);
   });
 
   it('getLastY', function() {
     // console.log(spectrum.getLastY());
-    spectrum0.getLastY().should.equal(-109159);
-    spectrum1.getLastY().should.equal(-109159);
+    expect(spectrum0.getLastY()).toBe(-109159);
+    expect(spectrum1.getLastY()).toBe(-109159);
   });
 
   it('getTitle', function() {
-    spectrum0.getTitle().should.equal('109-92-2');
-    spectrum1.getTitle().should.equal('109-92-2');
+    expect(spectrum0.getTitle()).toBe('109-92-2');
+    expect(spectrum1.getTitle()).toBe('109-92-2');
   });
 
   it.skip('Checking X array', function() {
     var x = spectrum0.getXData();
-    x.should.be.instanceof(Array).and.have.lengthOf(16384);
-    x[0].should.equal(11.00659);
+    expect(x).to.be.instanceof(Array).toHaveLength(16384);
+    expect(x[0]).toBe(11.00659);
     x = spectrum1.getXData();
-    x.should.be.instanceof(Array).and.have.lengthOf(16384);
-    x[0].should.equal(11.00659);
+    expect(x).to.be.instanceof(Array).toHaveLength(16384);
+    expect(x[0]).toBe(11.00659);
   });
 
   it.skip('Checking Y array', function() {
     var y = spectrum0.getYData();
-    y.should.be.instanceof(Array).and.have.lengthOf(16384);
-    y[0].should.equal(-119886);
+    expect(y).to.be.instanceof(Array).toHaveLength(16384);
+    expect(y[0]).toBe(-119886);
     y = spectrum1.getYData();
-    y.should.be.instanceof(Array).and.have.lengthOf(16384);
-    y[0].should.equal(-119886);
+    expect(y).to.be.instanceof(Array).toHaveLength(16384);
+    expect(y[0]).toBe(-119886);
   });
 
   it.skip('Checking XY array', function() {
     var xy = spectrum0.getXYData();
-    xy.should.be.instanceof(Array).and.have.lengthOf(2);
-    xy[0].should.be.instanceof(Array).and.have.lengthOf(16384);
-    xy[1].should.be.instanceof(Array).and.have.lengthOf(16384);
-    xy[0][0].should.equal(11.00659);
-    xy[1][0].should.equal(-119886);
+    expect(xy).to.be.instanceof(Array).toHaveLength(2);
+    expect(xy[0]).to.be.instanceof(Array).toHaveLength(16384);
+    expect(xy[1]).to.be.instanceof(Array).toHaveLength(16384);
+    expect(xy[0][0]).toBe(11.00659);
+    expect(xy[1][0]).toBe(-119886);
     xy = spectrum1.getXYData();
-    xy.should.be.instanceof(Array).and.have.lengthOf(2);
-    xy[0].should.be.instanceof(Array).and.have.lengthOf(16384);
-    xy[1].should.be.instanceof(Array).and.have.lengthOf(16384);
-    xy[0][0].should.equal(11.00659);
-    xy[1][0].should.equal(-119886);
+    expect(xy).to.be.instanceof(Array).toHaveLength(2);
+    expect(xy[0]).to.be.instanceof(Array).toHaveLength(16384);
+    expect(xy[1]).to.be.instanceof(Array).toHaveLength(16384);
+    expect(xy[0][0]).toBe(11.00659);
+    expect(xy[1][0]).toBe(-119886);
   });
 
   it('Checking if is2D is false', function() {
-    spectrum0.is2D().should.equal(false);
-    spectrum1.is2D().should.equal(false);
+    expect(spectrum0.is2D()).toBe(false);
+    expect(spectrum1.is2D()).toBe(false);
   });
 });

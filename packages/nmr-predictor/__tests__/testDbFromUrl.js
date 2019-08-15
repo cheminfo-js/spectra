@@ -1,5 +1,4 @@
 
-require('should');
 const predictor = require('..');
 
 const molfile = `Benzene, ethyl-, ID: C100414
@@ -31,7 +30,7 @@ describe('URL JSON 1H prediction', function () {
   it.skip('1H chemical shift prediction expanded', function () {
     predictor.fetchProton(`${path}h1.json`, 'customProton');
     const prediction = predictor.proton(molfile, { group: true, db: 'customProton' });
-    prediction.length.should.eql(5);
+    expect(prediction.length).toBe(5);
   });
 });
 
@@ -39,6 +38,6 @@ describe('URL JSON 13C prediction', function () {
   it.skip('13C chemical shift prediction expanded', function () {
     predictor.fetchCarbon(`${path}nmrshiftdb2-13c.json`, 'customCarbon');
     const prediction = predictor.carbon(molfile, { group: true, db: 'customCarbon' });
-    prediction.length.should.eql(6);
+    expect(prediction.length).toBe(6);
   });
 });

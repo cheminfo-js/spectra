@@ -10,8 +10,6 @@ import predictor from 'nmr-predictor';
 
 import autoassigner from '../src/index';
 
-require('should');
-
 function createSpectraData(filename, label, data) {
   var spectrum = SD.NMR.fromJcamp(
     FS.readFileSync(__dirname + filename).toString()
@@ -81,7 +79,7 @@ describe('Auto-assignment 109-92-2', function() {
         console.log(result.setAssignmentOnRanges(peakPicking, 1));
         console.log(JSON.stringify(peakPicking));*/
     // console.log(JSON.stringify(result.getAssignments()));
-    result.getAssignments().length.should.equal(6);
+    expect(result.getAssignments().length).toBe(6);
 
     // console.log(result.getAssignments()[0].score == result.getAssignments()[1].score)
     // result.getAssignments()[0].score.should.equal(1);

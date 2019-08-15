@@ -1,4 +1,3 @@
-require('should');
 const simulation = require('..');
 
 
@@ -108,7 +107,7 @@ describe('Simulation from signals simple COSY', function () {
       return row.map((value) => (value < 1e-10 ? 0 : 1));
     });
 
-    spectrum.should.eql([
+    expect(spectrum).toEqual([
       [0, 0, 0, 0, 0, 0, 0],
       [0, 1, 0, 1, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],

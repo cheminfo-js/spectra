@@ -1,4 +1,6 @@
-require('should');
+import {toBeDeepCloseTo,toMatchCloseTo} from 'jest-matcher-deep-close-to';
+expect.extend({toBeDeepCloseTo, toMatchCloseTo});
+
 const Data = require('..');
 
 import path from 'path';
@@ -19,56 +21,56 @@ describe('spectra-data examples ethylvinylether/1h.jdx', () => {
   });
 
   it('getNucleus', () => {
-    spectrum.getNucleus().should.equal('1H');
+    expect(spectrum.getNucleus()).toBe('1H');
   });
 
   it('getSolventName', () => {
-    spectrum.getSolventName().should.equal('DMSO');
+    expect(spectrum.getSolventName()).toBe('DMSO');
   });
 
   it('getFirstX', () => {
-    spectrum.getFirstX().should.equal(11.00659);
+    expect(spectrum.getFirstX()).toBe(11.00659);
   });
 
   it('getLastX', () => {
-    spectrum.getLastX().should.equal(-1.009276326659311);
+    expect(spectrum.getLastX()).toBe(-1.009276326659311);
   });
 
   it('getFirstY', () => {
-    spectrum.getFirstY().should.equal(-119886);
+    expect(spectrum.getFirstY()).toBe(-119886);
   });
 
   it('getLastY', () => {
-    spectrum.getLastY().should.equal(-109159);
+    expect(spectrum.getLastY()).toBe(-109159);
   });
 
   it('getTitle', () => {
-    spectrum.getTitle().should.equal('109-92-2');
+    expect(spectrum.getTitle()).toBe('109-92-2');
   });
 
   it('Checking X array', () => {
     var x = spectrum.getXData();
-    x.should.be.instanceof(Array).and.have.lengthOf(16384);
-    x[0].should.equal(11.00659);
+    expect(x).to.be.instanceof(Array).toHaveLength(16384);
+    expect(x[0]).toBe(11.00659);
   });
 
   it('Checking Y array', () => {
     var y = spectrum.getYData();
-    y.should.be.instanceof(Array).and.have.lengthOf(16384);
-    y[0].should.equal(-119886);
+    expect(y).to.be.instanceof(Array).toHaveLength(16384);
+    expect(y[0]).toBe(-119886);
   });
 
   it('Checking XY array', () => {
     var xy = spectrum.getXYData();
-    xy.should.be.instanceof(Array).and.have.lengthOf(2);
-    xy[0].should.be.instanceof(Array).and.have.lengthOf(16384);
-    xy[1].should.be.instanceof(Array).and.have.lengthOf(16384);
-    xy[0][0].should.equal(11.00659);
-    xy[1][0].should.equal(-119886);
+    expect(xy).to.be.instanceof(Array).toHaveLength(2);
+    expect(xy[0]).to.be.instanceof(Array).toHaveLength(16384);
+    expect(xy[1]).to.be.instanceof(Array).toHaveLength(16384);
+    expect(xy[0][0]).toBe(11.00659);
+    expect(xy[1][0]).toBe(-119886);
   });
 
   it('Checking if is2D is false', () => {
-    spectrum.is2D().should.equal(false);
+    expect(spectrum.is2D()).toBe(false);
   });
 
   it('Check peak-picking', () => {
@@ -82,7 +84,7 @@ describe('spectra-data examples ethylvinylether/1h.jdx', () => {
       format: 'new',
       keepPeaks: true
     });
-    peakPicking[0].signal[0].peak.length.should.equal(4);
+    expect(peakPicking[0].signal[0].peak.length).toBe(4);
   });
 
   it('Check peak-picking in zone', () => {
@@ -97,14 +99,14 @@ describe('spectra-data examples ethylvinylether/1h.jdx', () => {
       from: 1,
       to: 2
     });
-    peakPicking.length.should.eql(1);
-    peakPicking[0].signal[0].multiplicity.should.eql('t');
+    expect(peakPicking.length).toBe(1);
+    expect(peakPicking[0].signal[0].multiplicity).toBe('t');
   });
 
   it('getVector', () => {
-    spectrum
+    expect(spectrum
       .getVector({ from: 0, to: 10, nbPoints: 4 * 1024 })
-      .length.should.equal(4 * 1024);
+      .length).toBe(4 * 1024);
   });
 
   it('updateIntegrals', () => {
@@ -121,6 +123,6 @@ describe('spectra-data examples ethylvinylether/1h.jdx', () => {
     ranges[0].to = 6.47;
     var integral0 = ranges[0].integral;
     spectrum.updateIntegrals(ranges, { nH: nH });
-    ranges[0].integral.should.approximately(integral0 / 2, integral0 / nH);
+    expect(ranges[0].integral).to.approximately(integral0 / 2, integral0 / nH);
   });
 });

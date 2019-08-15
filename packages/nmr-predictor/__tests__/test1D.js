@@ -1,4 +1,3 @@
-require('should');
 const predictor = require('..');
 
 import FS from 'fs';
@@ -36,22 +35,22 @@ M  END
 describe('Spinus prediction', function () {
   it('1H chemical shift prediction expanded', function () {
     predictor.spinus(molfile).then((prediction) => {
-      prediction.length.should.equal(10);
+      expect(prediction.length).toBe(10);
     });
   });
   it('1H chemical shift prediction grouped', function () {
     predictor.spinus(molfile, { group: true }).then((prediction) => {
-      prediction.length.should.equal(5);
+      expect(prediction.length).toBe(5);
     });
   });
   it('1H chemical shift prediction expanded from SMILES', function () {
     predictor.spinus('c1ccccc1').then((prediction) => {
-      prediction.length.should.equal(6);
+      expect(prediction.length).toBe(6);
     });
   });
   it('1H chemical shift prediction expanded from SMILES ethylbenzene', function () {
     predictor.spinus('c1ccccc1CC').then((prediction) => {
-      prediction.length.should.equal(10);
+      expect(prediction.length).toBe(10);
     });
   });
 });
@@ -59,8 +58,8 @@ describe('Spinus prediction', function () {
 describe('HOSE assignment prediction', function () {
   it('1H chemical shift prediction expanded', function () {
     const prediction = predictor.proton(molfile, { db: db1H });
-    prediction[0].delta.should.greaterThan(0);
-    prediction.length.should.equal(10);
+    expect(prediction[0].delta).toBeGreaterThan(0);
+    expect(prediction.length).toBe(10);
   });
   // commented until fix the format of signals in HOSE assignment predictor
   // it('1H chemical shift prediction grouped', function () {
@@ -71,15 +70,15 @@ describe('HOSE assignment prediction', function () {
 
   it('13C chemical shift prediction expanded', function () {
     const prediction = predictor.carbon(molfile, { db: db13C });
-    prediction.length.should.eql(8);
-    prediction[0].delta.should.greaterThan(0);
-    prediction[1].delta.should.greaterThan(0);
-    prediction[2].delta.should.greaterThan(0);
-    prediction[3].delta.should.greaterThan(0);
-    prediction[4].delta.should.greaterThan(0);
-    prediction[5].delta.should.greaterThan(0);
-    prediction[6].delta.should.greaterThan(0);
-    prediction[7].delta.should.greaterThan(0);
+    expect(prediction.length).toBe(8);
+    expect(prediction[0].delta).toBeGreaterThan(0);
+    expect(prediction[1].delta).toBeGreaterThan(0);
+    expect(prediction[2].delta).toBeGreaterThan(0);
+    expect(prediction[3].delta).toBeGreaterThan(0);
+    expect(prediction[4].delta).toBeGreaterThan(0);
+    expect(prediction[5].delta).toBeGreaterThan(0);
+    expect(prediction[6].delta).toBeGreaterThan(0);
+    expect(prediction[7].delta).toBeGreaterThan(0);
   });
   // commented until fix the format of signals in HOSE assignment predictor
   // it('13C chemical shift prediction grouped', function () {
