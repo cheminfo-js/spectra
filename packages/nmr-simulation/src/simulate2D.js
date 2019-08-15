@@ -75,9 +75,11 @@ function unitsToArrayPoints(x, from, to, nbPoints) {
 function addPeak(matrix, peak) {
   var nSigma = 4;
   var fromX = Math.max(0, Math.round(peak.x - peak.widthX * nSigma));
-  var toX = Math.min(matrix[0].length - 1, Math.round(peak.x + peak.widthX * nSigma));
+  // var toX = Math.min(matrix[0].length - 1, Math.round(peak.x + peak.widthX * nSigma));
+  var toX = Math.min(matrix.columns - 1, Math.round(peak.x + peak.widthX * nSigma));
   var fromY = Math.max(0, Math.round(peak.y - peak.widthY * nSigma));
-  var toY = Math.min(matrix.length - 1, Math.round(peak.y + peak.widthY * nSigma));
+  // var toY = Math.min(matrix.length - 1, Math.round(peak.y + peak.widthY * nSigma));
+  var toY = Math.min(matrix.rows - 1, Math.round(peak.y + peak.widthY * nSigma));
 
   var squareSigmaX = peak.widthX * peak.widthX;
   var squareSigmaY = peak.widthY * peak.widthY;
@@ -86,7 +88,8 @@ function addPeak(matrix, peak) {
       var exponent = Math.pow(peak.x - i, 2) / squareSigmaX +
                 Math.pow(peak.y - j, 2) / squareSigmaY;
       var result = 10000 * peak.z * Math.exp(-exponent);
-      matrix[j][i] += result;
+      // matrix[j][i] += result;
+      matrix.set(j, i, matrix.get(j, i) + result);
     }
   }
 }
