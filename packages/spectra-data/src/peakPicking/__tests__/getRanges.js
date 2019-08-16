@@ -54,7 +54,7 @@ function xRange(start, end, NbPoints) {
 
 describe('mixed spectrum with small and big peaks', function () {
   it('sum of integral is correct', function () {
-    expect(totalIntegral).to.approximately(options.nH, 0.1);
+    expect(totalIntegral).toBeDeepCloseTo(options.nH, 1);
   });
   it('peakPicking', function () {
     expect(ranges.length).toBe(2);

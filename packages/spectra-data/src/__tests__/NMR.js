@@ -1,14 +1,15 @@
 import {toBeDeepCloseTo,toMatchCloseTo} from 'jest-matcher-deep-close-to';
 expect.extend({toBeDeepCloseTo, toMatchCloseTo});
 
-const Data = require('..');
+// const Data = require('..');
+import * as Data from '..';
 
 import path from 'path';
 import FS from 'fs';
 
 function createSpectraData(filename) {
   return Data.NMR.fromJcamp(
-    fs.readFileSync(path.join(__dirname, filename)).toString()
+    FS.readFileSync(path.join(__dirname, filename)).toString()
   );
 }
 
@@ -50,21 +51,26 @@ describe('spectra-data examples ethylvinylether/1h.jdx', () => {
 
   it('Checking X array', () => {
     var x = spectrum.getXData();
-    expect(x).to.be.instanceof(Array).toHaveLength(16384);
+    expect(x).toBeInstanceOf(Array);
+    expect(x).toHaveLength(16384);
     expect(x[0]).toBe(11.00659);
   });
 
   it('Checking Y array', () => {
     var y = spectrum.getYData();
-    expect(y).to.be.instanceof(Array).toHaveLength(16384);
+    expect(y).toBeInstanceOf(Array);
+    expect(y).toHaveLength(16384);
     expect(y[0]).toBe(-119886);
   });
 
   it('Checking XY array', () => {
     var xy = spectrum.getXYData();
-    expect(xy).to.be.instanceof(Array).toHaveLength(2);
-    expect(xy[0]).to.be.instanceof(Array).toHaveLength(16384);
-    expect(xy[1]).to.be.instanceof(Array).toHaveLength(16384);
+    expect(xy).toBeInstanceOf(Array);
+    expect(xy).toHaveLength(2);
+    expect(xy[0]).toBeInstanceOf(Array);
+    expect(xy[0]).toHaveLength(16384);
+    expect(xy[1]).toBeInstanceOf(Array);
+    expect(xy[1]).toHaveLength(16384);
     expect(xy[0][0]).toBe(11.00659);
     expect(xy[1][0]).toBe(-119886);
   });
@@ -123,6 +129,6 @@ describe('spectra-data examples ethylvinylether/1h.jdx', () => {
     ranges[0].to = 6.47;
     var integral0 = ranges[0].integral;
     spectrum.updateIntegrals(ranges, { nH: nH });
-    expect(ranges[0].integral).to.approximately(integral0 / 2, integral0 / nH);
+    expect(ranges[0].integral).toBeDeepCloseTo(integral0 / 2, 1)
   });
 });

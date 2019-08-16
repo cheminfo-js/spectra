@@ -1,11 +1,11 @@
 import FS from 'fs';
 import path from 'path';
 
-const Data = require('../../..');
+import * as Data from '../..';
 
 function createSpectraData(filename) {
   var spectrum = Data.NMR.fromJcamp(
-    FS.readFileSync(path.join(__dirname, filename)).toString()
+    FS.readFileSync(path.join(__dirname, filename), 'utf8')
   );
   return spectrum;
 }

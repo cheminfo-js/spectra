@@ -1,8 +1,7 @@
 import FS from 'fs';
 import path from 'path';
 
-const Data = require('../../..');
-
+import * as Data from '../..';
 function createSpectraData(filename) {
   var spectrum = Data.NMR.fromJcamp(
     FS.readFileSync(path.join(__dirname, filename)).toString()
@@ -66,33 +65,42 @@ describe('toJcamp spectra-data examples', function() {
 
   it.skip('Checking X array', function() {
     var x = spectrum0.getXData();
-    expect(x).to.be.instanceof(Array).toHaveLength(16384);
+    expect(x).toBeInstanceOf(Array);
+    expect(x).toHaveLength(16384);
     expect(x[0]).toBe(11.00659);
     x = spectrum1.getXData();
-    expect(x).to.be.instanceof(Array).toHaveLength(16384);
+    expect(x).toBeInstanceOf(Array);
+    expect(x).toHaveLength(16384);
     expect(x[0]).toBe(11.00659);
   });
 
   it.skip('Checking Y array', function() {
     var y = spectrum0.getYData();
-    expect(y).to.be.instanceof(Array).toHaveLength(16384);
+    expect(y).toBeInstanceOf(Array);
+    expect(y).toHaveLength(16384);
     expect(y[0]).toBe(-119886);
     y = spectrum1.getYData();
-    expect(y).to.be.instanceof(Array).toHaveLength(16384);
+    expect(y).toBeInstanceOf(Array);
+    expect(y).toHaveLength(16384);
     expect(y[0]).toBe(-119886);
   });
 
   it.skip('Checking XY array', function() {
     var xy = spectrum0.getXYData();
-    expect(xy).to.be.instanceof(Array).toHaveLength(2);
-    expect(xy[0]).to.be.instanceof(Array).toHaveLength(16384);
-    expect(xy[1]).to.be.instanceof(Array).toHaveLength(16384);
+    expect(xy).toBeInstanceOf(Array);
+    expect(xy[0]).toBeInstanceOf(Array);
+    expect(xy[0]).toHaveLength(16384);
+    expect(xy[1]).toBeInstanceOf(Array);
+    expect(xy[1]).toHaveLength(16384);
     expect(xy[0][0]).toBe(11.00659);
     expect(xy[1][0]).toBe(-119886);
     xy = spectrum1.getXYData();
-    expect(xy).to.be.instanceof(Array).toHaveLength(2);
-    expect(xy[0]).to.be.instanceof(Array).toHaveLength(16384);
-    expect(xy[1]).to.be.instanceof(Array).toHaveLength(16384);
+    expect(xy).toBeInstanceOf(Array);
+    expect(xy).toHaveLength(2);
+    expect(xy[0]).toBeInstanceOf(Array);
+    expect(xy[0]).toHaveLength(16384);
+    expect(xy[1]).toBeInstanceOf(Array);
+    expect(xy[1]).toHaveLength(16384);
     expect(xy[0][0]).toBe(11.00659);
     expect(xy[1][0]).toBe(-119886);
   });

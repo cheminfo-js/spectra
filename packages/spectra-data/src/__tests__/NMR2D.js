@@ -4,7 +4,8 @@ expect.extend({toBeDeepCloseTo, toMatchCloseTo});
 import path from 'path';
 import FS from 'fs';
 
-const Data = require('..');
+// const Data = require('..');
+import * as Data from '..';
 
 function createSpectraData(filename) {
   var spectrum = Data.NMR2D.fromJcamp(
