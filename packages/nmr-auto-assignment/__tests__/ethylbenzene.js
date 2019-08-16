@@ -6,10 +6,8 @@ import FS from 'fs';
 import path from 'path';
 
 import OCLE from 'openchemlib-extended';
-import predictor from 'nmr-predictor';
-// import SD from 'spectra-data';
-
-const autoassigner = require('../src/index');
+import * as predictor from 'nmr-predictor';
+import {default as autoassigner} from '../src/index';
 
 function loadFile(filename) {
   return FS.readFileSync(path.join(__dirname, filename)).toString();

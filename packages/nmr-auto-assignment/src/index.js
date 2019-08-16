@@ -1,7 +1,7 @@
 /**
  * Created by acastillo on 7/5/16.
  */
-import nmrUtilities from 'spectra-nmr-utilities';
+import * as nmrUtilities from 'spectra-nmr-utilities';
 
 import SpinSystem from './SpinSystem2';
 import AutoAssigner from './AutoAssigner2';

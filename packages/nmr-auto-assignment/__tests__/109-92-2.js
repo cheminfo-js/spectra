@@ -4,11 +4,10 @@
 
 import FS from 'fs';
 
-import SD from 'spectra-data';
+import * as SD from 'spectra-data';
 import OCLE from 'openchemlib-extended';
-import predictor from 'nmr-predictor';
-
-import autoassigner from '../src/index';
+import * as predictor from 'nmr-predictor';
+import {default as autoassigner} from '../src/index';
 
 function createSpectraData(filename, label, data) {
   var spectrum = SD.NMR.fromJcamp(

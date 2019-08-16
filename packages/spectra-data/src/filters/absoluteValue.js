@@ -1,5 +1,3 @@
-import { NMR } from '../index';
-
 export default function absoluteValue(spectrum) {
   if (spectrum.is2D()) throw TypeError('The data should be one dimensional');
   if (spectrum.getXUnits(0).toLowerCase() !== 'ppm') throw TypeError('NMR data should be in ppm');
@@ -16,5 +14,5 @@ export default function absoluteValue(spectrum) {
     return Math.sqrt(imValSquare + val * val);
   });
 
-  return new NMR(result);
+  return result;
 }

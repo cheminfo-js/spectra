@@ -3,7 +3,7 @@ const predictor = require('..');
 
 import FS from 'fs';
 
-const db = JSON.parse(fs.readFileSync(`${__dirname}/../data/h1.json`, 'utf8'));
+const db = JSON.parse(FS.readFileSync(`${__dirname}/../data/h1.json`, 'utf8'));
 
 const molfile = `
   -ISIS-  07020715012D

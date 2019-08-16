@@ -73,7 +73,9 @@ describe('Simulation from signals', function () {
   it('simulation 1H gives {x,y} data', function () {
     const spinSystem = nmr.SpinSystem.fromPrediction(prediction1h);
     spinSystem.ensureClusterSize(options1h);
+    console.log(spinSystem)
     var simulation = nmr.simulate1D(spinSystem, options1h);
+
     expect(simulation).toHaveProperty('x');
     expect(simulation).toHaveProperty('y');
     expect(simulation.x.length).toBe(16384);

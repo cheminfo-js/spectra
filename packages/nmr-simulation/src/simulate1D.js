@@ -146,7 +146,7 @@ export default function simulate1d(spinSystem, options) {
           for (var k = 0; k < row.length; k++) {
             if (row[k] !== 0) {
               // rhoip.set(i, k, rhoip.get(i, k) + row[k]);
-              rhoip.set(i, k, rhoip.get(i, k) + V.get(j, K));
+              rhoip.set(i, k, rhoip.get(i, k) + V.get(j, k));
             }
           }
         }

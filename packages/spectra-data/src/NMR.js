@@ -90,7 +90,7 @@ export default class NMR extends SD {
      * @return {NMR} absolute value spectra-data instance.
      */
   getMagnitude() {
-    return Filters.absoluteValue(this);
+    return new this(Filters.absoluteValue(this));
   }
 
   /**

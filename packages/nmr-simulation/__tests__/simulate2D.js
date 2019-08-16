@@ -103,11 +103,18 @@ describe('Simulation from signals simple COSY', function () {
   it('simulation 1H-1H gives matrix data', function () {
     var spectrum = simulation.simulate2D(prediction, optionsCOSY);
     // Lets make a logical matrix. Small values are 0
-    spectrum = spectrum.map((row) => {
-      return row.map((value) => (value < 1e-10 ? 0 : 1));
-    });
-
-    expect(spectrum).toEqual([
+    let rows = spectrum.rows;
+    let columns = spectrum.columns;
+    let array2D = [];
+    for (let r = 0; r < rows; r++) {
+      let row = new Array(columns);
+      for (let c = 0; c < columns; c++) {
+          row[c] = spectrum.get(r, c) < 1e-10 ? 0 : 1;
+      }
+      array2D.push(row);
+    }
+  
+    expect(array2D).toEqual([
       [0, 0, 0, 0, 0, 0, 0],
       [0, 1, 0, 1, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
