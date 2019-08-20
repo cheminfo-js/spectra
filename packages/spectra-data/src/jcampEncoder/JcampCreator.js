@@ -1,7 +1,9 @@
 import {encode} from './VectorEncoder';
 
 const CRLF = '\r\n';
-const version = `Cheminfo tools ${require('../../package.json').version}`;
+// const v = require('../../jj.json');
+import {version as vx} from '../../package.json';
+const version = `Cheminfo tools ${vx}`;
 
 const defaultParameters = { encode: 'DIFDUP', yFactor: 1, type: 'SIMPLE', keep: [] };
 /**
