@@ -1,11 +1,10 @@
-var diagonalError = 0.05;
-var tolerance = 0.05;
+let diagonalError = 0.05;
+let tolerance = 0.05;
 
 export default {
-
-  clean: function (peaks, threshold) {
-    var max = Number.NEGATIVE_INFINITY;
-    var i;
+  clean: function(peaks, threshold) {
+    let max = Number.NEGATIVE_INFINITY;
+    let i;
     // double min = Double.MAX_VALUE;
     for (i = peaks.length - 1; i >= 0; i--) {
       if (Math.abs(peaks[i].z) > max) {
@@ -21,13 +20,13 @@ export default {
     return peaks;
   },
 
-  enhanceSymmetry: function (signals) {
-    var properties = initializeProperties(signals);
-    var output = signals;
+  enhanceSymmetry: function(signals) {
+    let properties = initializeProperties(signals);
+    let output = signals;
 
     // First step of the optimization: Symmetry validation
-    var i, hits, index;
-    var signal;
+    let i, hits, index;
+    let signal;
     for (i = output.length - 1; i >= 0; i--) {
       signal = output[i];
       if (signal.peaks.length > 1) {
@@ -53,22 +52,29 @@ export default {
 
     // Now, each peak have a score between 0 and 4, we can complete the patterns which
     // contains peaks with high scores, and finally, we can remove peaks with scores 0 and 1
-    var count = 0;
+    let count = 0;
     for (i = output.length - 1; i >= 0; i--) {
       if (properties[i][0] !== 0 && properties[i][1] > 2) {
         count++;
-        count += completeMissingIfNeeded(output, properties, output[i], properties[i]);
+        count += completeMissingIfNeeded(
+          output,
+          properties,
+          output[i],
+          properties[i],
+        );
       }
       if (properties[i][1] >= 2 && properties[i][0] === 0) {
         count++;
       }
     }
 
-    var toReturn = new Array(count);
+    let toReturn = new Array(count);
     count--;
     for (i = output.length - 1; i >= 0; i--) {
-      if (properties[i][0] !== 0 && properties[i][1] > 2
-     || properties[i][0] === 0 && properties[i][1] > 1) {
+      if (
+        (properties[i][0] !== 0 && properties[i][1] > 2) ||
+        (properties[i][0] === 0 && properties[i][1] > 1)
+      ) {
         toReturn[count--] = output[i];
       }
     }
@@ -76,30 +82,34 @@ export default {
   },
 
   /**
-     * This function maps the corresponding 2D signals to the given set of 1D signals
-     * @param {Array} signals2D
-     * @param {Array} references
-     * @private
-     */
-  alignDimensions: function (signals2D, references) {
+   * This function maps the corresponding 2D signals to the given set of 1D signals
+   * @param {Array} signals2D
+   * @param {Array} references
+   * @private
+   */
+  alignDimensions: function(signals2D, references) {
     // For each reference dimension
-    for (var i = 0; i < references.length; i++) {
-      var ref = references[i];
+    for (let i = 0; i < references.length; i++) {
+      let ref = references[i];
       if (ref) {
         alignSingleDimension(signals2D, ref);
       }
     }
-  }
+  },
 };
 
 function completeMissingIfNeeded(output, properties, thisSignal, thisProp) {
   // Check for symmetry
-  var index = exist(output, properties, thisSignal, -thisProp[0], true);
-  var addedPeaks = 0;
-  var newSignal = null;
-  var tmpProp = null;
-  if (index < 0) { // If this signal have no a symmetry image, we have to include it
-    newSignal = { nucleusX: thisSignal.nucleusX, nucleusY: thisSignal.nucleusY };
+  let index = exist(output, properties, thisSignal, -thisProp[0], true);
+  let addedPeaks = 0;
+  let newSignal = null;
+  let tmpProp = null;
+  if (index < 0) {
+    // If this signal have no a symmetry image, we have to include it
+    newSignal = {
+      nucleusX: thisSignal.nucleusX,
+      nucleusY: thisSignal.nucleusY,
+    };
     newSignal.resolutionX = thisSignal.resolutionX;
     newSignal.resolutionY = thisSignal.resolutionY;
     newSignal.shiftX = thisSignal.shiftY;
@@ -111,9 +121,9 @@ function completeMissingIfNeeded(output, properties, thisSignal, thisProp) {
     addedPeaks++;
   }
   // Check for diagonal peaks
-  var j, signal;
-  var diagX = false;
-  var diagY = false;
+  let j, signal;
+  let diagX = false;
+  let diagY = false;
   for (j = output.length - 1; j >= 0; j--) {
     signal = output[j];
     if (properties[j][0] === 0) {
@@ -126,7 +136,10 @@ function completeMissingIfNeeded(output, properties, thisSignal, thisProp) {
     }
   }
   if (diagX === false) {
-    newSignal = { nucleusX: thisSignal.nucleusX, nucleusY: thisSignal.nucleusY };
+    newSignal = {
+      nucleusX: thisSignal.nucleusX,
+      nucleusY: thisSignal.nucleusY,
+    };
     newSignal.resolutionX = thisSignal.resolutionX;
     newSignal.resolutionY = thisSignal.resolutionY;
     newSignal.shiftX = thisSignal.shiftX;
@@ -138,7 +151,10 @@ function completeMissingIfNeeded(output, properties, thisSignal, thisProp) {
     addedPeaks++;
   }
   if (diagY === false) {
-    newSignal = { nucleusX: thisSignal.nucleusX, nucleusY: thisSignal.nucleusY };
+    newSignal = {
+      nucleusX: thisSignal.nucleusX,
+      nucleusY: thisSignal.nucleusY,
+    };
     newSignal.resolutionX = thisSignal.resolutionX;
     newSignal.resolutionY = thisSignal.resolutionY;
     newSignal.shiftX = thisSignal.shiftY;
@@ -154,11 +170,11 @@ function completeMissingIfNeeded(output, properties, thisSignal, thisProp) {
 
 // Check for any diagonal peak that match this cross peak
 function checkCrossPeaks(output, properties, signal, updateProperties) {
-  var hits = 0;
-  var shift = signal.shiftX * 4;
-  var crossPeaksX = [];
-  var crossPeaksY = [];
-  var cross;
+  let hits = 0;
+  let shift = signal.shiftX * 4;
+  let crossPeaksX = [];
+  let crossPeaksY = [];
+  let cross;
   for (var i = output.length - 1; i >= 0; i--) {
     cross = output[i];
     if (properties[i][0] !== 0) {
@@ -182,7 +198,7 @@ function checkCrossPeaks(output, properties, signal, updateProperties) {
     }
   }
   // Update found crossPeaks and diagonal peak
-  shift /= (crossPeaksX.length + crossPeaksY.length + 4);
+  shift /= crossPeaksX.length + crossPeaksY.length + 4;
   if (crossPeaksX.length > 0) {
     for (i = crossPeaksX.length - 1; i >= 0; i--) {
       output[crossPeaksX[i]].shiftX = shift;
@@ -199,7 +215,7 @@ function checkCrossPeaks(output, properties, signal, updateProperties) {
 }
 
 function exist(output, properties, signal, type, symmetricSearch) {
-  for (var i = output.length - 1; i >= 0; i--) {
+  for (let i = output.length - 1; i >= 0; i--) {
     if (properties[i][0] === type) {
       if (distanceTo(signal, output[i], symmetricSearch) < tolerance) {
         if (!symmetricSearch) {
@@ -230,13 +246,13 @@ function exist(output, properties, signal, type, symmetricSearch) {
  * @private
  */
 function initializeProperties(signals) {
-  var signalsProperties = new Array(signals.length);
-  for (var i = signals.length - 1; i >= 0; i--) {
+  let signalsProperties = new Array(signals.length);
+  for (let i = signals.length - 1; i >= 0; i--) {
     signalsProperties[i] = [0, 0];
     // We check if it is a diagonal peak
     if (Math.abs(signals[i].shiftX - signals[i].shiftY) <= diagonalError) {
       signalsProperties[i][1] = 1;
-      var shift = (signals[i].shiftX * 2 + signals[i].shiftY) / 3.0;
+      let shift = (signals[i].shiftX * 2 + signals[i].shiftY) / 3.0;
       signals[i].shiftX = shift;
       signals[i].shiftY = shift;
     } else {
@@ -261,21 +277,23 @@ function initializeProperties(signals) {
  */
 function distanceTo(a, b, toImage) {
   if (!toImage) {
-    return Math.sqrt(Math.pow(a.shiftX - b.shiftX, 2)
-   + Math.pow(a.shiftY - b.shiftY, 2));
+    return Math.sqrt(
+      Math.pow(a.shiftX - b.shiftX, 2) + Math.pow(a.shiftY - b.shiftY, 2),
+    );
   } else {
-    return Math.sqrt(Math.pow(a.shiftX - b.shiftY, 2)
-   + Math.pow(a.shiftY - b.shiftX, 2));
+    return Math.sqrt(
+      Math.pow(a.shiftX - b.shiftY, 2) + Math.pow(a.shiftY - b.shiftX, 2),
+    );
   }
 }
 
 function alignSingleDimension(signals2D, references) {
   // For each 2D signal
-  var center = 0;
-  var width = 0;
-  var i, j;
+  let center = 0;
+  let width = 0;
+  let i, j;
   for (i = 0; i < signals2D.length; i++) {
-    var signal2D = signals2D[i];
+    let signal2D = signals2D[i];
     for (j = 0; j < references.length; j++) {
       center = (references[j].startX + references[j].stopX) / 2;
       width = Math.abs(references[j].startX - references[j].stopX) / 2;

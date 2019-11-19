@@ -37,7 +37,7 @@ export default class Zones extends Array {
     // 1. Collapse all the equivalent predictions
     const nPredictions = predictions.length;
     const ids = new Array(nPredictions);
-    var i, j, diaIDs, prediction, width, center, jc;
+    let i, j, diaIDs, prediction, width, center, jc;
     for (i = 0; i < nPredictions; i++) {
       if (!ids[predictions[i].diaIDs[0]]) {
         ids[predictions[i].diaIDs[0]] = [i];
@@ -67,7 +67,7 @@ export default class Zones extends Array {
         from: prediction.delta - width,
         to: prediction.delta + width,
         integral: 1,
-        signal: [predictions[diaIDs[0]]]
+        signal: [predictions[diaIDs[0]]],
       };
       for (j = 1; j < diaIDs.length; j++) {
         result[i].signal.push(predictions[diaIDs[j]]);

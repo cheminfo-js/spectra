@@ -1,9 +1,11 @@
-import { NMR } from '../index';
-
 export default function absoluteValue(spectrum) {
   if (spectrum.is2D()) throw TypeError('The data should be one dimensional');
-  if (spectrum.getXUnits(0).toLowerCase() !== 'ppm') throw TypeError('NMR data should be in ppm');
-  if (spectrum.getXUnits(1).toLowerCase() !== 'ppm') throw TypeError('The data has no imaginary part');
+  if (spectrum.getXUnits(0).toLowerCase() !== 'ppm') {
+    throw TypeError('NMR data should be in ppm');
+  }
+  if (spectrum.getXUnits(1).toLowerCase() !== 'ppm') {
+    throw TypeError('The data has no imaginary part');
+  }
 
   let re = spectrum.getYData(0);
   let im = spectrum.getYData(1);
@@ -16,5 +18,5 @@ export default function absoluteValue(spectrum) {
     return Math.sqrt(imValSquare + val * val);
   });
 
-  return new NMR(result);
+  return result;
 }

@@ -1,10 +1,8 @@
-
-require('should');
-const predictor = require('..');
-
 import FS from 'fs';
 
-const db = JSON.parse(fs.readFileSync(`${__dirname}/../data/h1.json`, 'utf8'));
+import * as predictor from '../src/index';
+
+const db = JSON.parse(FS.readFileSync(`${__dirname}/../data/h1.json`, 'utf8'));
 
 const molfile = `
   -ISIS-  07020715012D
@@ -65,14 +63,14 @@ const molfile = `
 M  END
 `;
 
-describe('Ask Erno prediction indometacin', function () {
-  it('1H chemical shift prediction no labile', function () {
+describe('Ask Erno prediction indometacin', function() {
+  it('1H chemical shift prediction no labile', function() {
     const prediction = predictor.proton(molfile, { db });
-    prediction.length.should.eql(15);
+    expect(prediction).toHaveLength(15);
   });
 
-  it('1H chemical shift prediction with labile', function () {
+  it('1H chemical shift prediction with labile', function() {
     const prediction = predictor.proton(molfile, { ignoreLabile: false, db });
-    prediction.length.should.eql(16);
+    expect(prediction).toHaveLength(16);
   });
 });

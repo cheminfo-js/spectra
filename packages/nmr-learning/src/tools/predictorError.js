@@ -23,21 +23,21 @@ const setup = {
   errorCS: -0.15,
   timeout: 2000,
   maxSolutions: 2500,
-  nUnassigned: 1
+  nUnassigned: 1,
 };
 
-var data = loadData();
+let data = loadData();
 // let fastDB = JSON.parse(loadFile('../../../nmr-predictor/data/db-1h.json'));
 // let fastDB = JSON.parse(loadFile('../../data/h_clean.json'));
 
 // let fastDB = JSON.parse(FS.readFileSync('/home/acastillo/Documents/git/cheminfo-js/openchemlib-extended/kaggleCS.json').toString())['H'];
 let fastDB = JSON.parse(
-  FS.readFileSync('../nmr-predictor/data/kaggleCS.json').toString()
+  FS.readFileSync('../nmr-predictor/data/kaggleCS.json').toString(),
 ).H;
 fastDB = dbutils.reduceDB(fastDB);
 FS.writeFileSync(
   '/home/acastillo/Documents/git/cheminfo-js/openchemlib-extended/kaggleCS2-1h.json',
-  JSON.stringify(fastDB)
+  JSON.stringify(fastDB),
 );
 
 getPerformance(data, fastDB, setup);
@@ -47,27 +47,25 @@ async function getPerformance(testSet, fastDB, setup) {
   let start = date.getTime();
   predictor.setDb(fastDB, 'proton', 'proton');
   // var error = comparePredictors(datasetSim,{"db":db,"dataset":testSet,"iteration":"="+iteration});
-  var histParams = { from: 0, to: 1, nBins: 30 };
-  var error = await stats.cmp2asg(testSet, predictor, {
+  let histParams = { from: 0, to: 1, nBins: 30 };
+  let error = await stats.cmp2asg(testSet, predictor, {
     db: fastDB,
     dataset: testSet,
     ignoreLabile: setup.ignoreLabile,
     histParams: histParams,
     levels: setup.levels,
     use: 'median',
-    OCLE: OCLE
+    OCLE: OCLE,
   });
 
   date = new Date();
 
   logger(
-    `Error: ${error.error} count: ${error.count} min: ${error.min} max: ${
-      error.max
-    }`
+    `Error: ${error.error} count: ${error.count} min: ${error.min} max: ${error.max}`,
   );
 
-  var data = error.hist;
-  var sumHist = 0;
+  let data = error.hist;
+  let sumHist = 0;
   for (let k = 0; k < data.length; k++) {
     sumHist += data[k].y / error.count;
     if (sumHist > 0) {

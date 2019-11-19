@@ -14,31 +14,31 @@ export default class SpinSystem {
   }
 
   static fromSpinusPrediction(result) {
-    var lines = result.split('\n');
-    var nspins = lines.length - 1;
-    var cs = new Array(nspins);
-    var integrals = new Array(nspins);
-    var ids = {};
-    var jc = Matrix.zeros(nspins, nspins);
+    let lines = result.split('\n');
+    let nspins = lines.length - 1;
+    let cs = new Array(nspins);
+    let integrals = new Array(nspins);
+    let ids = {};
+    let jc = Matrix.zeros(nspins, nspins);
     for (let i = 0; i < nspins; i++) {
       var tokens = lines[i].split('\t');
-      cs[i] = +tokens[2];
+      cs[i] = Number(tokens[2]);
       ids[tokens[0] - 1] = i;
-      integrals[i] = +tokens[5];// Is it always 1??
+      integrals[i] = Number(tokens[5]); // Is it always 1??
     }
     for (let i = 0; i < nspins; i++) {
       tokens = lines[i].split('\t');
-      var nCoup = (tokens.length - 4) / 3;
+      let nCoup = (tokens.length - 4) / 3;
       for (j = 0; j < nCoup; j++) {
-        var withID = tokens[4 + 3 * j] - 1;
-        var idx = ids[withID];
+        let withID = tokens[4 + 3 * j] - 1;
+        let idx = ids[withID];
         // jc[i][idx] = +tokens[6 + 3 * j];
-        jc.set(i, idx, jc.get(i, idx)+tokens[6 + 3 * j]);
+        jc.set(i, idx, Number(tokens[6 + 3 * j]));
       }
     }
 
     for (var j = 0; j < nspins; j++) {
-      for (var i = j; i < nspins; i++) {
+      for (let i = j; i < nspins; i++) {
         jc.set(j, i, jc.get(i, j));
       }
     }
@@ -52,7 +52,7 @@ export default class SpinSystem {
     const jc = Matrix.zeros(nSpins, nSpins);
     const multiplicity = new Array(nSpins);
     const ids = {};
-    var i, k, j;
+    let i, k, j;
     for (i = 0; i < nSpins; i++) {
       cs[i] = predictions[i].delta;
       ids[predictions[i].atomIDs[0]] = i;
@@ -63,15 +63,21 @@ export default class SpinSystem {
       for (k = 0; k < j.length; k++) {
         // jc[ids[predictions[i].atomIDs[0]]][ids[j[k].assignment]] = j[k].coupling;
         // jc[ids[j[k].assignment]][ids[predictions[i].atomIDs[0]]] = j[k].coupling;
-        jc.set(ids[predictions[i].atomIDs[0]], ids[j[k].assignment], j[k].coupling);
-        jc.set(ids[j[k].assignment], ids[predictions[i].atomIDs[0]], j[k].coupling);
+        jc.set(
+          ids[predictions[i].atomIDs[0]],
+          ids[j[k].assignment],
+          j[k].coupling,
+        );
+        jc.set(
+          ids[j[k].assignment],
+          ids[predictions[i].atomIDs[0]],
+          j[k].coupling,
+        );
       }
       multiplicity[i] = predictions[i].integral + 1;
     }
-
     return new SpinSystem(cs, jc, multiplicity);
   }
-
 
   static ungroupAtoms(prediction) {
     let result = [];
@@ -105,38 +111,46 @@ export default class SpinSystem {
     return result;
   }
 
-
   _initClusters() {
-    this.clusters = simpleClustering(this.connectivity, { out: 'indexes' });
+    this.clusters = simpleClustering(this.connectivity.to2DArray(), {
+      out: 'indexes',
+    });
   }
 
+  //I am asumming that couplingConstants is a square matrix
   _initConnectivity() {
     const couplings = this.couplingConstants;
-    const connectivity = Matrix.ones(couplings.length, couplings.length);
-    for (var i = 0; i < couplings.length; i++) {
-      for (var j = i; j < couplings[i].length; j++) {
-        if (couplings[i][j] === 0) {
-          connectivity[i][j] = 0;
-          connectivity[j][i] = 0;
+    const connectivity = Matrix.ones(couplings.rows, couplings.rows);
+    for (let i = 0; i < couplings.rows; i++) {
+      for (let j = i; j < couplings.columns; j++) {
+        if (couplings.get(i, j) === 0) {
+          connectivity.set(i, j, 0);
+          connectivity.set(j, i, 0);
         }
       }
     }
     this.connectivity = connectivity;
   }
 
-
   _calculateBetas(J, frequency) {
-    var betas = Matrix.zeros(J.length, J.length);
+    let betas = Matrix.zeros(J.rows, J.rows);
     // Before clustering, we must add hidden J, we could use molecular information if available
-    var i, j;
+    let i, j;
     for (i = 0; i < J.rows; i++) {
       for (j = i; j < J.columns; j++) {
-        if ((this.chemicalShifts[i] - this.chemicalShifts[j]) !== 0) {
-          betas[i][j] = 1 - Math.abs(J[i][j] / ((this.chemicalShifts[i] - this.chemicalShifts[j]) * frequency));
-          betas[j][i] = betas[i][j];
-        } else if (!(i === j || J[i][j] !== 0)) {
-          betas[i][j] = 1;
-          betas[j][i] = 1;
+        let element = J.get(i, j);
+        if (this.chemicalShifts[i] - this.chemicalShifts[j] !== 0) {
+          let value =
+            1 -
+            Math.abs(
+              element /
+                ((this.chemicalShifts[i] - this.chemicalShifts[j]) * frequency),
+            );
+          betas.set(i, j, value);
+          betas.set(j, i, value);
+        } else if (!(i === j || element !== 0)) {
+          betas.set(i, j, 1);
+          betas.set(j, i, 1);
         }
       }
     }
@@ -144,20 +158,24 @@ export default class SpinSystem {
   }
 
   ensureClusterSize(options) {
-    var betas = this._calculateBetas(this.couplingConstants, options.frequency || 400);
-    var cluster = hlClust.agnes(betas, { isDistanceMatrix: true });
-    var list = [];
+    let betas = this._calculateBetas(
+      this.couplingConstants,
+      options.frequency || 400,
+    );
+    let cluster = hlClust.agnes(betas.to2DArray(), { isDistanceMatrix: true });
+    let list = [];
     this._splitCluster(cluster, list, options.maxClusterSize || 8, false);
-    var clusters = this._mergeClusters(list);
-    this.nClusters = clusters.length;
-    // console.log(clusters);
-    this.clusters = new Array(clusters.length);
-    // System.out.println(this.conmatrix);
-    for (var j = 0; j < this.nClusters; j++) {
+    let clusters = this._mergeClusters(list);
+    this.nClusters = clusters.rows;
+
+    this.clusters = new Array(clusters.rows);
+
+    for (let j = 0; j < this.nClusters; j++) {
       this.clusters[j] = [];
-      for (var i = 0; i < this.nSpins; i++) {
-        if (clusters[j][i] !== 0) {
-          if (clusters[j][i] < 0) {
+      for (let i = 0; i < this.nSpins; i++) {
+        let element = clusters.get(j, i);
+        if (element !== 0) {
+          if (element < 0) {
             this.clusters[j].push(-(i + 1));
           } else {
             this.clusters[j].push(i);
@@ -168,26 +186,26 @@ export default class SpinSystem {
   }
 
   /**
-     * Recursively split the clusters until the maxClusterSize criteria has been ensured.
-     * @param {Array} cluster
-     * @param {Array} clusterList
-     * @param {number} maxClusterSize
-     * @param  {boolean} force
-     */
+   * Recursively split the clusters until the maxClusterSize criteria has been ensured.
+   * @param {Array} cluster
+   * @param {Array} clusterList
+   * @param {number} maxClusterSize
+   * @param  {boolean} force
+   */
   _splitCluster(cluster, clusterList, maxClusterSize, force) {
     if (!force && cluster.index.length <= maxClusterSize) {
       clusterList.push(this._getMembers(cluster));
     } else {
-      for (var child of cluster.children) {
+      for (let child of cluster.children) {
         if (!isNaN(child.index) || child.index.length <= maxClusterSize) {
-          var members = this._getMembers(child);
+          let members = this._getMembers(child);
           // Add the neighbors that shares at least 1 coupling with the given cluster
-          var count = 0;
-          for (var i = 0; i < this.nSpins; i++) {
+          let count = 0;
+          for (let i = 0; i < this.nSpins; i++) {
             if (members[i] === 1) {
               count++;
-              for (var j = 0; j < this.nSpins; j++) {
-                if (this.connectivity[i][j] === 1 && members[j] === 0) {
+              for (let j = 0; j < this.nSpins; j++) {
+                if (this.connectivity.get(i, j) === 1 && members[j] === 0) {
                   members[j] = -1;
                   count++;
                 }
@@ -213,20 +231,20 @@ export default class SpinSystem {
     }
   }
   /**
-     * Recursively gets the cluster members
-     * @param cluster
-     * @param members
-     */
+   * Recursively gets the cluster members
+   * @param cluster
+   * @param members
+   */
 
   _getMembers(cluster) {
-    var members = new Array(this.nSpins);
-    for (var i = 0; i < this.nSpins; i++) {
+    let members = new Array(this.nSpins);
+    for (let i = 0; i < this.nSpins; i++) {
       members[i] = 0;
     }
     if (!isNaN(cluster.index)) {
       members[cluster.index * 1] = 1;
     } else {
-      for (var index of cluster.index) {
+      for (let index of cluster.index) {
         members[index.index * 1] = 1;
       }
     }
@@ -234,8 +252,8 @@ export default class SpinSystem {
   }
 
   _mergeClusters(list) {
-    var nElements = 0;
-    var clusterA, clusterB, i, j, index, common, count;
+    let nElements = 0;
+    let clusterA, clusterB, i, j, index, common, count;
     for (i = list.length - 1; i >= 0; i--) {
       clusterA = list[i];
       nElements = clusterA.length;

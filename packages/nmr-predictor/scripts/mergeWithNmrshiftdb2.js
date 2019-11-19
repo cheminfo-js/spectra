@@ -3,11 +3,16 @@ import FS from 'fs';
 
 const utils = require('./dbutils');
 
-
 const maxSphereSize = 6;
 
-let db1 = JSON.parse(fs.readFileSync(`${__dirname}/../data/nmrshiftdb2-1h-full.json`).toString());
-let db2 = JSON.parse(fs.readFileSync(`${__dirname}/../../nmr-learning/data/h_full_25.json`).toString());
+let db1 = JSON.parse(
+  fs.readFileSync(`${__dirname}/../data/nmrshiftdb2-1h-full.json`).toString(),
+);
+let db2 = JSON.parse(
+  fs
+    .readFileSync(`${__dirname}/../../nmr-learning/data/h_full_25.json`)
+    .toString(),
+);
 
 db1 = utils.mergeDB(db1, db2, maxSphereSize);
 

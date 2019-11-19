@@ -7,7 +7,7 @@
  * @param {number} shift
  */
 export default function rotate(array, shift) {
-  var nbPoints = array.length;
+  let nbPoints = array.length;
   // Lets calculate the lest amount of points to shift.
   // It decreases the amount of validations in the loop
   shift = shift % nbPoints;
@@ -17,13 +17,13 @@ export default function rotate(array, shift) {
   }
 
   if (shift !== 0) {
-    var currentIndex = 0;
-    var nextIndex = shift;
-    var toMove = nbPoints;
-    var current = array[currentIndex];
-    var next;
-    var lastFirstIndex = shift;
-    var direction = shift > 0 ? 1 : -1;
+    let currentIndex = 0;
+    let nextIndex = shift;
+    let toMove = nbPoints;
+    let current = array[currentIndex];
+    let next;
+    let lastFirstIndex = shift;
+    let direction = shift > 0 ? 1 : -1;
 
     while (toMove > 0) {
       nextIndex = putInRange(nextIndex, nbPoints);

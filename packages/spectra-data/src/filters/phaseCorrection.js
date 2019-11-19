@@ -9,20 +9,20 @@ export default function phaseCorrection(spectraData, phi0, phi1) {
   phi0 = Number.isFinite(phi0) ? phi0 : 0;
   phi1 = Number.isFinite(phi1) ? phi1 : 0;
 
-  var nbPoints = spectraData.getNbPoints();
-  var reData = spectraData.getYData(0);
-  var imData = spectraData.getYData(1);
+  let nbPoints = spectraData.getNbPoints();
+  let reData = spectraData.getYData(0);
+  let imData = spectraData.getYData(1);
 
-  var delta = phi1 / nbPoints;
-  var alpha = 2 * Math.pow(Math.sin(delta / 2), 2);
-  var beta = Math.sin(delta);
-  var cosTheta = Math.cos(phi0);
-  var sinTheta = Math.sin(phi0);
-  var cosThetaNew, sinThetaNew;
+  let delta = phi1 / nbPoints;
+  let alpha = 2 * Math.pow(Math.sin(delta / 2), 2);
+  let beta = Math.sin(delta);
+  let cosTheta = Math.cos(phi0);
+  let sinTheta = Math.sin(phi0);
+  let cosThetaNew, sinThetaNew;
 
-  var reTmp, imTmp;
-  var index;
-  for (var i = 0; i < nbPoints; i++) {
+  let reTmp, imTmp;
+  let index;
+  for (let i = 0; i < nbPoints; i++) {
     index = nbPoints - i - 1;
     index = i;
     reTmp = reData[index] * cosTheta - imData[index] * sinTheta;

@@ -2,12 +2,12 @@ const histogram = require('./histogram');
 const logger = require('./logger');
 
 function compare(A, B, hist, options) {
-  var error = 0;
-  var count = 0;
-  var max = 0;
-  var min = 9999999;
-  var tmp = 0;
-  var i, j;
+  let error = 0;
+  let count = 0;
+  let max = 0;
+  let min = 9999999;
+  let tmp = 0;
+  let i, j;
   // console.log(A.length+" "+B.length);
 
   for (i = A.length - 1; i >= 0; i--) {
@@ -22,8 +22,8 @@ function compare(A, B, hist, options) {
             // console.log(A[i].level + " " + A[i].delta + " " + B[j].delta + " " + A[i].diaIDs[0] + " " + A[i].hose[A[i].level - 1]);
             logger(
               `delete fastDB[${A[i].level - 1}][${JSON.stringify(
-                A[i].hose[A[i].level - 1]
-              )}]; //${tmp} ${A[i].delta} ${B[j].delta}`
+                A[i].hose[A[i].level - 1],
+              )}]; //${tmp} ${A[i].delta} ${B[j].delta}`,
             );
           }
 
@@ -49,7 +49,7 @@ function compare(A, B, hist, options) {
 }
 
 function addObserved(A, B) {
-  var i, j;
+  let i, j;
   for (i = A.length - 1; i >= 0; i--) {
     A[i].delta2 = null;
     for (j = B.length - 1; j >= 0; j--) {
@@ -81,10 +81,10 @@ export function hoseStats(dataSet, nmrShiftDBPred1H, options) {
   // console.log(options);
   // var db = new DB.MySQL("localhost","mynmrshiftdb3","nmrshiftdb","xxswagxx");
   let ACT = options.ACT;
-  var molecule, h1pred, i, j;
-  var result = [0, 0, 0, 0, 0, 0];
-  var db = options.db;
-  var predictions = new Array(dataSet.length);
+  let molecule, h1pred, i, j;
+  let result = [0, 0, 0, 0, 0, 0];
+  let db = options.db;
+  let predictions = new Array(dataSet.length);
   for (i = 0; i < dataSet.length; i++) {
     if (!dataSet[i].molecule) {
       molecule = ACT.load(dataSet[i].molfile.replace(/\\n/g, '\n'));
@@ -99,7 +99,7 @@ export function hoseStats(dataSet, nmrShiftDBPred1H, options) {
       debug: true,
       iterationQuery: options.iterationQuery,
       ignoreLabile: options.ignoreLabile,
-      hoseLevels: options.hoseLevels
+      hoseLevels: options.hoseLevels,
     });
 
     for (j = h1pred.length - 1; j >= 0; j--) {
@@ -113,23 +113,23 @@ export function hoseStats(dataSet, nmrShiftDBPred1H, options) {
 
 export async function cmp2asg(dataSet, predictor, options) {
   let OCLE = options.OCLE;
-  var h1pred, result;
-  var avgError = 0;
-  var count = 0;
-  var min = 9999999;
-  var max = 0;
-  var molfile = '';
-  var hist = [];
-  var lng = dataSet.length;
-  for (var i = 0; i < lng; i++) {
+  let h1pred, result;
+  let avgError = 0;
+  let count = 0;
+  let min = 9999999;
+  let max = 0;
+  let molfile = '';
+  let hist = [];
+  let lng = dataSet.length;
+  for (let i = 0; i < lng; i++) {
     if (!dataSet[i].ocl) {
       var molecule = OCLE.Molecule.fromIDCode(dataSet[i].diaID);
       molecule.addImplicitHydrogens();
       // molfile = molecule.toMolfile();
-      var nH =
+      let nH =
         molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') *
         1;
-      var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
+      let diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
       diaIDs.sort(function(a, b) {
         if (a.atomLabel === b.atomLabel) {
           return b.counter - a.counter;
@@ -140,19 +140,19 @@ export async function cmp2asg(dataSet, predictor, options) {
         fromLabel: 'H',
         toLabel: 'O',
         minLength: 1,
-        maxLength: 1
+        maxLength: 1,
       });
       const linksNH = molecule.getAllPaths({
         fromLabel: 'H',
         toLabel: 'N',
         minLength: 1,
-        maxLength: 1
+        maxLength: 1,
       });
       const linksClH = molecule.getAllPaths({
         fromLabel: 'Cl',
         toLabel: 'N',
         minLength: 1,
-        maxLength: 1
+        maxLength: 1,
       });
       const atoms = {};
       const levels = options.levels;
@@ -160,7 +160,7 @@ export async function cmp2asg(dataSet, predictor, options) {
         delete diaId._highlight;
         diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
           maxSphereSize: levels[0],
-          type: 0
+          type: 0,
         });
 
         for (const atomID of diaId.atoms) {
@@ -192,7 +192,7 @@ export async function cmp2asg(dataSet, predictor, options) {
         id: molecule.getIDCode(),
         atom: atoms,
         diaId: diaIDs,
-        nH: nH
+        nH: nH,
       };
     }
 
@@ -202,7 +202,7 @@ export async function cmp2asg(dataSet, predictor, options) {
     h1pred = await predictor.proton(molecule, {
       ignoreLabile: options.ignoreLabile,
       levels: options.levels,
-      hose: options.hose
+      hose: options.hose,
     });
 
     // console.log(dataSet[i].assignment);
@@ -222,7 +222,7 @@ export async function cmp2asg(dataSet, predictor, options) {
     }
   }
 
-  var histParams = options.histParams || { from: 0, to: 1, nBins: 100 };
+  let histParams = options.histParams || { from: 0, to: 1, nBins: 100 };
   return {
     error: avgError / dataSet.length,
     count: count,
@@ -230,8 +230,8 @@ export async function cmp2asg(dataSet, predictor, options) {
     max: max,
     hist: histogram({
       data: hist,
-      bins: linspace(histParams.from, histParams.to, histParams.nBins)
-    })
+      bins: linspace(histParams.from, histParams.to, histParams.nBins),
+    }),
   };
 }
 /*
@@ -307,8 +307,8 @@ function linspace(a, b, n) {
   if (n < 2) {
     return n === 1 ? [a] : [];
   }
-  var i;
-  var ret = Array(n);
+  let i;
+  let ret = Array(n);
   n--;
   for (i = n; i >= 0; i--) {
     ret[i] = (i * b + (n - i) * a) / n;

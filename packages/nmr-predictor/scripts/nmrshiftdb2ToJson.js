@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 
-
 import FS from 'fs';
 
-import OCLE from 'openchemlib-extended'
+import OCLE from 'openchemlib-extended';
+
 const stat = require('ml-stat/array');
 const sdfParser = require('sdf-parser');
 
@@ -43,8 +43,14 @@ for (let i = 0; i < parsedSdf.molecules.length; i++) {
   });
 });
 
-fs.writeFileSync(`${__dirname}/../data/nmrshiftdb2-13c.json`, JSON.stringify(db13C));
-fs.writeFileSync(`${__dirname}/../data/nmrshiftdb2-1h.json`, JSON.stringify(db1H));
+fs.writeFileSync(
+  `${__dirname}/../data/nmrshiftdb2-13c.json`,
+  JSON.stringify(db13C),
+);
+fs.writeFileSync(
+  `${__dirname}/../data/nmrshiftdb2-1h.json`,
+  JSON.stringify(db1H),
+);
 
 function getStats(entry) {
   const minMax = stat.minMax(entry);
@@ -54,7 +60,7 @@ function getStats(entry) {
     ncs: entry.length,
     mean: stat.mean(entry),
     median: stat.median(entry),
-    std: stat.standardDeviation(entry, false)
+    std: stat.standardDeviation(entry, false),
   };
 }
 
@@ -110,7 +116,10 @@ function fillDb(molecule, mol, fields, atomLabel, fieldLabel, db) {
         if (cache[oclId]) {
           hoseCodes = cache[oclId];
         } else {
-          hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(oclId, { maxSphereSize, type: 0 });
+          hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(oclId, {
+            maxSphereSize,
+            type: 0,
+          });
           cache[oclId] = hoseCodes;
         }
         for (let k = 0; k < maxSphereSize; k++) {
@@ -151,7 +160,13 @@ function getExtendedDiaIds(mol) {
 
     for (let i = 0; i < diaIDs.length; i++) {
       let diaID = diaIDs[i];
-      let newDiaID = { id: diaID, atomLabel: molecule.getAtomLabel(i), atom: i, nbHydrogens: 0, hydrogenOCLIDs: [] };
+      let newDiaID = {
+        id: diaID,
+        atomLabel: molecule.getAtomLabel(i),
+        atom: i,
+        nbHydrogens: 0,
+        hydrogenOCLIDs: [],
+      };
       let maxI = molecule.getAllConnAtoms(i);
       for (let j = 0; j < maxI; j++) {
         let atom = molecule.getConnAtom(i, j);

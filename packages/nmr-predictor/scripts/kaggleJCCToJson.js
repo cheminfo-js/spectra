@@ -1,4 +1,3 @@
-
 import FS from 'fs';
 
 const OCLE = require('../../../../core');
@@ -8,7 +7,10 @@ const getAllCouplings = require('../new/getAllCouplings');
 const dataFolder = '/home/acastillo/Documents/kaggle/champs-scalar-coupling/';
 const structuremol = `${dataFolder}structuresmol/`;
 
-var train = fs.readFileSync(`${dataFolder}train.csv`).toString().split('\n');
+let train = fs
+  .readFileSync(`${dataFolder}train.csv`)
+  .toString()
+  .split('\n');
 let head = train[0];
 // console.log(head);
 let molid = '';
@@ -32,7 +34,7 @@ for (let i = 1; i < max; i++) {
   stats[example[4]]++;
 
   if (i % 10000 === 0) {
-    console.log(i / max * 100);
+    console.log((i / max) * 100);
   }
 
   // Change of molecule
@@ -40,20 +42,28 @@ for (let i = 1; i < max; i++) {
     storeData(couplings, db);
     molid = example[1];
     // Open the molecule
-    let result = OCLE.Molecule.fromMolfileWithAtomMap(fs.readFileSync(`${structuremol + molid}.mol`).toString());
+    let result = OCLE.Molecule.fromMolfileWithAtomMap(
+      fs.readFileSync(`${structuremol + molid}.mol`).toString(),
+    );
     map = result.map;
     // console.log(fs.readFileSync(`${structuremol + molid}.mol`).toString());
     // console.log(map)
     // allPaths = result.molecule.getAllPaths({ fromLabel: 'H', maxLength: 3 });
-    couplings = getAllCouplings(result.molecule, { fromLabel: 'H', toLabel: '', maxLength: 3 });
+    couplings = getAllCouplings(result.molecule, {
+      fromLabel: 'H',
+      toLabel: '',
+      maxLength: 3,
+    });
     // console.log(couplings)
     // console.log(couplings[2].fromDiaID + '\n' + couplings[2].toDiaID + '\n' + couplings[2].code.join('\n'));
   }
 
   let group = couplings.find((value) => {
-    return value.fromTo.find((pair) => {
-      return map[pair[0]] === example[2] && map[pair[1]] === example[3];
-    }) != null;
+    return (
+      value.fromTo.find((pair) => {
+        return map[pair[0]] === example[2] && map[pair[1]] === example[3];
+      }) != null
+    );
   });
 
   if (!group) {
@@ -71,7 +81,6 @@ for (let i = 1; i < max; i++) {
 // console.log(allPaths);
 storeData(couplings, db);
 console.log(JSON.stringify(db));
-
 
 function storeData(couplings, result) {
   if (couplings !== null) {
@@ -92,7 +101,6 @@ function storeData(couplings, result) {
 // let examples = train.split('\n');
 
 // console.log(examples.length);
-
 
 /* var molecule = OCLE.Molecule.fromSmiles('CCC');
 molecule.addImplicitHydrogens();

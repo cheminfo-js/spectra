@@ -1,4 +1,3 @@
-
 import superagent from 'superagent';
 
 import normalizeOptions from './normalizeOptions';
@@ -6,8 +5,10 @@ import queryByHose from './queryByHose';
 import spinus from './spinus';
 import twoD from './twoD';
 
-const defaultProtonUrl = 'https://raw.githubusercontent.com/cheminfo-js/spectra/master/packages/nmr-predictor/data/h1.json';
-const defaultCarbonUrl = 'https://raw.githubusercontent.com/cheminfo-js/spectra/master/packages/nmr-predictor/data/nmrshiftdb2-13c.json';
+const defaultProtonUrl =
+  'https://raw.githubusercontent.com/cheminfo-js/spectra/master/packages/nmr-predictor/data/h1.json';
+const defaultCarbonUrl =
+  'https://raw.githubusercontent.com/cheminfo-js/spectra/master/packages/nmr-predictor/data/nmrshiftdb2-13c.json';
 
 const databases = {};
 
@@ -32,7 +33,11 @@ function fetchCarbon(url = defaultCarbonUrl, dbName = 'carbon') {
 }
 
 function fetch(url, dbName, type) {
-  if (databases[dbName] && databases[dbName].type === type && databases[dbName].url === url) {
+  if (
+    databases[dbName] &&
+    databases[dbName].type === type &&
+    databases[dbName].url === url
+  ) {
     if (databases[dbName].fetching) {
       return databases[dbName].fetching;
     }
@@ -42,18 +47,21 @@ function fetch(url, dbName, type) {
     type,
     url,
     db: null,
-    fetching: null
+    fetching: null,
   };
   databases[dbName] = database;
-  const fetching = superagent.get(url).then((res) => {
-    const db = res.body ? res.body : JSON.parse(res.text);
-    database.db = db;
-    database.fetching = false;
-    return db;
-  }).catch((e) => {
-    delete databases[dbName];
-    throw e;
-  });
+  const fetching = superagent
+    .get(url)
+    .then((res) => {
+      const db = res.body ? res.body : JSON.parse(res.text);
+      database.db = db;
+      database.fetching = false;
+      return db;
+    })
+    .catch((e) => {
+      delete databases[dbName];
+      throw e;
+    });
   database.fetching = fetching;
   return fetching;
 }
@@ -89,11 +97,21 @@ function carbon(molecule, options) {
 
 function getDb(option, type) {
   if (typeof option === 'object') return option;
-  if (typeof option !== 'string') throw new TypeError('database option must be a string or array');
+  if (typeof option !== 'string') {
+    throw new TypeError('database option must be a string or array');
+  }
   const db = databases[option];
-  if (!db) throw new Error(`database ${option} does not exist. Did you forget to fetch it?`);
+  if (!db) {
+    throw new Error(
+      `database ${option} does not exist. Did you forget to fetch it?`,
+    );
+  }
   if (db.fetching) throw new Error(`database ${option} is not fetched yet`);
-  if (db.type !== type) throw new Error(`database ${option} is of type ${db.type} instead of ${type}`);
+  if (db.type !== type) {
+    throw new Error(
+      `database ${option} is of type ${db.type} instead of ${type}`,
+    );
+  }
   return db.db;
 }
 
@@ -102,17 +120,9 @@ function setDb(db, type, dbName) {
     type,
     url: null,
     db: db,
-    fetching: false
+    fetching: false,
   };
   databases[dbName] = database;
 }
 
-export {
-  fetchProton,
-  fetchCarbon,
-  setDb,
-  proton,
-  carbon,
-  spinus,
-  twoD
-};
+export { fetchProton, fetchCarbon, setDb, proton, carbon, spinus, twoD };

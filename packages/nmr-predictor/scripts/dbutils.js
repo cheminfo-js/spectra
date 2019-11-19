@@ -1,7 +1,7 @@
 /** Merge 2 hose code databases in a single one*/
 const stat = require('ml-stat/array');
 
-let mergeDB = function (db1, db2, maxSphereSize) {
+let mergeDB = function(db1, db2, maxSphereSize) {
   if (db1.length >= db2.length) {
     return merge(db1, db2, maxSphereSize);
   } else {
@@ -9,7 +9,7 @@ let mergeDB = function (db1, db2, maxSphereSize) {
   }
 };
 
-let reduceDB = function (db1) {
+let reduceDB = function(db1) {
   [db1].forEach((db) => {
     db.forEach((hoseMap) => {
       for (const hose of Object.keys(hoseMap)) {
@@ -46,7 +46,7 @@ function getStats(entry) {
     ncs: entry.length,
     mean: stat.mean(entry),
     median: stat.median(entry),
-    std: stat.standardDeviation(entry, false)
+    std: stat.standardDeviation(entry, false),
   };
 }
 

@@ -1,15 +1,15 @@
 export default function histogram(opts) {
-  var data = opts.data;
-  var binsTemp = opts.bins;
-  var i = binsTemp.length;
+  let data = opts.data;
+  let binsTemp = opts.bins;
+  let i = binsTemp.length;
 
-  var bisector = function(f) {
+  let bisector = function(f) {
     return {
       left: function(a, x, lo, hi) {
         if (arguments.length < 3) lo = 0;
         if (arguments.length < 4) hi = a.length;
         while (lo < hi) {
-          var mid = (lo + hi) >>> 1;
+          let mid = (lo + hi) >>> 1;
           if (f.call(a, a[mid], mid) < x) lo = mid + 1;
           else hi = mid;
         }
@@ -19,50 +19,54 @@ export default function histogram(opts) {
         if (arguments.length < 3) lo = 0;
         if (arguments.length < 4) hi = a.length;
         while (lo < hi) {
-          var mid = (lo + hi) >>> 1;
+          let mid = (lo + hi) >>> 1;
           if (x < f.call(a, a[mid], mid)) hi = mid;
           else lo = mid + 1;
         }
         return lo;
-      }
+      },
     };
   };
 
-  var histBisector = bisector(function(d) {
+  let histBisector = bisector(function(d) {
     return d;
   });
   // var bisectLeft = histBisector.left;
-  var bisectRight = histBisector.right;
-  var bisect = bisectRight;
+  let bisectRight = histBisector.right;
+  let bisect = bisectRight;
 
-  var minimum = function(array, f) {
+  let minimum = function(array, f) {
     let i = -1;
-    var n = array.length;
-    var a, b;
+    let n = array.length;
+    let a, b;
     if (arguments.length === 1) {
       while (++i < n && !((a = array[i]) != null)) a = undefined;
       while (++i < n) if ((b = array[i]) != null && a > b) a = b;
     } else {
-      while (++i < n && !((a = f.call(array, array[i], i)) != null))
+      while (++i < n && !((a = f.call(array, array[i], i)) != null)) {
         a = undefined;
-      while (++i < n)
+      }
+      while (++i < n) {
         if ((b = f.call(array, array[i], i)) != null && a > b) a = b;
+      }
     }
     return a;
   };
 
-  var maximum = function(array, f) {
+  let maximum = function(array, f) {
     let i = -1;
-    var n = array.length;
-    var a, b;
+    let n = array.length;
+    let a, b;
     if (arguments.length === 1) {
       while (++i < n && !((a = array[i]) != null)) a = undefined;
       while (++i < n) if ((b = array[i]) != null && b > a) a = b;
     } else {
-      while (++i < n && !((a = f.call(array, array[i], i)) != null))
+      while (++i < n && !((a = f.call(array, array[i], i)) != null)) {
         a = undefined;
-      while (++i < n)
+      }
+      while (++i < n) {
         if ((b = f.call(array, array[i], i)) != null && b > a) a = b;
+      }
     }
     return a;
   };
@@ -89,15 +93,15 @@ export default function histogram(opts) {
   function histLayoutHistogramBinSturges(range, values) {
     return histLayoutHistogramBinFixed(
       range,
-      Math.ceil(Math.log(values.length) / Math.LN2 + 1)
+      Math.ceil(Math.log(values.length) / Math.LN2 + 1),
     );
   }
 
   function histLayoutHistogramBinFixed(range, n) {
-    var x = -1;
-    var b = +range[0];
-    var m = (range[1] - b) / n;
-    var f = [];
+    let x = -1;
+    let b = +range[0];
+    let m = (range[1] - b) / n;
+    let f = [];
     while (++x <= n) f[x] = m * x + b;
     return f;
   }
@@ -106,22 +110,22 @@ export default function histogram(opts) {
     return [minimum(values), maximum(values)];
   }
 
-  var frequency = true;
-  var valuer = Number;
-  var ranger = histLayoutHistogramRange;
+  let frequency = true;
+  let valuer = Number;
+  let ranger = histLayoutHistogramRange;
   var binner = histLayoutHistogramBinSturges;
 
   binsF(binsTemp);
 
-  var bins = [];
-  var values = data.map(valuer, this);
+  let bins = [];
+  let values = data.map(valuer, this);
   let range2 = ranger.call(this, values, i);
-  var thresholds = binner.call(this, range2, values, i);
+  let thresholds = binner.call(this, range2, values, i);
   i = -1;
-  var n = values.length;
-  var m = thresholds.length - 1;
-  var k = frequency ? 1 : 1 / n;
-  var x, bin;
+  let n = values.length;
+  let m = thresholds.length - 1;
+  let k = frequency ? 1 : 1 / n;
+  let x, bin;
 
   while (++i < m) {
     bin = bins[i] = [];

@@ -2,11 +2,7 @@ import numSort from 'num-sort';
 
 export default function queryByHose(molecule, db, options) {
   // const { Util } = getOcleFromOptions(options);
-  const {
-    atomLabel = 'H',
-    use = null,
-    levels = [4, 3, 2, 1, 0]
-  } = options;
+  const { atomLabel = 'H', use = null, levels = [4, 3, 2, 1, 0] } = options;
 
   levels.sort(numSort.desc);
 
@@ -14,12 +10,15 @@ export default function queryByHose(molecule, db, options) {
 
   const toReturn = [];
   for (const element of diaIds) {
-    if (element.atomLabel === options.atomLabel && (!element.isLabile || !options.ignoreLabile)) {
+    if (
+      element.atomLabel === options.atomLabel &&
+      (!element.isLabile || !options.ignoreLabile)
+    ) {
       let res;
       let k = 0;
       while (!res && k < levels.length) {
         if (db[levels[k] - 1]) {
-          res = db[levels[k] - 1][element.hose[levels[k] - 1]];// atom['hose' + levels[k]]];
+          res = db[levels[k] - 1][element.hose[levels[k] - 1]]; // atom['hose' + levels[k]]];
         }
         k++;
       }

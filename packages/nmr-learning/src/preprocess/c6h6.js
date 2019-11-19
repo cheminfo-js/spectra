@@ -9,27 +9,27 @@ function loadFile(filename) {
 export function load(path, datasetName, options) {
   let OCLE = options.OCLE;
 
-  var result = [];
-  var k = 0;
-  var rows = JSON.parse(loadFile(path)).rows;
+  let result = [];
+  let k = 0;
+  let rows = JSON.parse(loadFile(path)).rows;
   logger(rows.length);
-  for (var p = 0; p < rows.length; p++) {
-    var row = rows[p];
+  for (let p = 0; p < rows.length; p++) {
+    let row = rows[p];
     if (p % 500 === 0) {
       logger(p);
     }
     if (row.value.nucleus === '1H') {
       try {
-        var molecule = OCLE.Molecule.fromIDCode(row.value.idCode);
+        let molecule = OCLE.Molecule.fromIDCode(row.value.idCode);
         // logger(p + " " +molecule.getIDCode());
         // let ocl = {value: molecule};
 
         molecule.addImplicitHydrogens();
-        var nH =
+        let nH =
           molecule
             .getMolecularFormula()
             .formula.replace(/.*H([0-9]+).*/, '$1') * 1;
-        var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
+        let diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
         diaIDs.sort(function(a, b) {
           if (a.atomLabel === b.atomLabel) {
             return b.counter - a.counter;
@@ -41,19 +41,19 @@ export function load(path, datasetName, options) {
           fromLabel: 'H',
           toLabel: 'O',
           minLength: 1,
-          maxLength: 1
+          maxLength: 1,
         });
         const linksNH = molecule.getAllPaths({
           fromLabel: 'H',
           toLabel: 'N',
           minLength: 1,
-          maxLength: 1
+          maxLength: 1,
         });
         const linksClH = molecule.getAllPaths({
           fromLabel: 'H',
           toLabel: 'Cl',
           minLength: 1,
-          maxLength: 1
+          maxLength: 1,
         });
         const atoms = {};
         const levels = [6, 5, 4, 3];
@@ -62,7 +62,7 @@ export function load(path, datasetName, options) {
           delete diaId._highlight;
           diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
             maxSphereSize: levels[0],
-            type: 0
+            type: 0,
           });
 
           for (const atomID of diaId.atoms) {
@@ -92,8 +92,8 @@ export function load(path, datasetName, options) {
           }
         }
 
-        var signals = row.value.range;
-        for (var j = signals.length - 1; j >= 0; j--) {
+        let signals = row.value.range;
+        for (let j = signals.length - 1; j >= 0; j--) {
           if (signals[j].from < 0 || signals[j].from > 16) {
             signals.splice(j, 1);
           }
@@ -110,8 +110,8 @@ export function load(path, datasetName, options) {
               atom: atoms,
               diaId: diaIDs,
               nH: nH,
-              hasLabile
-            }
+              hasLabile,
+            },
           }, // : molecule.toMolfile()},
           spectra: {
             nmr: [
@@ -119,10 +119,10 @@ export function load(path, datasetName, options) {
                 nucleus: 'H',
                 experiment: '1d',
                 range: signals,
-                solvent: row.value.solvent
-              }
-            ]
-          }
+                solvent: row.value.solvent,
+              },
+            ],
+          },
         };
 
         result.push(sample);
@@ -130,7 +130,7 @@ export function load(path, datasetName, options) {
         if (result.length === 1000) {
           FS.writeFileSync(
             `${__dirname}/big${k++}.json`,
-            JSON.stringify(result)
+            JSON.stringify(result),
           );
           result = [];
         }

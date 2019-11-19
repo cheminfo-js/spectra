@@ -1,6 +1,5 @@
-require('should');
-const simulation = require('..');
-
+// const simulation = require('..');
+import { simulate2D } from '../src/index';
 
 /**
  * This example ilustrates the simulation of a sytste (B, AA, C ). Atoms of the group AA, resonating at 2ppm, are coupled with the atom B that resonates at 1ppm. The scalar coupling between them
@@ -15,7 +14,7 @@ const simulation = require('..');
  * 2.5 |  0   0   0   0   0   0   0
  * 3.0 |  0   0   0   1   0   1   0
  * 3.5 |  0   0   0   0   0   0   0
-*/
+ */
 const prediction = [
   {
     fromDiaID: 'A',
@@ -28,7 +27,7 @@ const prediction = [
     fromChemicalShift: 2,
     toChemicalShift: 2,
     fromAtomLabel: 'H',
-    toAtomLabel: 'H'
+    toAtomLabel: 'H',
   },
   {
     fromDiaID: 'B',
@@ -41,7 +40,7 @@ const prediction = [
     fromChemicalShift: 1,
     toChemicalShift: 1,
     fromAtomLabel: 'H',
-    toAtomLabel: 'H'
+    toAtomLabel: 'H',
   },
   {
     fromDiaID: 'C',
@@ -54,7 +53,7 @@ const prediction = [
     fromChemicalShift: 3,
     toChemicalShift: 3,
     fromAtomLabel: 'H',
-    toAtomLabel: 'H'
+    toAtomLabel: 'H',
   },
   {
     fromDiaID: 'A',
@@ -68,7 +67,7 @@ const prediction = [
     toChemicalShift: 1,
     fromAtomLabel: 'H',
     toAtomLabel: 'H',
-    j: 7
+    j: 7,
   },
   {
     fromDiaID: 'A',
@@ -82,11 +81,11 @@ const prediction = [
     toChemicalShift: 3,
     fromAtomLabel: 'H',
     toAtomLabel: 'H',
-    j: 16
-  }
+    j: 16,
+  },
 ];
 
-var optionsCOSY = {
+let optionsCOSY = {
   frequencyX: 1,
   frequencyY: 1,
   lineWidthX: 0.07, // Hz
@@ -97,25 +96,30 @@ var optionsCOSY = {
   lastY: 3.5,
   nbPointsX: 7,
   nbPointsY: 7,
-  symmetrize: true
+  symmetrize: true,
 };
 
-describe('Simulation from signals simple COSY', function () {
-  it('simulation 1H-1H gives matrix data', function () {
-    var spectrum = simulation.simulate2D(prediction, optionsCOSY);
+describe('Simulation from signals simple COSY', function() {
+  it('simulation 1H-1H gives matrix data', function() {
+    let spectrum = simulate2D(prediction, optionsCOSY);
     // Lets make a logical matrix. Small values are 0
-    spectrum = spectrum.map((row) => {
-      return row.map((value) => (value < 1e-10 ? 0 : 1));
-    });
+    let nRows = spectrum.rows;
+    let nCols = spectrum.columns;
+    for (let i = 0; i < nRows; i++) {
+      for (let j = 0; j < nCols; j++) {
+        let value = spectrum.get(i, j);
+        spectrum.set(i, j, value < 1e-10 ? 0 : 1);
+      }
+    }
 
-    spectrum.should.eql([
+    expect(spectrum.to2DArray()).toStrictEqual([
       [0, 0, 0, 0, 0, 0, 0],
       [0, 1, 0, 1, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
       [0, 1, 0, 1, 0, 1, 0],
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 1, 0, 1, 0],
-      [0, 0, 0, 0, 0, 0, 0]
+      [0, 0, 0, 0, 0, 0, 0],
     ]);
   });
 });

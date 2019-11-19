@@ -12,7 +12,7 @@ const defaultOptions = {
   integralType: 'sum',
   optimize: true,
   frequencyCluster: 16,
-  keepPeaks: false
+  keepPeaks: false,
 };
 
 /**
@@ -31,10 +31,10 @@ const defaultOptions = {
 
 export default function createRanges(spectrum, peakList, options) {
   options = Object.assign({}, defaultOptions, options);
-  var i, j;
-  var nH = options.nH;
+  let i, j;
+  let nH = options.nH;
   peakList = impurityRemover(peakList, options.removeImpurity);
-  var signals = detectSignals(spectrum, peakList, options);
+  let signals = detectSignals(spectrum, peakList, options);
 
   if (options.clean) {
     for (i = 0; i < signals.length; i++) {
@@ -45,22 +45,23 @@ export default function createRanges(spectrum, peakList, options) {
   }
 
   if (options.compile) {
-    var nHi, sum;
+    let nHi, sum;
     for (i = 0; i < signals.length; i++) {
       JAnalyzer.compilePattern(signals[i]);
 
-      if (signals[i].maskPattern &&
-                signals[i].multiplicity !== 'm' &&
-                signals[i].multiplicity !== ''
+      if (
+        signals[i].maskPattern &&
+        signals[i].multiplicity !== 'm' &&
+        signals[i].multiplicity !== ''
       ) {
         // Create a new signal with the removed peaks
         nHi = 0;
         sum = 0;
-        var peaksO = [];
+        let peaksO = [];
         for (j = signals[i].maskPattern.length - 1; j >= 0; j--) {
           sum += computeArea(signals[i].peaks[j]);
           if (signals[i].maskPattern[j] === false) {
-            var peakR = signals[i].peaks.splice(j, 1)[0];
+            let peakR = signals[i].peaks.splice(j, 1)[0];
             peaksO.push({ x: peakR.x, y: peakR.intensity, width: peakR.width });
             signals[i].mask.splice(j, 1);
             signals[i].mask2.splice(j, 1);
@@ -70,9 +71,9 @@ export default function createRanges(spectrum, peakList, options) {
           }
         }
         if (peaksO.length > 0) {
-          nHi = nHi * signals[i].integralData.value / sum;
+          nHi = (nHi * signals[i].integralData.value) / sum;
           signals[i].integralData.value -= nHi;
-          var peaks1 = [];
+          let peaks1 = [];
           for (j = peaksO.length - 1; j >= 0; j--) {
             peaks1.push(peaksO[j]);
           }
@@ -86,8 +87,8 @@ export default function createRanges(spectrum, peakList, options) {
       }
     }
     // it was a updateIntegrals function.
-    var sumIntegral = 0;
-    var sumObserved = 0;
+    let sumIntegral = 0;
+    let sumObserved = 0;
     for (i = 0; i < signals.length; i++) {
       sumObserved += Math.round(signals[i].integralData.value);
     }
@@ -99,7 +100,7 @@ export default function createRanges(spectrum, peakList, options) {
     }
   }
 
-  signals.sort(function (a, b) {
+  signals.sort(function(a, b) {
     return b.delta1 - a.delta1;
   });
 
@@ -113,7 +114,7 @@ export default function createRanges(spectrum, peakList, options) {
 
   let ranges = new Array(signals.length);
   for (i = 0; i < signals.length; i++) {
-    var signal = signals[i];
+    let signal = signals[i];
     ranges[i] = {
       from: round(signal.integralData.from, 5),
       to: round(signal.integralData.to, 5),
@@ -124,10 +125,9 @@ export default function createRanges(spectrum, peakList, options) {
           diaID: [],
           multiplicity: signal.multiplicity,
           kind: '',
-          remark: ''
-        }
-      ]
-
+          remark: '',
+        },
+      ],
     };
     if (options.keepPeaks) {
       ranges[i].signal[0].peak = signal.peaks;
@@ -143,7 +143,6 @@ export default function createRanges(spectrum, peakList, options) {
   return new Ranges(ranges);
 }
 
-
 /**
  * Extract the signals from the peakList and the given spectrum.
  * @param {object} spectrum - spectra data
@@ -157,41 +156,60 @@ export default function createRanges(spectrum, peakList, options) {
  * @private
  */
 function detectSignals(spectrum, peakList, options = {}) {
-  var {
+  let {
     nH = 100,
     integralType = 'sum',
     frequencyCluster = 16,
-    frequency = spectrum.observeFrequencyX()
+    frequency = spectrum.observeFrequencyX(),
   } = options;
 
-  var i, j, signal1D, peaks;
-  var signals = [];
-  var prevPeak = { x: 100000 };
-  var spectrumIntegral = 0;
+  let i, j, signal1D, peaks;
+  let signals = [];
+  let prevPeak = { x: 100000 };
+  let spectrumIntegral = 0;
   frequencyCluster /= frequency;
   for (i = 0; i < peakList.length; i++) {
     if (Math.abs(peakList[i].x - prevPeak.x) > frequencyCluster) {
       signal1D = {
-        nbPeaks: 1, units: 'PPM',
+        nbPeaks: 1,
+        units: 'PPM',
         startX: peakList[i].x - peakList[i].width,
         stopX: peakList[i].x + peakList[i].width,
-        multiplicity: '', pattern: '',
-        observe: frequency, nucleus: spectrum.getNucleus(1),
+        multiplicity: '',
+        pattern: '',
+        observe: frequency,
+        nucleus: spectrum.getNucleus(1),
         integralData: {
           from: peakList[i].x - peakList[i].width * 3,
-          to: peakList[i].x + peakList[i].width * 3
+          to: peakList[i].x + peakList[i].width * 3,
         },
-        peaks: [{ x: peakList[i].x, intensity: peakList[i].y, width: peakList[i].width }]
+        peaks: [
+          {
+            x: peakList[i].x,
+            intensity: peakList[i].y,
+            width: peakList[i].width,
+          },
+        ],
       };
       signals.push(signal1D);
     } else {
-      var tmp = peakList[i].x + peakList[i].width;
+      let tmp = peakList[i].x + peakList[i].width;
       signal1D.stopX = Math.max(signal1D.stopX, tmp);
       signal1D.startX = Math.min(signal1D.startX, tmp);
       signal1D.nbPeaks++;
-      signal1D.peaks.push({ x: peakList[i].x, intensity: peakList[i].y, width: peakList[i].width });
-      signal1D.integralData.from = Math.min(signal1D.integralData.from, peakList[i].x - peakList[i].width * 3);
-      signal1D.integralData.to = Math.max(signal1D.integralData.to, peakList[i].x + peakList[i].width * 3);
+      signal1D.peaks.push({
+        x: peakList[i].x,
+        intensity: peakList[i].y,
+        width: peakList[i].width,
+      });
+      signal1D.integralData.from = Math.min(
+        signal1D.integralData.from,
+        peakList[i].x - peakList[i].width * 3,
+      );
+      signal1D.integralData.to = Math.max(
+        signal1D.integralData.to,
+        peakList[i].x + peakList[i].width * 3,
+      );
     }
     prevPeak = peakList[i];
   }
@@ -203,7 +221,7 @@ function detectSignals(spectrum, peakList, options = {}) {
     let integralPeaks = 0;
 
     for (j = 0; j < peaks.length; j++) {
-      var area = computeArea(peaks[j]);
+      let area = computeArea(peaks[j]);
       chemicalShift += peaks[j].x * area;
       integralPeaks += area;
     }

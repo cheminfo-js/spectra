@@ -10,18 +10,18 @@ const defaultOptions = {
   onlyCount: false,
   timeout: 6000,
   condensed: true,
-  unassigned: 0
+  unassigned: 0,
 };
 
 export default class Assignment {
   constructor(spinSystem, opt) {
-    var options = Object.assign({}, defaultOptions, opt);
+    let options = Object.assign({}, defaultOptions, opt);
     this.spinSystem = spinSystem;
     this.keys = Object.keys(this.spinSystem.sources);
 
     this.sourcesIDs = [];
     this.targetIDs = [];
-    this.keys.forEach(key => {
+    this.keys.forEach((key) => {
       this.sourcesIDs = this.sourcesIDs.concat(this.spinSystem.sources[key]);
       this.targetIDs = this.targetIDs.concat(this.spinSystem.targets[key]);
     });
@@ -58,15 +58,15 @@ export default class Assignment {
   generateExpandMap() {
     this.expandMap = {};
     let errorAbs = Math.abs(this.errorCS);
-    this.keys.forEach(key => {
+    this.keys.forEach((key) => {
       let sourcesIDs = this.spinSystem.sources[key];
       let targetIDs = this.spinSystem.targets[key];
-      sourcesIDs.forEach(sourceID => {
+      sourcesIDs.forEach((sourceID) => {
         let source = this.spinSystem.sourcesConstrains[sourceID];
         source.error = Math.abs(source.error);
         this.expandMap[sourceID] = [];
         if (targetIDs) {
-          targetIDs.forEach(targetID => {
+          targetIDs.forEach((targetID) => {
             let target = this.spinSystem.targetsConstains[targetID];
             if (source.atomIDs.length - target.integral < 1) {
               if (this.errorCS === 0 || typeof source.delta === 'undefined') {
@@ -95,9 +95,9 @@ export default class Assignment {
   }
 
   buildAssignments() {
-    var date = new Date();
+    let date = new Date();
     this.timeStart = date.getTime();
-    var nSources;
+    let nSources;
     this.lowerBound = this.minScore;
 
     // do {
@@ -157,7 +157,7 @@ export default class Assignment {
 
     // Clean up any previous assignment
     for (let i = 0; i < ranges.length; i++) {
-      ranges[i].signal.forEach(signal => {
+      ranges[i].signal.forEach((signal) => {
         signal.diaID = [];
       });
     }
@@ -167,7 +167,7 @@ export default class Assignment {
         let range = this.spinSystem.targetsConstains[signalId];
 
         if (range) {
-          range.signal.forEach(signal => {
+          range.signal.forEach((signal) => {
             signal.diaID.push(this.sourcesIDs[diaIndex]);
           });
         }
@@ -179,7 +179,7 @@ export default class Assignment {
   }
 
   setAssignmentOnSample(sample, index) {
-    sample.spectra.nmr.forEach(nmr => {
+    sample.spectra.nmr.forEach((nmr) => {
       if (nmr.experiment === '1d') {
         this.setAssignmentOnRanges(nmr.range, index);
       }
@@ -275,7 +275,7 @@ export default class Assignment {
     let activeDomainOnTarget = Object.keys(partialInverse);
     let scoreOn2D = 0;
     if (activeDomainOnTarget.length > 1) {
-      var andConstrains = {};
+      let andConstrains = {};
       for (let i = 0; i < activeDomainOnSource.length; i++) {
         let sourceI = this.sourcesIDs[activeDomainOnSource[i]];
         for (let j = i + 1; j < activeDomainOnSource.length; j++) {
@@ -301,7 +301,7 @@ export default class Assignment {
             } else {
               andConstrains[keyOnTargerMap] = Math.max(
                 andConstrains[keyOnTargerMap],
-                value
+                value,
               );
             }
           }
@@ -310,7 +310,7 @@ export default class Assignment {
 
       let andKeys = Object.keys(andConstrains);
       let sumAnd = 0;
-      andKeys.forEach(key => {
+      andKeys.forEach((key) => {
         sumAnd += andConstrains[key];
       });
 
@@ -338,7 +338,7 @@ export default class Assignment {
   }
 
   scoreIntegration(partial) {
-    partial.forEach(targetID => {
+    partial.forEach((targetID) => {
       if (targetID !== null) {
         // let source = this.spinSystem.sourcesConstrains[this.sourcesIDs[index]];
         // let target = this.spinSystem.targetsConstains[targetID];
@@ -360,7 +360,7 @@ export default class Assignment {
       // let source = system.sourcesConstrains[sourceID];//The 1D prediction to be assigned
       let expand = this.expandMap[sourceID];
       // console.log("X "+JSON.stringify(expand));
-      expand.forEach(targetID => {
+      expand.forEach((targetID) => {
         partial[sourceAddress] = targetID;
         this.score = this.partialScore(partial, system.sourcesConstrains);
         // console.log(partial)
@@ -374,9 +374,9 @@ export default class Assignment {
           ) {
             // console.log(this.score + ' Found ' + JSON.stringify(partial));
             this.nSolutions++;
-            var solution = {
+            let solution = {
               assignment: this._cloneArray(partial),
-              score: this.score
+              score: this.score,
             };
             if (this.solutions.length >= this.maxSolutions) {
               if (this.score > this.solutions.last().score) {
@@ -390,7 +390,7 @@ export default class Assignment {
             this.exploreTreeRec(
               system,
               sourceAddress + 1,
-              JSON.parse(JSON.stringify(partial))
+              JSON.parse(JSON.stringify(partial)),
             );
           }
         } else {

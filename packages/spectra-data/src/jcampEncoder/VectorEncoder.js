@@ -1,4 +1,3 @@
-
 /**
  * class encodes a integer vector as a String in order to store it in a text file.
  * The algorithms used to encode the data are describe in:
@@ -13,7 +12,7 @@ const pseudoDigits = [
   ['@', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'],
   ['%', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'],
   ['%', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r'],
-  [' ', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 's']
+  [' ', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 's'],
 ];
 
 const SQZ_P = 1;
@@ -76,10 +75,10 @@ export function fixEncoding(data, firstX, intervalX, separator) {
   if (!separator) {
     separator = ' ';
   }
-  var outputData = '';
-  var j = 0;
-  var TD = data.length;
-  var i;
+  let outputData = '';
+  let j = 0;
+  let TD = data.length;
+  let i;
   while (j < TD - 7) {
     outputData += Math.ceil(firstX + j * intervalX);
     for (i = 0; i < 8; i++) {
@@ -106,10 +105,10 @@ export function fixEncoding(data, firstX, intervalX, separator) {
  * @return {string}
  */
 export function packedEncoding(data, firstX, intervalX) {
-  var outputData = '';
-  var j = 0;
-  var TD = data.length;
-  var i;
+  let outputData = '';
+  let j = 0;
+  let TD = data.length;
+  let i;
 
   while (j < TD - 7) {
     outputData += Math.ceil(firstX + j * intervalX);
@@ -147,11 +146,11 @@ export function packedEncoding(data, firstX, intervalX) {
  * @return {string}
  */
 export function squeezedEncoding(data, firstX, intervalX) {
-  var outputData = '';
+  let outputData = '';
   // String outputData = new String();
-  var j = 0;
-  var TD = data.length;
-  var i;
+  let j = 0;
+  let TD = data.length;
+  let i;
 
   while (j < TD - 10) {
     outputData += Math.ceil(firstX + j * intervalX);
@@ -180,26 +179,30 @@ export function squeezedEncoding(data, firstX, intervalX) {
  * @return {string}
  */
 export function differenceDuplicateEncoding(data, firstX, intervalX) {
-  var mult = 0;
-  var index = 0;
-  var charCount = 0;
-  var i;
+  let mult = 0;
+  let index = 0;
+  let charCount = 0;
+  let i;
   // We built a string where we store the encoded data.
-  var encodData = '';
-  var encodNumber = '';
-  var temp = '';
+  let encodData = '';
+  let encodNumber = '';
+  let temp = '';
 
   // We calculate the differences vector
-  var diffData = new Array(data.length - 1);
+  let diffData = new Array(data.length - 1);
   for (i = 0; i < diffData.length; i++) {
     diffData[i] = data[i + 1] - data[i];
   }
 
   // We simulate a line carry
-  var numDiff = diffData.length;
+  let numDiff = diffData.length;
   while (index < numDiff) {
-    if (charCount === 0) { // Start line
-      encodNumber = Math.ceil(firstX + index * intervalX) + squeezedDigit(data[index].toString()) + differenceDigit(diffData[index].toString());
+    if (charCount === 0) {
+      // Start line
+      encodNumber =
+        Math.ceil(firstX + index * intervalX) +
+        squeezedDigit(data[index].toString()) +
+        differenceDigit(diffData[index].toString());
       encodData += encodNumber;
       charCount += encodNumber.length;
     } else {
@@ -207,7 +210,8 @@ export function differenceDuplicateEncoding(data, firstX, intervalX) {
       if (diffData[index - 1] === diffData[index]) {
         mult++;
       } else {
-        if (mult > 0) { // Now we know that it can be in line
+        if (mult > 0) {
+          // Now we know that it can be in line
           mult++;
           encodNumber = duplicateDigit(mult.toString());
           encodData += encodNumber;
@@ -220,10 +224,14 @@ export function differenceDuplicateEncoding(data, firstX, intervalX) {
           if (encodNumber.length + charCount < MaxLinelength) {
             encodData += encodNumber;
             charCount += encodNumber.length;
-          } else { // Iniciar nueva linea
+          } else {
+            // Iniciar nueva linea
             encodData += newLine;
-            temp = Math.ceil(firstX + index * intervalX) + squeezedDigit(data[index].toString()) + encodNumber;
-            encodData += temp;// Each line start with first index number.
+            temp =
+              Math.ceil(firstX + index * intervalX) +
+              squeezedDigit(data[index].toString()) +
+              encodNumber;
+            encodData += temp; // Each line start with first index number.
             charCount = temp.length;
           }
         }
@@ -236,7 +244,10 @@ export function differenceDuplicateEncoding(data, firstX, intervalX) {
   }
   // We insert the last data from fid. It is done to control of data
   // The last line start with the number of datas in the fid.
-  encodData += newLine + Math.ceil(firstX + index * intervalX) + squeezedDigit(data[index].toString());
+  encodData +=
+    newLine +
+    Math.ceil(firstX + index * intervalX) +
+    squeezedDigit(data[index].toString());
 
   return encodData;
 }
@@ -250,25 +261,28 @@ export function differenceDuplicateEncoding(data, firstX, intervalX) {
  * @return {string}
  */
 export function differenceEncoding(data, firstX, intervalX) {
-  var index = 0;
-  var charCount = 0;
-  var i;
+  let index = 0;
+  let charCount = 0;
+  let i;
 
-  var encodData = '';
-  var encodNumber = '';
-  var temp = '';
+  let encodData = '';
+  let encodNumber = '';
+  let temp = '';
 
   // We calculate the differences vector
-  var diffData = new Array(data.length - 1);
+  let diffData = new Array(data.length - 1);
   for (i = 0; i < diffData.length; i++) {
     diffData[i] = data[i + 1] - data[i];
   }
 
-  var numDiff = diffData.length;
+  let numDiff = diffData.length;
   while (index < numDiff) {
     if (charCount === 0) {
       // We convert the first number.
-      encodNumber = Math.ceil(firstX + index * intervalX) + squeezedDigit(data[index].toString()) + differenceDigit(diffData[index].toString());
+      encodNumber =
+        Math.ceil(firstX + index * intervalX) +
+        squeezedDigit(data[index].toString()) +
+        differenceDigit(diffData[index].toString());
       encodData += encodNumber;
       charCount += encodNumber.length;
     } else {
@@ -278,15 +292,21 @@ export function differenceEncoding(data, firstX, intervalX) {
         charCount += encodNumber.length;
       } else {
         encodData += newLine;
-        temp = Math.ceil(firstX + index * intervalX) + squeezedDigit(data[index].toString()) + encodNumber;
-        encodData += temp;// Each line start with first index number.
+        temp =
+          Math.ceil(firstX + index * intervalX) +
+          squeezedDigit(data[index].toString()) +
+          encodNumber;
+        encodData += temp; // Each line start with first index number.
         charCount = temp.length;
       }
     }
     index++;
   }
   // We insert the last number from data. It is done to control of data
-  encodData += newLine + Math.ceil(firstX + index * intervalX) + squeezedDigit(data[index].toString());
+  encodData +=
+    newLine +
+    Math.ceil(firstX + index * intervalX) +
+    squeezedDigit(data[index].toString());
 
   return encodData;
 }
@@ -298,7 +318,7 @@ export function differenceEncoding(data, firstX, intervalX) {
  * @return {string}
  */
 function squeezedDigit(num) {
-  var SQZdigit = '';
+  let SQZdigit = '';
   if (num.charAt(0) === '-') {
     SQZdigit += pseudoDigits[SQZ_N][num.charAt(1)];
     if (num.length > 2) {
@@ -321,7 +341,7 @@ function squeezedDigit(num) {
  * @return {string}
  */
 function differenceDigit(num) {
-  var DIFFdigit = '';
+  let DIFFdigit = '';
 
   if (num.charAt(0) === '-') {
     DIFFdigit += pseudoDigits[DIF_N][num.charAt(1)];
@@ -345,7 +365,7 @@ function differenceDigit(num) {
  * @return {string}
  */
 function duplicateDigit(num) {
-  var DUPdigit = '';
+  let DUPdigit = '';
   DUPdigit += pseudoDigits[DUP][num.charAt(0)];
   if (num.length > 1) {
     DUPdigit += num.substring(1);
@@ -353,4 +373,3 @@ function duplicateDigit(num) {
 
   return DUPdigit;
 }
-
