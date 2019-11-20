@@ -1,4 +1,3 @@
-
 const nmrshiftdb2 = require('../data/nmrshiftdb2-13c.json');
 
 test('nmrshiftdb2', () => {
@@ -6,7 +5,7 @@ test('nmrshiftdb2', () => {
   expect(nmrshiftdb2).toHaveLength(5);
   for (const el of nmrshiftdb2) {
     let id;
-    for (var i in el) {
+    for (let i in el) {
       id = i;
       break;
     }

@@ -1,6 +1,4 @@
-
-require('should');
-const predictor = require('..');
+import * as predictor from '../src/index';
 
 const molfile = `Benzene, ethyl-, ID: C100414
   NIST    16081116462D 1   1.00000     0.00000
@@ -25,20 +23,27 @@ Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
 M  END
 `;
 
-const path = 'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/';
+const path =
+  'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/';
 
-describe('URL JSON 1H prediction', function () {
-  it.skip('1H chemical shift prediction expanded', function () {
+describe('URL JSON 1H prediction', function() {
+  it.skip('1H chemical shift prediction expanded', function() {
     predictor.fetchProton(`${path}h1.json`, 'customProton');
-    const prediction = predictor.proton(molfile, { group: true, db: 'customProton' });
-    prediction.length.should.eql(5);
+    const prediction = predictor.proton(molfile, {
+      group: true,
+      db: 'customProton',
+    });
+    expect(prediction).toHaveLength(5);
   });
 });
 
-describe('URL JSON 13C prediction', function () {
-  it.skip('13C chemical shift prediction expanded', function () {
+describe('URL JSON 13C prediction', function() {
+  it.skip('13C chemical shift prediction expanded', function() {
     predictor.fetchCarbon(`${path}nmrshiftdb2-13c.json`, 'customCarbon');
-    const prediction = predictor.carbon(molfile, { group: true, db: 'customCarbon' });
-    prediction.length.should.eql(6);
+    const prediction = predictor.carbon(molfile, {
+      group: true,
+      db: 'customCarbon',
+    });
+    expect(prediction).toHaveLength(6);
   });
 });

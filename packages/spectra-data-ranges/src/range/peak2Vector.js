@@ -12,15 +12,15 @@
  */
 
 export default function peak2Vector(peaks, options = {}) {
-  var {
+  let {
     from = null,
     to = null,
     nbPoints = 1024,
     functionName = '',
-    nWidth = 4
+    nWidth = 4,
   } = options;
 
-  var factor;
+  let factor;
   if (from === null) {
     from = Number.MAX_VALUE;
     for (let i = 0; i < peaks.length; i++) {
@@ -40,17 +40,17 @@ export default function peak2Vector(peaks, options = {}) {
     }
   }
 
-  var x = new Array(nbPoints);
-  var y = new Array(nbPoints);
-  var dx = (to - from) / (nbPoints - 1);
+  let x = new Array(nbPoints);
+  let y = new Array(nbPoints);
+  let dx = (to - from) / (nbPoints - 1);
   for (let i = 0; i < nbPoints; i++) {
     x[i] = from + i * dx;
     y[i] = 0;
   }
 
-  var intensity = peaks[0].y ? 'y' : 'intensity';
+  let intensity = peaks[0].y ? 'y' : 'intensity';
 
-  var functionToUse;
+  let functionToUse;
   switch (functionName.toLowerCase()) {
     case 'lorentzian':
       functionToUse = lorentzian;
@@ -60,11 +60,11 @@ export default function peak2Vector(peaks, options = {}) {
   }
 
   for (let i = 0; i < peaks.length; i++) {
-    var peak = peaks[i];
+    let peak = peaks[i];
     if (peak.x > from && peak.x < to) {
-      var index = Math.round((peak.x - from) / dx);
-      var w = Math.round(peak.width * nWidth / dx);
-      for (var j = index - w; j < index + w; j++) {
+      let index = Math.round((peak.x - from) / dx);
+      let w = Math.round((peak.width * nWidth) / dx);
+      for (let j = index - w; j < index + w; j++) {
         if (j >= 0 && j < nbPoints) {
           y[j] += functionToUse(peak[intensity], x[j], peak.width, peak.x);
         }
@@ -73,7 +73,7 @@ export default function peak2Vector(peaks, options = {}) {
   }
 
   function lorentzian(intensity, x, width, mean) {
-    var factor = intensity * Math.pow(width, 2) / 4;
+    let factor = (intensity * Math.pow(width, 2)) / 4;
     return factor / (Math.pow(mean - x, 2) + Math.pow(width / 2, 2));
   }
 

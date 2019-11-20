@@ -4,18 +4,18 @@ const LM = ML.LM;
 const math = ML.algebra;
 
 export default function singleFitting(data, pInit, opts) {
-  var y = (data.y === undefined) ? data.data.y : data.data[0].y;
-  var x = (data.x === undefined) ? data.data.x : data.data[0].x;
+  let y = data.y === undefined ? data.data.y : data.data[0].y;
+  let x = data.x === undefined ? data.data.x : data.data[0].x;
 
   // Get the max for normalize
-  var max = y[0];
+  let max = y[0];
   for (var i = 1; i < y.length; i++) {
     if (y[i] > max) max = y[i];
   }
 
   // prepare of the data for fitting
-  var xDat = math.matrix(y.length, 1);
-  var yDat = math.matrix(y.length, 1);
+  let xDat = math.matrix(y.length, 1);
+  let yDat = math.matrix(y.length, 1);
 
   for (i = 0; i < xDat.length; i++) {
     xDat[i][0] = x[i];
@@ -32,45 +32,62 @@ export default function singleFitting(data, pInit, opts) {
     y.push(yDat[i][0]);
   }
 
-  var weight = [xDat.length / math.sqrt(math.multiply(math.transpose(yDat), yDat))];
+  let weight = [
+    xDat.length / math.sqrt(math.multiply(math.transpose(yDat), yDat)),
+  ];
 
-  var pMin = math.multiply(math.abs(pInit), -10);
-  var pMax = math.multiply(math.abs(pInit), 10);
+  let pMin = math.multiply(math.abs(pInit), -10);
+  let pMax = math.multiply(math.abs(pInit), 10);
 
-  var consts = [];// optional vector of constants
+  let consts = []; // optional vector of constants
 
-  var pFit = LM.optimize(errFunc, pInit, xDat, yDat, weight, -0.01, pMin, pMax, consts, opts);
+  let pFit = LM.optimize(
+    errFunc,
+    pInit,
+    xDat,
+    yDat,
+    weight,
+    -0.01,
+    pMin,
+    pMax,
+    consts,
+    opts,
+  );
 
   pFit = pFit.p;
 
-  var rango = [xDat[0][0], xDat[xDat.length - 1][0]];
-  var t = math.matrix(100, 1);
-  var ini = math.min(rango[0], rango[1]);
-  var jump = math.abs(rango[0] - rango[1]) / 100;
+  let rango = [xDat[0][0], xDat[xDat.length - 1][0]];
+  let t = math.matrix(100, 1);
+  let ini = math.min(rango[0], rango[1]);
+  let jump = math.abs(rango[0] - rango[1]) / 100;
 
   for (i = 0; i < 100; i++) t[i][0] = ini + jump * i;
 
-  var yFitting = errFunc(t, pFit);
+  let yFitting = errFunc(t, pFit);
 
-  var yFit = [];
-  var xFit = [];
+  let yFit = [];
+  let xFit = [];
 
   for (i = 0; i < 100; i++) {
     xFit.push(t[i][0]);
     yFit.push(yFitting[i][0]);
   }
-  return { dataProfile: { title: '', data: { x: x, y: y } }, fittingProfile: { title: '', data: { x: xFit, y: yFit } }, pFit: pFit };
+  return {
+    dataProfile: { title: '', data: { x: x, y: y } },
+    fittingProfile: { title: '', data: { x: xFit, y: yFit } },
+    pFit: pFit,
+  };
 }
 
 function errFunc(z, p) {
-  var a = p[0][0];
-  var b = p[1][0];
-  var c = p[2][0];
-  var d = p[3][0];
-  var x = math.multiply(c, math.add(z, -d));
+  let a = p[0][0];
+  let b = p[1][0];
+  let c = p[2][0];
+  let d = p[3][0];
+  let x = math.multiply(c, math.add(z, -d));
   const erfA = 0.147;
-  var signOfX = math.matrix(x.length, 1);
-  for (var i = 0; i < x.length; i++) {
+  let signOfX = math.matrix(x.length, 1);
+  for (let i = 0; i < x.length; i++) {
     if (x[i][0] === 0) {
       signOfX[i][0] = 0;
     } else if (x[i][0] > 0) {
@@ -79,19 +96,22 @@ function errFunc(z, p) {
       signOfX[i][0] = -1;
     }
   }
-  var potencia = math.dotMultiply(x, x);
-  var onePlusA = math.add(1, math.multiply(erfA, potencia));
-  var fourO = math.add(math.multiply(4, Math.pow(Math.PI, -1)), math.multiply(potencia, erfA));
-  var ratio = math.dotDivide(fourO, onePlusA);
+  let potencia = math.dotMultiply(x, x);
+  let onePlusA = math.add(1, math.multiply(erfA, potencia));
+  let fourO = math.add(
+    math.multiply(4, Math.pow(Math.PI, -1)),
+    math.multiply(potencia, erfA),
+  );
+  let ratio = math.dotDivide(fourO, onePlusA);
   ratio = math.dotMultiply(ratio, math.multiply(-1, potencia));
-  var expofun = math.multiply(-1, math.exp(ratio));
-  var radical = math.sqrt(math.add(expofun, 1));
+  let expofun = math.multiply(-1, math.exp(ratio));
+  let radical = math.sqrt(math.add(expofun, 1));
   z = math.dotMultiply(signOfX, radical);
   z = math.add(a, math.multiply(b, z));
   return z;
 }
 
 function zGenerator(x, g, gamma) {
-  var z = math.multiply(x, math.inv(g * gamma));
+  let z = math.multiply(x, math.inv(g * gamma));
   return z;
 }

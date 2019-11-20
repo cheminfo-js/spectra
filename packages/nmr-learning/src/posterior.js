@@ -18,37 +18,37 @@ function loadFile(filename) {
 }
 
 async function start() {
-  var ignoreLabile = true; // Set the use of labile protons during training
+  let ignoreLabile = true; // Set the use of labile protons during training
   const levels = [6, 5, 4, 3, 2];
 
-  var testSet = JSON.parse(loadFile('/../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
-  var dataset1 = JSON.parse(
+  let testSet = JSON.parse(loadFile('/../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
+  let dataset1 = JSON.parse(
     FS.readFileSync(
-      '/home/acastillo/Documents/data/procjson/cheminfo443_y.json'
-    ).toString()
+      '/home/acastillo/Documents/data/procjson/cheminfo443_y.json',
+    ).toString(),
   );
-  var dataset2 = JSON.parse(
+  let dataset2 = JSON.parse(
     FS.readFileSync(
-      '/home/acastillo/Documents/data/procjson/maybridge_y.json'
-    ).toString()
+      '/home/acastillo/Documents/data/procjson/maybridge_y.json',
+    ).toString(),
   );
-  var dataset3 = []; // JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
+  let dataset3 = []; // JSON.parse(FS.readFileSync('/home/acastillo/Documents/data/procjson/big0.json').toString());
 
   // dataset3.splice(0, 500)
 
-  var datasets = [dataset1, dataset2, dataset3];
+  let datasets = [dataset1, dataset2, dataset3];
 
-  var start, date;
-  var dataset, max, ds, i, j;
+  let start, date;
+  let dataset, max, ds, i, j;
   // var fastDB = [];
-  var fastDB = JSON.parse(loadFile('/../data/h_44.json'));
+  let fastDB = JSON.parse(loadFile('/../data/h_44.json'));
   logger(`Cheminfo All: ${dataset1.length}`);
   logger(`MayBridge All: ${dataset2.length}`);
   logger(`Other All: ${dataset3.length}`);
 
   // Remove the overlap molecules from train and test
-  var removed = 0;
-  var trainDataset = [];
+  let removed = 0;
+  let trainDataset = [];
   for (i = 0; i < testSet.length; i++) {
     for (ds = 0; ds < datasets.length; ds++) {
       dataset = datasets[ds];
@@ -80,7 +80,7 @@ async function start() {
   logger(`MayBridge Final: ${dataset2.length}`);
   logger(`Other Final: ${dataset3.length}`);
   logger(
-    `Overlaped molecules: ${removed}.  They were removed from training datasets`
+    `Overlaped molecules: ${removed}.  They were removed from training datasets`,
   );
 
   // Run the learning process. After each iteration the system has seen every single molecule once
@@ -101,7 +101,7 @@ async function start() {
           hose: true,
           use: 'median',
           ignoreLabile: ignoreLabile,
-          keepMolecule: true
+          keepMolecule: true,
         });
         // logger(i)
         let ranges = dataset[i].spectra.nmr[0].range;
@@ -138,7 +138,7 @@ async function start() {
         }
       }
       let keys = Object.keys(fastDB[level - 1]);
-      var deleted = 0;
+      let deleted = 0;
       for (let key in keys) {
         let confidence = 0;
         if (fastDB[level - 1][key].p) {
@@ -161,7 +161,7 @@ async function start() {
     }
     FS.writeFileSync(
       `${__dirname}/../data/h_clean.json`,
-      JSON.stringify(fastDB)
+      JSON.stringify(fastDB),
     );
   } catch (e) {
     logger(e);

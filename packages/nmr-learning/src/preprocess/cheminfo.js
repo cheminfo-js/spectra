@@ -9,7 +9,7 @@ function loadFile(filename) {
 }
 
 function createSpectraData(filename) {
-  var spectrum = SD.NMR.fromJcamp(FS.readFileSync(filename).toString());
+  let spectrum = SD.NMR.fromJcamp(FS.readFileSync(filename).toString());
   return spectrum;
 }
 
@@ -17,29 +17,29 @@ export function load(path, datasetName, options) {
   let OCLE = options.OCLE;
   // var keepMolfile = false || options.keepMolfile;
   // var keepMolecule = false || options.keepMolecule;
-  var filter = { filter: '.mol' };
+  let filter = { filter: '.mol' };
   if (typeof options.filter === 'object') {
     filter = options.filter;
   }
 
   // var datasetName = "learningDataSet";
   // var path = "/Research/NMR/AutoAssign/data/"+datasetName;
-  var molFiles = FS.readdirSync(path).filter(line => {
+  let molFiles = FS.readdirSync(path).filter((line) => {
     return line.endsWith(filter.filter);
   });
 
-  var max = molFiles.length;
-  var result = []; // new Array(max);
+  let max = molFiles.length;
+  let result = []; // new Array(max);
   // we could now loop on the sdf to add the int index
-  for (var i = 0; i < max; i++) {
+  for (let i = 0; i < max; i++) {
     try {
-      var molfile = loadFile(path + molFiles[i]);
-      var molecule = OCLE.Molecule.fromMolfile(molfile);
+      let molfile = loadFile(path + molFiles[i]);
+      let molecule = OCLE.Molecule.fromMolfile(molfile);
       molecule.addImplicitHydrogens();
-      var nH =
+      let nH =
         molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') *
         1;
-      var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
+      let diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
       diaIDs.sort(function(a, b) {
         if (a.atomLabel === b.atomLabel) {
           return b.counter - a.counter;
@@ -52,19 +52,19 @@ export function load(path, datasetName, options) {
         fromLabel: 'H',
         toLabel: 'O',
         minLength: 1,
-        maxLength: 1
+        maxLength: 1,
       });
       const linksNH = molecule.getAllPaths({
         fromLabel: 'H',
         toLabel: 'N',
         minLength: 1,
-        maxLength: 1
+        maxLength: 1,
       });
       const linksClH = molecule.getAllPaths({
         fromLabel: 'H',
         toLabel: 'Cl',
         minLength: 1,
-        maxLength: 1
+        maxLength: 1,
       });
       const atoms = {};
       const levels = [6, 5, 4, 3];
@@ -73,7 +73,7 @@ export function load(path, datasetName, options) {
         delete diaId._highlight;
         diaId.hose = OCLE.Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
           maxSphereSize: levels[0],
-          type: 0
+          type: 0,
         });
 
         for (const atomID of diaId.atoms) {
@@ -108,19 +108,19 @@ export function load(path, datasetName, options) {
       // ocl.nH = nH;
 
       // Simulate and process the 1H-NMR spectrum at 400MHz
-      var jcampFile = molFiles[i]
+      let jcampFile = molFiles[i]
         .replace('mol_', 'h1_')
         .replace('.mol', '.jdx');
-      var spectraData1H = createSpectraData(path + jcampFile);
+      let spectraData1H = createSpectraData(path + jcampFile);
 
-      var signals = spectraData1H.getRanges({
+      let signals = spectraData1H.getRanges({
         nH: nH,
         realTop: true,
         thresholdFactor: 1,
         // minMaxRatio:0.001,
         clean: true,
         compile: true,
-        format: 'new'
+        format: 'new',
       });
 
       let sum = 0;
@@ -147,12 +147,12 @@ export function load(path, datasetName, options) {
         signals[j].integral *= nH / sum;
       }
       // It seems that the compiler makes crazy things some times. We need to join the signals in the same range
-      for (var j = signals.length - 2; j >= 0; j--) {
+      for (let j = signals.length - 2; j >= 0; j--) {
         if (
           Math.abs(
             signals[j].to +
               signals[j].from -
-              (signals[j + 1].to + signals[j + 1].from)
+              (signals[j + 1].to + signals[j + 1].from),
           ) <
           Math.abs(signals[j].to - signals[j].from) +
             Math.abs(signals[j + 1].to - signals[j + 1].from)
@@ -178,8 +178,8 @@ export function load(path, datasetName, options) {
             atom: atoms,
             diaId: diaIDs,
             nH: nH,
-            hasLabile
-          }
+            hasLabile,
+          },
         }, // {ocl: ocl, molfile: molecule.toMolfileV3()},
         spectra: {
           nmr: [
@@ -187,10 +187,10 @@ export function load(path, datasetName, options) {
               nucleus: 'H',
               experiment: '1d',
               range: signals,
-              solvent: spectraData1H.getParamString('.SOLVENT NAME', 'unknown')
-            }
-          ]
-        }
+              solvent: spectraData1H.getParamString('.SOLVENT NAME', 'unknown'),
+            },
+          ],
+        },
       };
       // {nucleus: ["H", "H"],  experiment: "cosy", region: cosyZones, solvent: cosy.getParamString(".SOLVENT NAME", "unknown")}
       result.push(sample);

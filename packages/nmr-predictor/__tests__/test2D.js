@@ -1,11 +1,13 @@
-
-require('should');
-const predictor = require('..');
-
 import FS from 'fs';
 
-const db1H = JSON.parse(fs.readFileSync(`${__dirname}/../data/h1.json`, 'utf8'));
-const db13C = JSON.parse(fs.readFileSync(`${__dirname}/../data/nmrshiftdb2-13c.json`, 'utf8'));
+import * as predictor from '../src/index';
+
+const db1H = JSON.parse(
+  FS.readFileSync(`${__dirname}/../data/h1.json`, 'utf8'),
+);
+const db13C = JSON.parse(
+  FS.readFileSync(`${__dirname}/../data/nmrshiftdb2-13c.json`, 'utf8'),
+);
 
 const molfile = `Benzene, ethyl-, ID: C100414
   NIST    16081116462D 1   1.00000     0.00000
@@ -30,57 +32,87 @@ Copyright by the U.S. Sec. Commerce on behalf of U.S.A. All rights reserved.
 M  END
 `;
 
-describe('2D prediction', function () {
-  it('COSY', function () {
+describe('2D prediction', function() {
+  it('COSY', function() {
     const h1 = predictor.proton(molfile, { db: db1H });
-    const prediction = predictor.twoD(h1, h1, molfile, { minLength: 1, maxLength: 3 });
+    const prediction = predictor.twoD(h1, h1, molfile, {
+      minLength: 1,
+      maxLength: 3,
+    });
     let count = 0;
     prediction.forEach((element) => {
-      if (element.fromDiaID === 'did@`@f\\bbRaih@J@A~dHBIU@'
-                && element.toDiaID === 'did@`@fTfUvf`@h@GzP`HeT' && element.pathLength === 3) {
+      if (
+        element.fromDiaID === 'did@`@f\\bbRaih@J@A~dHBIU@' &&
+        element.toDiaID === 'did@`@fTfUvf`@h@GzP`HeT' &&
+        element.pathLength === 3
+      ) {
         count++;
       }
-      if (element.toDiaID === 'did@`@f\\bbRaih@J@A~dHBIU@'
-                && element.fromDiaID === 'did@`@fTfUvf`@h@GzP`HeT' && element.pathLength === 3) {
+      if (
+        element.toDiaID === 'did@`@f\\bbRaih@J@A~dHBIU@' &&
+        element.fromDiaID === 'did@`@fTfUvf`@h@GzP`HeT' &&
+        element.pathLength === 3
+      ) {
         count++;
       }
-      if (element.fromDiaID === 'did@`@f\\bbRaih@J@A~dHBIU@'
-                && element.toDiaID === 'did@`@fTfYUn`HH@GzP`HeT' && element.pathLength === 3) {
+      if (
+        element.fromDiaID === 'did@`@f\\bbRaih@J@A~dHBIU@' &&
+        element.toDiaID === 'did@`@fTfYUn`HH@GzP`HeT' &&
+        element.pathLength === 3
+      ) {
         count++;
       }
-      if (element.toDiaID === 'did@`@f\\bbRaih@J@A~dHBIU@'
-                && element.fromDiaID === 'did@`@fTfYUn`HH@GzP`HeT' && element.pathLength === 3) {
+      if (
+        element.toDiaID === 'did@`@f\\bbRaih@J@A~dHBIU@' &&
+        element.fromDiaID === 'did@`@fTfYUn`HH@GzP`HeT' &&
+        element.pathLength === 3
+      ) {
         count++;
       }
-      if (element.fromDiaID === 'did@`@fTf[Waj@@bJ@_iB@bUP'
-                && element.toDiaID === 'did@`@fTeYWaj@@@GzP`HeT' && element.pathLength === 3) {
+      if (
+        element.fromDiaID === 'did@`@fTf[Waj@@bJ@_iB@bUP' &&
+        element.toDiaID === 'did@`@fTeYWaj@@@GzP`HeT' &&
+        element.pathLength === 3
+      ) {
         count++;
       }
-      if (element.toDiaID === 'did@`@fTf[Waj@@bJ@_iB@bUP'
-                && element.fromDiaID === 'did@`@fTeYWaj@@@GzP`HeT' && element.pathLength === 3) {
+      if (
+        element.toDiaID === 'did@`@fTf[Waj@@bJ@_iB@bUP' &&
+        element.fromDiaID === 'did@`@fTeYWaj@@@GzP`HeT' &&
+        element.pathLength === 3
+      ) {
         count++;
       }
 
-      if (element.toDiaID === 'did@`@fTf[Waj@@bJ@_iB@bUP'
-                && element.fromDiaID === 'did@`@fTf[Waj@@bJ@_iB@bUP' && element.pathLength === 2) {
+      if (
+        element.toDiaID === 'did@`@fTf[Waj@@bJ@_iB@bUP' &&
+        element.fromDiaID === 'did@`@fTf[Waj@@bJ@_iB@bUP' &&
+        element.pathLength === 2
+      ) {
         count++;
       }
-      if (element.toDiaID === 'did@`@fTeYWaj@@@GzP`HeT'
-                && element.fromDiaID === 'did@`@fTeYWaj@@@GzP`HeT' && element.pathLength === 2) {
+      if (
+        element.toDiaID === 'did@`@fTeYWaj@@@GzP`HeT' &&
+        element.fromDiaID === 'did@`@fTeYWaj@@@GzP`HeT' &&
+        element.pathLength === 2
+      ) {
         count++;
       }
     });
-    prediction.length.should.equal(count);
+    expect(prediction).toHaveLength(count);
   });
 
-  it('HSQC', function () {
+  it('HSQC', function() {
     const c13 = predictor.carbon(molfile, { db: db13C });
     const h1 = predictor.proton(molfile, { db: db1H });
     // console.log(c13);
     // console.log(h1);
-    const prediction = predictor.twoD(h1, c13, molfile, { minLength: 1, maxLength: 4 });
-    prediction.length.should.equal(24);
-    prediction[0].fromChemicalShift.should.greaterThan(0);
-    prediction[0].toChemicalShift.should.greaterThan(0);
+    const prediction = predictor.twoD(h1, c13, molfile, {
+      minLength: 1,
+      maxLength: 4,
+    });
+    expect(prediction).toHaveLength(24);
+    expect(prediction[0].fromChemicalShift).toBeGreaterThan(0);
+    expect(prediction[0].toChemicalShift).toBeGreaterThan(0);
   });
 });

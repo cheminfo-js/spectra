@@ -6,11 +6,11 @@
  * @return {SD}
  */
 export default function zeroFilling(spectraData, zeroFillingX) {
-  var nbSubSpectra = spectraData.getNbSubSpectra();
+  let nbSubSpectra = spectraData.getNbSubSpectra();
   // var zeroPadding = spectraData.getParamDouble("$$ZEROPADDING", 0);
-  var nbXPoints, lastX, deltaX, k, x, y;
+  let nbXPoints, lastX, deltaX, k, x, y;
   if (zeroFillingX !== 0) {
-    for (var iSubSpectra = 0; iSubSpectra < nbSubSpectra; iSubSpectra++) {
+    for (let iSubSpectra = 0; iSubSpectra < nbSubSpectra; iSubSpectra++) {
       spectraData.setActiveElement(iSubSpectra);
       nbXPoints = spectraData.getNbPoints();
       y = spectraData.getYData();

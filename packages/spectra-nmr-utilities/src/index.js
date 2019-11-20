@@ -1,7 +1,7 @@
 const patterns = ['s', 'd', 't', 'q', 'quint', 'h', 'sept', 'o', 'n'];
 
 export function nmrJ(Js, options = {}) {
-  var jString = '';
+  let jString = '';
   options = Object.assign({}, { separator: ', ', nbDecimal: 2 }, options);
   let j, i;
   for (i = 0; i < Js.length; i++) {
@@ -15,13 +15,13 @@ export function nmrJ(Js, options = {}) {
 }
 
 export function joinCoupling(signal, tolerance = 0.05) {
-  var jc = signal.j;
+  let jc = signal.j;
   if (jc && jc.length > 0) {
-    var cont = jc[0].assignment ? jc[0].assignment.length : 1;
+    let cont = jc[0].assignment ? jc[0].assignment.length : 1;
     var pattern = '';
-    var newNmrJs = [];
-    var diaIDs = [];
-    var atoms = [];
+    let newNmrJs = [];
+    let diaIDs = [];
+    let atoms = [];
     jc.sort(function(a, b) {
       return b.coupling - a.coupling;
     });
@@ -39,7 +39,7 @@ export function joinCoupling(signal, tolerance = 0.05) {
       } else {
         let jTemp = {
           coupling: Math.abs(jc[i].coupling),
-          multiplicity: patterns[cont]
+          multiplicity: patterns[cont],
         };
         if (diaIDs.length > 0) {
           jTemp.diaID = diaIDs;
@@ -60,7 +60,7 @@ export function joinCoupling(signal, tolerance = 0.05) {
     }
     let jTemp = {
       coupling: Math.abs(jc[i].coupling),
-      multiplicity: patterns[cont]
+      multiplicity: patterns[cont],
     };
     if (diaIDs.length > 0) {
       jTemp.diaID = diaIDs;
@@ -81,12 +81,12 @@ export function joinCoupling(signal, tolerance = 0.05) {
 }
 
 export function group(signals, options = {}) {
-  var i, k;
+  let i, k;
   for (i = 0; i < signals.length; i++) {
     var j = signals[i].j;
     if (j && j.length > 0) {
       for (k = j.length - 2; k >= 0; k--) {
-        for (var m = j.length - 1; m > k; m--) {
+        for (let m = j.length - 1; m > k; m--) {
           if (
             j[k].diaID === j[m].diaID &&
             j[k].coupling === j[m].coupling &&
@@ -126,14 +126,14 @@ export function group(signals, options = {}) {
 }
 
 export function compilePattern(signal, tolerance = 0.05) {
-  var jc = signal.j;
-  var pattern = '';
+  let jc = signal.j;
+  let pattern = '';
   if (jc && jc.length > 0) {
-    var cont = jc[0].assignment ? jc[0].assignment.length : 0;
+    let cont = jc[0].assignment ? jc[0].assignment.length : 0;
     jc.sort(function(a, b) {
       return b.coupling - a.coupling;
     });
-    for (var i = 0; i < jc.length - 1; i++) {
+    for (let i = 0; i < jc.length - 1; i++) {
       if (Math.abs(jc[i].coupling - jc[i + 1].coupling) < tolerance) {
         cont += jc[i + 1].assignment ? jc[i + 1].assignment.length : 1;
       } else {

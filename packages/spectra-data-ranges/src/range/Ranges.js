@@ -32,13 +32,13 @@ export default class Ranges extends Array {
     options = Object.assign(
       {},
       { lineWidth: 1, frequency: 400, nucleus: '1H' },
-      options
+      options,
     );
     // 1. Collapse all the equivalent predictions
 
     signals = utils.group(signals, options);
     const nSignals = signals.length;
-    var i, j, signal, width, center, jc;
+    let i, j, signal, width, center, jc;
 
     const result = new Array(nSignals);
 
@@ -60,7 +60,7 @@ export default class Ranges extends Array {
         from: signal.delta - width,
         to: signal.delta + width,
         integral: signal.nbAtoms,
-        signal: [signal]
+        signal: [signal],
       };
     }
 
@@ -144,11 +144,11 @@ export default class Ranges extends Array {
    * @return {Ranges}
    */
   updateIntegrals(options = {}) {
-    var factor = options.factor || 1;
-    var i;
+    let factor = options.factor || 1;
+    let i;
     if (options.sum) {
-      var nH = options.sum || 1;
-      var sumObserved = this.sumOfIntegrals();
+      let nH = options.sum || 1;
+      let sumObserved = this.sumOfIntegrals();
       factor = nH / (sumObserved || 1);
     }
     for (i = 0; i < this.length; i++) {
@@ -176,10 +176,10 @@ export default class Ranges extends Array {
    */
   getPeakList() {
     if (this[0].signal[0].peak) {
-      var peaks = [];
-      for (var i = 0; i < this.length; i++) {
-        var range = this[i];
-        for (var j = 0; j < range.signal.length; j++) {
+      let peaks = [];
+      for (let i = 0; i < this.length; i++) {
+        let range = this[i];
+        for (let j = 0; j < range.signal.length; j++) {
           peaks = peaks.concat(range.signal[j].peak);
         }
       }
@@ -208,14 +208,14 @@ export default class Ranges extends Array {
    * @return {Array<object>}
    */
   toIndex(options = {}) {
-    var index = [];
+    let index = [];
     if (options.joinCouplings) {
       this.joinCouplings(options);
     }
     for (let range of this) {
       if (Array.isArray(range.signal) && range.signal.length > 0) {
         let l = range.signal.length;
-        var delta = new Array(l);
+        let delta = new Array(l);
         for (let i = 0; i < l; i++) {
           delta[i] = range.signal[i].delta;
         }
@@ -227,12 +227,12 @@ export default class Ranges extends Array {
                 utils.joinCoupling(range.signal[0], options.tolerance),
           delta:
             arrayUtils.arithmeticMean(delta) || (range.to + range.from) * 0.5,
-          integral: range.integral
+          integral: range.integral,
         });
       } else {
         index.push({
           delta: (range.to + range.from) * 0.5,
-          multiplicity: 'm'
+          multiplicity: 'm',
         });
       }
     }
@@ -264,7 +264,7 @@ export default class Ranges extends Array {
         if (signal.length === 1) {
           signal[0].multiplicity = utils.joinCoupling(
             signal[0],
-            options.tolerance
+            options.tolerance,
           );
         } else {
           signal.forEach((signal) => {

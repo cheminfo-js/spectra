@@ -7,12 +7,12 @@ const defaultOptions = {
   levels: [5, 4, 3, 2],
   keepMolfile: false,
   keepMolecule: false,
-  distanceMatrix: false
+  distanceMatrix: false,
 };
 
 export default function normalizeOptions(molecule, options) {
   options = Object.assign({}, defaultOptions, options);
-  let { Molecule, Util } = getOcleFromOptions(options);// (0, getOcleFromOptions.default)(options);
+  let { Molecule, Util } = getOcleFromOptions(options); // (0, getOcleFromOptions.default)(options);
   if (typeof molecule === 'string') {
     if (molecule.split(/[\r\n]+/).length > 2) {
       molecule = Molecule.fromMolfile(molecule);
@@ -46,9 +46,10 @@ export default function normalizeOptions(molecule, options) {
 
 function molecule2Json(molecule, Util, options) {
   // molecule.addImplicitHydrogens();
-  var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') * 1;
-  var diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
-  diaIDs.sort(function (a, b) {
+  let nH =
+    molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') * 1;
+  let diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
+  diaIDs.sort(function(a, b) {
     if (a.atomLabel === b.atomLabel) {
       return b.counter - a.counter;
     }
@@ -59,21 +60,21 @@ function molecule2Json(molecule, Util, options) {
     fromLabel: 'H',
     toLabel: 'O',
     minLength: 1,
-    maxLength: 1
+    maxLength: 1,
   });
 
   const linksNH = molecule.getAllPaths({
     fromLabel: 'H',
     toLabel: 'N',
     minLength: 1,
-    maxLength: 1
+    maxLength: 1,
   });
 
   const linksClH = molecule.getAllPaths({
     fromLabel: 'H',
     toLabel: 'Cl',
     minLength: 1,
-    maxLength: 1
+    maxLength: 1,
   });
 
   const atoms = {};
@@ -83,7 +84,7 @@ function molecule2Json(molecule, Util, options) {
     delete diaId._highlight;
     diaId.hose = Util.getHoseCodesFromDiastereotopicID(diaId.oclID, {
       maxSphereSize: levels[0],
-      type: 0
+      type: 0,
     });
 
     for (const atomID of diaId.atoms) {
@@ -115,10 +116,18 @@ function molecule2Json(molecule, Util, options) {
     }
   }
 
-  let toReturn = { id: molecule.getIDCode(), atom: atoms, diaId: diaIDs, nH: nH, hasLabile };
+  let toReturn = {
+    id: molecule.getIDCode(),
+    atom: atoms,
+    diaId: diaIDs,
+    nH: nH,
+    hasLabile,
+  };
 
   if (options.distanceMatrix) {
-    toReturn.distanceMatrix = molecule.getConnectivityMatrix({ pathLength: true });
+    toReturn.distanceMatrix = molecule.getConnectivityMatrix({
+      pathLength: true,
+    });
   }
   if (options.keepMolfile) {
     toReturn.molfile = molecule.toMolfile();

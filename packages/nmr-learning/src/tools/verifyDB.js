@@ -12,9 +12,9 @@ function loadFile(filename) {
 }
 
 async function start() {
-  var testSet = JSON.parse(loadFile('/../../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
+  let testSet = JSON.parse(loadFile('/../../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
   let fastDB = JSON.parse(
-    loadFile('../../../nmr-predictor/data/nmrshiftdb2-1h.json')
+    loadFile('../../../nmr-predictor/data/nmrshiftdb2-1h.json'),
   );
 
   // var fastDB = JSON.parse(loadFile2('/home/acastillo/Documents/workspaces/cheminfo/nemo2/data/prediction/h1.json'));
@@ -27,7 +27,7 @@ async function start() {
       Object.keys(fastDB[1]).length
     } ${Object.keys(fastDB[2]).length} ${Object.keys(fastDB[3]).length} ${
       Object.keys(fastDB[4]).length
-    }`
+    }`,
   ); //  + " " + Object.keys(fastDB[5]).length);
 
   // logger(fastDB[3]);
@@ -39,7 +39,7 @@ async function start() {
     predictor.setDb(fastDB, 'proton', 'proton');
     getPerformance(testSet, fastDB, {
       ignoreLabile: true,
-      levels: setup.levels
+      levels: setup.levels,
     });
     /* var error = getPerformance(testSet, fastDB, { ignoreLabile: true, levels: setup.levels });
     for (let level of setup.levels) {
@@ -58,8 +58,8 @@ async function getPerformance(testSet, fastDB, setup) {
   let start = date.getTime();
   predictor.setDb(fastDB, 'proton', 'proton');
   // var error = comparePredictors(datasetSim,{"db":db,"dataset":testSet,"iteration":"="+iteration});
-  var histParams = { from: 0, to: 1, nBins: 30 };
-  var error = await stats.cmp2asg(testSet, predictor, {
+  let histParams = { from: 0, to: 1, nBins: 30 };
+  let error = await stats.cmp2asg(testSet, predictor, {
     db: fastDB,
     dataset: testSet,
     ignoreLabile: setup.ignoreLabile,
@@ -67,19 +67,17 @@ async function getPerformance(testSet, fastDB, setup) {
     levels: setup.levels,
     use: 'median',
     OCLE: OCLE,
-    hose: false
+    hose: false,
   });
 
   date = new Date();
 
   logger(
-    `Error: ${error.error} count: ${error.count} min: ${error.min} max: ${
-      error.max
-    }`
+    `Error: ${error.error} count: ${error.count} min: ${error.min} max: ${error.max}`,
   );
 
-  var data = error.hist;
-  var sumHist = 0;
+  let data = error.hist;
+  let sumHist = 0;
   for (let k = 0; k < data.length; k++) {
     sumHist += data[k].y / error.count;
     if (sumHist > 0) {

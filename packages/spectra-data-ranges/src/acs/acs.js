@@ -5,27 +5,32 @@ const globalOptions = {
     nucleus: '1H',
     nbDecimalDelta: 2,
     nbDecimalJ: 1,
-    observedFrequency: 400
+    observedFrequency: 400,
   },
   c: {
     nucleus: '13C',
     nbDecimalDelta: 1,
     nbDecimalJ: 1,
-    observedFrequency: 100
+    observedFrequency: 100,
   },
   f: {
     nucleus: '19F',
     nbDecimalDelta: 2,
     nbDecimalJ: 1,
-    observedFrequency: 400
-  }
+    observedFrequency: 400,
+  },
 };
 
 export default function toAcs(ranges, options = {}) {
   if (!options.nucleus) options.nucleus = '1H';
-  var nucleus = options.nucleus.toLowerCase().replace(/[0-9]/g, '');
-  var defaultOptions = globalOptions[nucleus];
-  options = Object.assign({}, defaultOptions, { ascending: false, format: 'IMJA' }, options);
+  let nucleus = options.nucleus.toLowerCase().replace(/[0-9]/g, '');
+  let defaultOptions = globalOptions[nucleus];
+  options = Object.assign(
+    {},
+    defaultOptions,
+    { ascending: false, format: 'IMJA' },
+    options,
+  );
 
   ranges = JSON.parse(JSON.stringify(ranges));
   if (options.ascending === true) {
@@ -35,7 +40,7 @@ export default function toAcs(ranges, options = {}) {
       return fromA - fromB;
     });
   }
-  var acsString = formatAcs(ranges, options);
+  let acsString = formatAcs(ranges, options);
 
   if (acsString.length > 0) acsString += '.';
 
@@ -43,9 +48,9 @@ export default function toAcs(ranges, options = {}) {
 }
 
 function formatAcs(ranges, options) {
-  var acs = spectroInformation(options);
+  let acs = spectroInformation(options);
   if (acs.length === 0) acs = 'δ ';
-  var acsRanges = [];
+  let acsRanges = [];
   for (let range of ranges) {
     pushDelta(range, acsRanges, options);
   }
@@ -74,19 +79,20 @@ function spectroInformation(options) {
 }
 
 function pushDelta(range, acsRanges, options) {
-  var strings = '';
-  var parenthesis = [];
+  let strings = '';
+  let parenthesis = [];
   let fromTo = [range.from, range.to];
   if (Array.isArray(range.signal) && range.signal.length > 0) {
-    var signals = range.signal;
+    let signals = range.signal;
     if (signals.length > 1) {
       if (options.ascending === true) {
         signals.sort((a, b) => {
           return a.delta - b.delta;
         });
       }
-      strings += `${Math.min(...fromTo).toFixed(options.nbDecimalDelta)}-${
-        Math.max(...fromTo).toFixed(options.nbDecimalDelta)}`;
+      strings += `${Math.min(...fromTo).toFixed(
+        options.nbDecimalDelta,
+      )}-${Math.max(...fromTo).toFixed(options.nbDecimalDelta)}`;
       strings += ` (${getIntegral(range, options)}`;
       for (let signal of signals) {
         parenthesis = [];
@@ -105,13 +111,17 @@ function pushDelta(range, acsRanges, options) {
         switchFormat(range, signals[0], parenthesis, options);
         if (parenthesis.length > 0) strings += ` (${parenthesis.join(', ')})`;
       } else {
-        strings += `${Math.min(...fromTo).toFixed(options.nbDecimalDelta)}-${Math.max(...fromTo).toFixed(options.nbDecimalDelta)}`;
+        strings += `${Math.min(...fromTo).toFixed(
+          options.nbDecimalDelta,
+        )}-${Math.max(...fromTo).toFixed(options.nbDecimalDelta)}`;
         switchFormat(range, signals[0], parenthesis, options);
         if (parenthesis.length > 0) strings += ` (${parenthesis})`;
       }
     }
   } else {
-    strings += `${Math.min(...fromTo).toFixed(options.nbDecimalDelta)}-${Math.max(...fromTo).toFixed(options.nbDecimalDelta)}`;
+    strings += `${Math.min(...fromTo).toFixed(
+      options.nbDecimalDelta,
+    )}-${Math.max(...fromTo).toFixed(options.nbDecimalDelta)}`;
     switchFormat(range, [], parenthesis, options);
     if (parenthesis.length > 0) strings += ` (${parenthesis.join(', ')})`;
   }
@@ -123,7 +133,8 @@ function getIntegral(range, options) {
   if (range.pubIntegral) {
     integral = range.pubIntegral;
   } else if (range.integral) {
-    integral = range.integral.toFixed(0) + options.nucleus[options.nucleus.length - 1];
+    integral =
+      range.integral.toFixed(0) + options.nucleus[options.nucleus.length - 1];
   }
   return integral;
 }
@@ -168,7 +179,7 @@ function formatNucleus(nucleus) {
 }
 
 function appendSeparator(strings) {
-  if ((strings.length > 0) && (!strings.match(/ $/)) && (!strings.match(/\($/))) {
+  if (strings.length > 0 && !strings.match(/ $/) && !strings.match(/\($/)) {
     strings += ', ';
   }
   return strings;
@@ -182,17 +193,19 @@ function formatAssignment(assignment) {
 
 function pushCoupling(signal, parenthesis, options) {
   if (Array.isArray(signal.j) && signal.j.length > 0) {
-    signal.j.sort(function (a, b) {
+    signal.j.sort(function(a, b) {
       return b.coupling - a.coupling;
     });
 
-    var values = [];
+    let values = [];
     for (let j of signal.j) {
       if (j.coupling !== undefined) {
         values.push(j.coupling.toFixed(options.nbDecimalJ));
       }
     }
-    if (values.length > 0) parenthesis.push(`<i>J</i> = ${values.join(', ')} Hz`);
+    if (values.length > 0) {
+      parenthesis.push(`<i>J</i> = ${values.join(', ')} Hz`);
+    }
   }
 }
 

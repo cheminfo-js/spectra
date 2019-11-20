@@ -8,17 +8,19 @@
  * @return {Array}
  */
 export default function profile(pdata, signals, maxShiftDiference) {
-  var peaks = pdata[0].peakPicking;
+  let peaks = pdata[0].peakPicking;
 
-  var Data = new Array(signals.length);
+  let Data = new Array(signals.length);
 
   // @TODO Is needed to modified something to obtain spoffs information by default.
   for (var i = 0; i < signals.length; i++) {
     var profileData = [];
     var shiftData = [];
-    var ini = true;
+    let ini = true;
     for (var k = 0; k < peaks.length; k++) {
-      if (Math.abs(peaks[k].signal[0].delta - signals[i]) <= maxShiftDiference) {
+      if (
+        Math.abs(peaks[k].signal[0].delta - signals[i]) <= maxShiftDiference
+      ) {
         profileData.push(Number(pdata[0].value.info.$SPOFFS));
         profileData.push(peaks[k].integral);
         shiftData.push(peaks[k].signal[0].delta);
@@ -33,10 +35,12 @@ export default function profile(pdata, signals, maxShiftDiference) {
 
   for (i = 1; i < pdata.length; i++) {
     peaks = pdata[i].peakPicking;
-    for (var j = 0; j < signals.length; j++) {
+    for (let j = 0; j < signals.length; j++) {
       for (k = 0; k < peaks.length; k++) {
-        if (Math.abs(peaks[k].signal[0].delta - signals[j]) <= maxShiftDiference) {
-          var temp = Data[j];
+        if (
+          Math.abs(peaks[k].signal[0].delta - signals[j]) <= maxShiftDiference
+        ) {
+          let temp = Data[j];
           profileData = temp[0];
           shiftData = temp[1];
           profileData.push(Number(pdata[i].value.info.$SPOFFS));

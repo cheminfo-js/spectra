@@ -1,7 +1,7 @@
 /**
  * Created by acastillo on 7/5/16.
  */
-import nmrUtilities from 'spectra-nmr-utilities';
+import * as nmrUtilities from 'spectra-nmr-utilities';
 
 import SpinSystem from './SpinSystem2';
 import AutoAssigner from './AutoAssigner2';
@@ -33,9 +33,9 @@ async function assignmentFromRaw(entry, options) {
 
 async function assignmentFromPeakPicking(entry, options) {
   // const predictor = options.predictor;
-  var molecule, diaIDs;
+  let molecule, diaIDs;
   OCLE = getOcleFromOptions(options);
-  var spectra = entry.spectra;
+  let spectra = entry.spectra;
   if (!entry.general.ocl) {
     molecule = OCLE.Molecule.fromMolfile(entry.general.molfile);
     molecule.addImplicitHydrogens();
@@ -87,12 +87,12 @@ async function predictByExperiment(molecule, nmr, options) {
       try {
         pred = await options.predictor.proton(
           molecule,
-          Object.assign({}, options)
+          Object.assign({}, options),
         );
       } catch (e) {
         pred = await options.predictor.spinus(
           molecule,
-          Object.assign({}, options)
+          Object.assign({}, options),
         );
       }
       // pred = options.predictor.spinus(molecule, Object.assign({}, options, {ignoreLabile: false})).then(value => {console.log(value)});
@@ -101,19 +101,19 @@ async function predictByExperiment(molecule, nmr, options) {
     if (nmr.nucleus === 'C') {
       pred = await options.predictor.carbon(
         molecule,
-        Object.assign({}, options)
+        Object.assign({}, options),
       );
     }
     // console.log(pred.length)
     pred = nmrUtilities.group(pred);
     // console.log(pred.length)
 
-    var optionsError = {
+    let optionsError = {
       iteration: options.iteration || 1,
-      learningRatio: options.learningRatio || 1
+      learningRatio: options.learningRatio || 1,
     };
 
-    for (var j = 0; j < pred.length; j++) {
+    for (let j = 0; j < pred.length; j++) {
       pred[j].error = getError(pred[j], optionsError);
     }
 
@@ -131,7 +131,7 @@ async function predictByExperiment(molecule, nmr, options) {
         fromLabel: 'H',
         toLabel: 'H',
         minLength: 0,
-        maxLength: 3
+        maxLength: 3,
       });
     }
     return null;
@@ -150,7 +150,7 @@ function getError(prediction, param) {
   } else {
     // factor is between 1 and +inf
     // console.log(prediction.ncs+" "+(param.iteration+1)+" "+param.learningRatio);
-    var factor =
+    let factor =
       (3 * prediction.std) /
       Math.pow(prediction.ncs, (param.iteration + 1) * param.learningRatio); // (param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
     return 2 * prediction.std + factor;

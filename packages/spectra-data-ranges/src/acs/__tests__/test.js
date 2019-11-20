@@ -1,4 +1,3 @@
-
 import ACS from '../acs';
 import Ranges from '../../range/Ranges';
 
@@ -9,22 +8,29 @@ import Ranges from '../../range/Ranges';
  * `$options.sampleName : <sup>1</sup>H NMR ($options.solvent, $options.frequencyObserved MHz) δ: 1.50 (1H, <i>s</i>, H1"), 0.72 (1H, d, J = 4.0 Hz, H4"), 2.90 (3H, s, OCH<sub>3</sub>).`  It is a example when 2D data is collected
  *
  */
-var FS = require('fs');
+let FS = require('fs');
 
-var ranges = JSON.parse(FS.readFileSync(`${__dirname}/ranges.json`));
+let ranges = JSON.parse(FS.readFileSync(`${__dirname}/ranges.json`));
 //
 describe('ACS tests: formating and parsing', () => {
-  test('format ACS', () => {
-    var inputRange = new Ranges(ranges);
-    var acs = ACS(inputRange, { nbDecimal: 2, nucleus: '1H', frequencyObserved: 400, solvent: 'C6D6', format: 'IMJA', ascending: true });
+  it('format ACS', () => {
+    let inputRange = new Ranges(ranges);
+    let acs = ACS(inputRange, {
+      nbDecimal: 2,
+      nucleus: '1H',
+      frequencyObserved: 400,
+      solvent: 'C6D6',
+      format: 'IMJA',
+      ascending: true,
+    });
     expect(acs).toBe(
       '<sup>1</sup>H NMR (C<sub>6</sub>D<sub>6</sub>, 400 MHz): δ 1.29 (1H, t, <i>J</i> = 4.5 Hz), 2.96 (3H, dd, <i>J</i> = 9.2, 2.7 Hz, COCH<sub>3</sub>), 3.35 (3H, d, <i>J</i> = 5.2 Hz, CH<sub>3</sub>OH),' +
-              ' 4.09-4.34 (3H, 4.15 (t, <i>J</i> = 5.5, 5.2 Hz), 4.23 (d, <i>J</i> = 5.2 Hz)), 4.80 (3H, d, <i>J</i> = 5.2 Hz, D<sub>2</sub>O), 5.42-5.64 (3H, 5.46 (d, <i>J</i> = 5.2 Hz), 5.55 (dd, <i>J</i> = 5.5, 5.2 Hz)), 6.26-7.27 (8H, m).'
+        ' 4.09-4.34 (3H, 4.15 (t, <i>J</i> = 5.5, 5.2 Hz), 4.23 (d, <i>J</i> = 5.2 Hz)), 4.80 (3H, d, <i>J</i> = 5.2 Hz, D<sub>2</sub>O), 5.42-5.64 (3H, 5.46 (d, <i>J</i> = 5.2 Hz), 5.55 (dd, <i>J</i> = 5.5, 5.2 Hz)), 6.26-7.27 (8H, m).',
     );
     acs = ACS(inputRange, { nbDecimal: 2, nucleus: '1H', format: 'IMJA' });
     expect(acs).toBe(
       '<sup>1</sup>H NMR: δ 2.96 (3H, dd, <i>J</i> = 9.2, 2.7 Hz, COCH<sub>3</sub>), 1.29 (1H, t, <i>J</i> = 4.5 Hz), 3.35 (3H, d, <i>J</i> = 5.2 Hz, CH<sub>3</sub>OH), 4.09-4.34 (3H, 4.23 (d, <i>J</i> = 5.2 Hz),' +
-              ' 4.15 (t, <i>J</i> = 5.5, 5.2 Hz)), 4.80 (3H, d, <i>J</i> = 5.2 Hz, D<sub>2</sub>O), 5.42-5.64 (3H, 5.46 (d, <i>J</i> = 5.2 Hz), 5.55 (dd, <i>J</i> = 5.5, 5.2 Hz)), 6.26-7.27 (8H, m).'
+        ' 4.15 (t, <i>J</i> = 5.5, 5.2 Hz)), 4.80 (3H, d, <i>J</i> = 5.2 Hz, D<sub>2</sub>O), 5.42-5.64 (3H, 5.46 (d, <i>J</i> = 5.2 Hz), 5.55 (dd, <i>J</i> = 5.5, 5.2 Hz)), 6.26-7.27 (8H, m).',
     );
   });
 });

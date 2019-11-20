@@ -7,21 +7,21 @@ import fft from 'ml-fft';
  */
 
 export default function fourierTransform(spectraData) {
-  var nbPoints = spectraData.getNbPoints();
-  var nSubSpectra = spectraData.getNbSubSpectra() / 2;
-  var spectraType = 'NMR SPECTRUM';// spectraData.TYPE_NMR_SPECTRUM;
-  var FFT = fft.FFT;
+  let nbPoints = spectraData.getNbPoints();
+  let nSubSpectra = spectraData.getNbSubSpectra() / 2;
+  let spectraType = 'NMR SPECTRUM'; // spectraData.TYPE_NMR_SPECTRUM;
+  let FFT = fft.FFT;
   if (nSubSpectra > 1) {
     spectraType = 'nD NMR SPECTRUM';
-  }// spectraData.TYPE_2DNMR_SPECTRUM;
+  } // spectraData.TYPE_2DNMR_SPECTRUM;
 
   FFT.init(nbPoints);
 
-  var fcor = spectraData.getParamDouble('$FCOR', 0.0);
+  let fcor = spectraData.getParamDouble('$FCOR', 0.0);
   // var tempArray = new Array(nbPoints / 2);
-  for (var iSubSpectra = 0; iSubSpectra < nSubSpectra; iSubSpectra++) {
-    var re = spectraData.getYData(2 * iSubSpectra);
-    var im = spectraData.getYData(2 * iSubSpectra + 1);
+  for (let iSubSpectra = 0; iSubSpectra < nSubSpectra; iSubSpectra++) {
+    let re = spectraData.getYData(2 * iSubSpectra);
+    let im = spectraData.getYData(2 * iSubSpectra + 1);
 
     re[0] *= fcor;
     im[0] *= fcor;
@@ -59,22 +59,22 @@ export default function fourierTransform(spectraData) {
 }
 
 function updateSpectra(spectraData, spectraType) {
-  var baseFrequency = spectraData.getParamDouble('$BF1', NaN);
-  var spectralFrequency = spectraData.getParamDouble('$SFO1', NaN);
-  var spectralWidth = spectraData.getParamDouble('$SW', NaN);
-  var xMiddle = ((spectralFrequency - baseFrequency) / baseFrequency) * 1e6;
-  var dx = 0.5 * spectralWidth * spectralFrequency / baseFrequency;
+  let baseFrequency = spectraData.getParamDouble('$BF1', NaN);
+  let spectralFrequency = spectraData.getParamDouble('$SFO1', NaN);
+  let spectralWidth = spectraData.getParamDouble('$SW', NaN);
+  let xMiddle = ((spectralFrequency - baseFrequency) / baseFrequency) * 1e6;
+  let dx = (0.5 * spectralWidth * spectralFrequency) / baseFrequency;
 
   spectraData.setDataType(spectraType);
   spectraData.setFirstX(xMiddle + dx);
   spectraData.setLastX(xMiddle - dx);
   spectraData.setXUnits('PPM');
 
-  var x = spectraData.getXData();
-  var tmp = xMiddle + dx;
-  dx = -2 * dx / (x.length - 1);
+  let x = spectraData.getXData();
+  let tmp = xMiddle + dx;
+  dx = (-2 * dx) / (x.length - 1);
 
-  for (var i = 0; i < x.length; i++) {
+  for (let i = 0; i < x.length; i++) {
     x[i] = tmp;
     tmp += dx;
   }

@@ -2,7 +2,8 @@
   "name": "nmr-learning",
   "version": "1.0.12",
   "description": "Learn a database of chemical shift and coupling constants assignments",
-  "main": "src/index.js",
+  "main": "./lib/index.js",
+  "module": "./src/index.js",
   "files": [
     "src"
   ],

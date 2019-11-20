@@ -12,8 +12,8 @@ function loadFile(filename) {
 }
 
 async function start() {
-  var testSet = JSON.parse(loadFile('/../../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
-  var fastDB = JSON.parse(loadFile('/../../data/h_27.json'));
+  let testSet = JSON.parse(loadFile('/../../data/assigned298.json')); // File.parse("/data/nmrsignal298.json");//"/Research/NMR/AutoAssign/data/cobasSimulated";
+  let fastDB = JSON.parse(loadFile('/../../data/h_27.json'));
 
   let setup = { ignoreLabile: true, levels: [6, 5, 4, 3] };
   delete fastDB[3]['gOxHFIeIfRzPhC~dPHeT']; // 2.75072 3.78928 6.54
@@ -144,14 +144,14 @@ async function start() {
 
   FS.writeFileSync(
     `${__dirname}/../../data/h_clean.json`,
-    JSON.stringify(fastDB)
+    JSON.stringify(fastDB),
   );
 
   try {
     predictor.setDb(fastDB, 'proton', 'proton');
     getPerformance(testSet, fastDB, {
       ignoreLabile: true,
-      levels: setup.levels
+      levels: setup.levels,
     });
     /* var error = getPerformance(testSet, fastDB, { ignoreLabile: true, levels: setup.levels });
     logger(error);
@@ -171,8 +171,8 @@ async function getPerformance(testSet, fastDB, setup) {
   let start = date.getTime();
   predictor.setDb(fastDB, 'proton', 'proton');
   // var error = comparePredictors(datasetSim,{"db":db,"dataset":testSet,"iteration":"="+iteration});
-  var histParams = { from: 0, to: 1, nBins: 30 };
-  var error = await stats.cmp2asg(testSet, predictor, {
+  let histParams = { from: 0, to: 1, nBins: 30 };
+  let error = await stats.cmp2asg(testSet, predictor, {
     db: fastDB,
     dataset: testSet,
     ignoreLabile: setup.ignoreLabile,
@@ -180,19 +180,17 @@ async function getPerformance(testSet, fastDB, setup) {
     levels: setup.levels,
     use: 'median',
     OCLE: OCLE,
-    hose: false
+    hose: false,
   });
 
   date = new Date();
 
   logger(
-    `Error: ${error.error} count: ${error.count} min: ${error.min} max: ${
-      error.max
-    }`
+    `Error: ${error.error} count: ${error.count} min: ${error.min} max: ${error.max}`,
   );
 
-  var data = error.hist;
-  var sumHist = 0;
+  let data = error.hist;
+  let sumHist = 0;
   for (let k = 0; k < data.length; k++) {
     sumHist += data[k].y / error.count;
     if (sumHist > 0) {

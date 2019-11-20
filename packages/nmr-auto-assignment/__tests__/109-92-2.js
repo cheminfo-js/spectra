@@ -4,17 +4,15 @@
 
 import FS from 'fs';
 
-import SD from 'spectra-data';
+import * as SD from 'spectra-data';
 import OCLE from 'openchemlib-extended';
-import predictor from 'nmr-predictor';
+import * as predictor from 'nmr-predictor';
 
-import autoassigner from '../src/index';
-
-require('should');
+import { default as autoassigner } from '../src/index';
 
 function createSpectraData(filename, label, data) {
-  var spectrum = SD.NMR.fromJcamp(
-    FS.readFileSync(__dirname + filename).toString()
+  let spectrum = SD.NMR.fromJcamp(
+    FS.readFileSync(__dirname + filename).toString(),
   );
   return spectrum;
 }
@@ -24,21 +22,21 @@ function loadFile(filename) {
 }
 
 describe('Auto-assignment 109-92-2', function() {
-  var spectrum = createSpectraData('/examples/109-92-2.jdx');
+  let spectrum = createSpectraData('/examples/109-92-2.jdx');
 
-  var molecule = OCLE.Molecule.fromMolfile(loadFile('/examples/109-92-2.mol'));
+  let molecule = OCLE.Molecule.fromMolfile(loadFile('/examples/109-92-2.mol'));
   molecule.addImplicitHydrogens();
-  var molfile = molecule.toMolfile();
-  var nH =
+  let molfile = molecule.toMolfile();
+  let nH =
     molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/, '$1') * 1;
 
-  var peakPicking = spectrum.getRanges({
+  let peakPicking = spectrum.getRanges({
     nH: nH,
     realTop: true,
     thresholdFactor: 1,
     clean: 0.5,
     compile: true,
-    format: 'new'
+    format: 'new',
   });
 
   peakPicking.forEach((range, index) => {
@@ -60,10 +58,10 @@ describe('Auto-assignment 109-92-2', function() {
               nucleus: 'H',
               experiment: '1d',
               range: peakPicking,
-              solvent: 'unknown'
-            }
-          ]
-        }
+              solvent: 'unknown',
+            },
+          ],
+        },
       },
       {
         minScore: 0.9,
@@ -73,15 +71,15 @@ describe('Auto-assignment 109-92-2', function() {
         condensed: true,
         OCLE: OCLE,
         levels: [5, 4, 3, 2],
-        unassigned: 0
-      }
+        unassigned: 0,
+      },
     ); // .getAssignments();
     /* console.log(result.setAssignmentOnRanges(peakPicking, 0));
         console.log(JSON.stringify(peakPicking));
         console.log(result.setAssignmentOnRanges(peakPicking, 1));
         console.log(JSON.stringify(peakPicking));*/
     // console.log(JSON.stringify(result.getAssignments()));
-    result.getAssignments().length.should.equal(6);
+    expect(result.getAssignments()).toHaveLength(6);
 
     // console.log(result.getAssignments()[0].score == result.getAssignments()[1].score)
     // result.getAssignments()[0].score.should.equal(1);

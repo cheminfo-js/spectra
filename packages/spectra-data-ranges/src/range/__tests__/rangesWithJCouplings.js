@@ -1,30 +1,30 @@
 import FS from 'fs';
 import path from 'path';
 
-const spectraData = require('spectra-data');
+import * as spectraData from 'spectra-data';
 
 function createSpectraData(filename) {
-  var spectrum = spectraData.NMR.fromJcamp(
-    FS.readFileSync(path.join(__dirname, filename)).toString()
+  let spectrum = spectraData.NMR.fromJcamp(
+    FS.readFileSync(path.join(__dirname, filename)).toString(),
   );
   return spectrum;
 }
 
-describe('spectra-data examples peak picking ', () => {
-  var nH = 8;
-  var spectrum = createSpectraData(
-    '/../../../../../data-test/ethylvinylether/1h.jdx'
+describe('spectra-data examples peak picking', () => {
+  let nH = 8;
+  let spectrum = createSpectraData(
+    '/../../../../../data-test/ethylvinylether/1h.jdx',
   );
-  var peakPicking = spectrum.getRanges({
+  let peakPicking = spectrum.getRanges({
     nH: nH,
     realTopDetection: true,
     thresholdFactor: 1,
     clean: 0.5,
-    compile: true
+    compile: true,
   });
-  test('patterns for ethylvinylether (OLD)', () => {
-    for (var i = 0; i < peakPicking.length; i++) {
-      var signal = peakPicking[i].signal[0];
+  it('patterns for ethylvinylether (OLD)', () => {
+    for (let i = 0; i < peakPicking.length; i++) {
+      let signal = peakPicking[i].signal[0];
       if (Math.abs(signal.delta1 - 1.308) < 0.01) {
         expect(signal.multiplicity).toBe('t');
       }
@@ -43,11 +43,11 @@ describe('spectra-data examples peak picking ', () => {
     }
   });
 
-  test('Number of patterns', () => {
-    expect(peakPicking.length).toBe(5);
+  it('Number of patterns', () => {
+    expect(peakPicking).toHaveLength(5);
   });
 
-  test('examples integration and multiplet limits', () => {
+  it('examples integration and multiplet limits', () => {
     expect(peakPicking[4].from).toBeLessThan(1.29);
     expect(peakPicking[4].to).toBeGreaterThan(1.325);
   });

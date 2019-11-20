@@ -13,7 +13,7 @@ const smallFilter = [
   [2, 7, 3, -12, -23, -12, 3, 7, 2],
   [1, 4, 5, 3, 0, 3, 5, 4, 1],
   [0, 1, 3, 7, 7, 7, 3, 1, 0],
-  [0, 0, 1, 2, 2, 2, 1, 0, 0]
+  [0, 0, 1, 2, 2, 2, 1, 0, 0],
 ];
 
 export default function getZones(spectraData, thresholdFactor) {
@@ -23,41 +23,72 @@ export default function getZones(spectraData, thresholdFactor) {
   if (thresholdFactor < 0) {
     thresholdFactor = -thresholdFactor;
   }
-  var nbPoints = spectraData.getNbPoints();
-  var nbSubSpectra = spectraData.getNbSubSpectra();
+  let nbPoints = spectraData.getNbPoints();
+  let nbSubSpectra = spectraData.getNbSubSpectra();
 
-  var data = new Array(nbPoints * nbSubSpectra);
-  var isHomonuclear = spectraData.isHomoNuclear();
+  let data = new Array(nbPoints * nbSubSpectra);
+  let isHomonuclear = spectraData.isHomoNuclear();
 
-  for (var iSubSpectra = 0; iSubSpectra < nbSubSpectra; iSubSpectra++) {
-    var spectrum = spectraData.getYData(iSubSpectra);
-    for (var iCol = 0; iCol < nbPoints; iCol++) {
+  for (let iSubSpectra = 0; iSubSpectra < nbSubSpectra; iSubSpectra++) {
+    let spectrum = spectraData.getYData(iSubSpectra);
+    for (let iCol = 0; iCol < nbPoints; iCol++) {
       if (isHomonuclear) {
-        data[iSubSpectra * nbPoints + iCol] = (spectrum[iCol] > 0 ? spectrum[iCol] : 0);
+        data[iSubSpectra * nbPoints + iCol] =
+          spectrum[iCol] > 0 ? spectrum[iCol] : 0;
       } else {
         data[iSubSpectra * nbPoints + iCol] = Math.abs(spectrum[iCol]);
       }
     }
   }
 
-  var nStdDev = getLoGnStdDevNMR(spectraData);
+  let nStdDev = getLoGnStdDevNMR(spectraData);
   if (isHomonuclear) {
-    let convolutedSpectrum = FFTUtils.convolute(data, smallFilter, nbSubSpectra, nbPoints);
-    let peaksMC1 = matrixPeakFinders.findPeaks2DRegion(data, { filteredData: convolutedSpectrum, rows: nbSubSpectra, cols: nbPoints, nStdDev: nStdDev * thresholdFactor });// )1.5);
-    var peaksMax1 = matrixPeakFinders.findPeaks2DMax(data, { filteredData: convolutedSpectrum, rows: nbSubSpectra, cols: nbPoints, nStdDev: (nStdDev + 0.5) * thresholdFactor });// 2.0);
-    for (var i = 0; i < peaksMC1.length; i++) {
+    let convolutedSpectrum = FFTUtils.convolute(
+      data,
+      smallFilter,
+      nbSubSpectra,
+      nbPoints,
+    );
+    let peaksMC1 = matrixPeakFinders.findPeaks2DRegion(data, {
+      filteredData: convolutedSpectrum,
+      rows: nbSubSpectra,
+      cols: nbPoints,
+      nStdDev: nStdDev * thresholdFactor,
+    }); // )1.5);
+    let peaksMax1 = matrixPeakFinders.findPeaks2DMax(data, {
+      filteredData: convolutedSpectrum,
+      rows: nbSubSpectra,
+      cols: nbPoints,
+      nStdDev: (nStdDev + 0.5) * thresholdFactor,
+    }); // 2.0);
+    for (let i = 0; i < peaksMC1.length; i++) {
       peaksMax1.push(peaksMC1[i]);
     }
-    return PeakOptimizer.enhanceSymmetry(createSignals2D(peaksMax1, spectraData, 24));
+    return PeakOptimizer.enhanceSymmetry(
+      createSignals2D(peaksMax1, spectraData, 24),
+    );
   } else {
-    let convolutedSpectrum = FFTUtils.convolute(data, smallFilter, nbSubSpectra, nbPoints);
-    let peaksMC1 = matrixPeakFinders.findPeaks2DRegion(data, { filteredData: convolutedSpectrum, rows: nbSubSpectra, cols: nbPoints, nStdDev: nStdDev * thresholdFactor });
+    let convolutedSpectrum = FFTUtils.convolute(
+      data,
+      smallFilter,
+      nbSubSpectra,
+      nbPoints,
+    );
+    let peaksMC1 = matrixPeakFinders.findPeaks2DRegion(data, {
+      filteredData: convolutedSpectrum,
+      rows: nbSubSpectra,
+      cols: nbPoints,
+      nStdDev: nStdDev * thresholdFactor,
+    });
     // Peak2D[] peaksMC1 = matrixPeakFinders.findPeaks2DMax(data, nbSubSpectra, nbPoints, (nStdDev+0.5)*thresholdFactor);
     // Remove peaks with less than 3% of the intensity of the highest peak
-    return createSignals2D(PeakOptimizer.clean(peaksMC1, 0.05), spectraData, 24);
+    return createSignals2D(
+      PeakOptimizer.clean(peaksMC1, 0.05),
+      spectraData,
+      24,
+    );
   }
 }
-
 
 // How noisy is the spectrum depending on the kind of experiment.
 function getLoGnStdDevNMR(spectraData) {
@@ -78,15 +109,15 @@ function getLoGnStdDevNMR(spectraData) {
  * @private
  */
 function createSignals2D(peaks, spectraData, tolerance) {
-  var bf1 = spectraData.observeFrequencyX();
-  var bf2 = spectraData.observeFrequencyY();
+  let bf1 = spectraData.observeFrequencyX();
+  let bf2 = spectraData.observeFrequencyY();
 
-  var firstY = spectraData.getFirstY();
-  var dy = spectraData.getDeltaY();
-  var i;
+  let firstY = spectraData.getFirstY();
+  let dy = spectraData.getDeltaY();
+  let i;
   for (i = peaks.length - 1; i >= 0; i--) {
-    peaks[i].x = (spectraData.arrayPointToUnits(peaks[i].x));
-    peaks[i].y = (firstY + dy * (peaks[i].y));
+    peaks[i].x = spectraData.arrayPointToUnits(peaks[i].x);
+    peaks[i].y = firstY + dy * peaks[i].y;
 
     // Still having problems to correctly detect peaks on those areas. So I'm removing everything there.
     if (peaks[i].y < -1 || peaks[i].y >= 210) {
@@ -95,14 +126,17 @@ function createSignals2D(peaks, spectraData, tolerance) {
   }
   // The connectivity matrix is an square and symmetric matrix, so we'll only store the upper diagonal in an
   // array like form
-  var connectivity = [];
-  var tmp = 0;
+  let connectivity = [];
+  let tmp = 0;
   tolerance *= tolerance;
   // console.log(tolerance);
   for (i = 0; i < peaks.length; i++) {
-    for (var j = i; j < peaks.length; j++) {
-      tmp = Math.pow((peaks[i].x - peaks[j].x) * bf1, 2) + Math.pow((peaks[i].y - peaks[j].y) * bf2, 2);
-      if (tmp < tolerance) { // 30*30Hz We cannot distinguish peaks with less than 20 Hz of separation
+    for (let j = i; j < peaks.length; j++) {
+      tmp =
+        Math.pow((peaks[i].x - peaks[j].x) * bf1, 2) +
+        Math.pow((peaks[i].y - peaks[j].y) * bf2, 2);
+      if (tmp < tolerance) {
+        // 30*30Hz We cannot distinguish peaks with less than 20 Hz of separation
         connectivity.push(1);
       } else {
         connectivity.push(0);
@@ -110,27 +144,31 @@ function createSignals2D(peaks, spectraData, tolerance) {
     }
   }
 
-  var clusters = simpleClustering(connectivity);
+  let clusters = simpleClustering(connectivity);
 
-  var signals = [];
+  let signals = [];
   if (peaks != null) {
-    for (var iCluster = 0; iCluster < clusters.length; iCluster++) {
-      var signal = { nucleusX: spectraData.getNucleus(1), nucleusY: spectraData.getNucleus(2) };
-      signal.resolutionX = (spectraData.getLastX() - spectraData.getFirstX()) / spectraData.getNbPoints();
+    for (let iCluster = 0; iCluster < clusters.length; iCluster++) {
+      let signal = {
+        nucleusX: spectraData.getNucleus(1),
+        nucleusY: spectraData.getNucleus(2),
+      };
+      signal.resolutionX =
+        (spectraData.getLastX() - spectraData.getFirstX()) /
+        spectraData.getNbPoints();
       signal.resolutionY = dy;
-      var peaks2D = [];
+      let peaks2D = [];
       signal.shiftX = 0;
       signal.shiftY = 0;
-      var minMax1 = [Number.MAX_VALUE, 0];
-      var minMax2 = [Number.MAX_VALUE, 0];
-      var sumZ = 0;
-      for (var jPeak = clusters[iCluster].length - 1; jPeak >= 0; jPeak--) {
+      let minMax1 = [Number.MAX_VALUE, 0];
+      let minMax2 = [Number.MAX_VALUE, 0];
+      let sumZ = 0;
+      for (let jPeak = clusters[iCluster].length - 1; jPeak >= 0; jPeak--) {
         if (clusters[iCluster][jPeak] === 1) {
           peaks2D.push({
             x: peaks[jPeak].x,
             y: peaks[jPeak].y,
-            z: peaks[jPeak].z
-
+            z: peaks[jPeak].z,
           });
           signal.shiftX += peaks[jPeak].x * peaks[jPeak].z;
           signal.shiftY += peaks[jPeak].y * peaks[jPeak].z;
@@ -151,7 +189,7 @@ function createSignals2D(peaks, spectraData, tolerance) {
       }
       signal.fromTo = [
         { from: minMax1[0], to: minMax1[1] },
-        { from: minMax2[0], to: minMax2[1] }
+        { from: minMax2[0], to: minMax2[1] },
       ];
       signal.shiftX /= sumZ;
       signal.shiftY /= sumZ;

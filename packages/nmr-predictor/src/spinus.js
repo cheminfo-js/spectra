@@ -1,4 +1,3 @@
-
 import newArray from 'new-array';
 import superagent from 'superagent';
 import { group } from 'spectra-nmr-utilities';
@@ -13,7 +12,11 @@ import normalizeOptions from './normalizeOptions';
  * @return {Promise<Array>}
  */
 export default function spinus(molecule, options) {
-  options = Object.assign({}, { keepMolfile: true, distanceMatrix: true }, options);
+  options = Object.assign(
+    {},
+    { keepMolfile: true, distanceMatrix: true },
+    options,
+  );
   [molecule, options] = normalizeOptions(molecule, options);
   return fromSpinus(molecule).then((prediction) => {
     return options.group ? group(prediction) : prediction;
@@ -35,11 +38,11 @@ function fromSpinus(molecule) {
     const nspins = cs.length;
     const diaIDs = molecule.diaId;
     const distanceMatrix = molecule.distanceMatrix;
-    var result = new Array(nspins);
-    var atoms = {};
-    var atomNumbers = [];
-    var i, j, k, oclID, tmpCS;
-    var csByOclID = {};
+    let result = new Array(nspins);
+    let atoms = {};
+    let atomNumbers = [];
+    let i, j, k, oclID, tmpCS;
+    let csByOclID = {};
     for (j = diaIDs.length - 1; j >= 0; j--) {
       if (diaIDs[j].atomLabel === 'H') {
         oclID = `${diaIDs[j].oclID}`;
@@ -56,8 +59,7 @@ function fromSpinus(molecule) {
       }
     }
 
-
-    var idsKeys = Object.keys(ids);
+    let idsKeys = Object.keys(ids);
     for (i = 0; i < nspins; i++) {
       tmpCS = csByOclID[atoms[idsKeys[i]]].cs / csByOclID[atoms[idsKeys[i]]].nc;
       result[i] = {
@@ -66,7 +68,7 @@ function fromSpinus(molecule) {
         nbAtoms: integrals[i],
         delta: tmpCS,
         atomLabel: 'H',
-        j: []
+        j: [],
       };
 
       for (j = 0; j < nspins; j++) {
@@ -76,7 +78,7 @@ function fromSpinus(molecule) {
             diaID: atoms[idsKeys[j]],
             coupling: jc[i][j],
             multiplicity: multiplicity[j],
-            distance: distanceMatrix[idsKeys[i]][idsKeys[j]]
+            distance: distanceMatrix[idsKeys[i]][idsKeys[j]],
           });
         }
       }
@@ -86,29 +88,29 @@ function fromSpinus(molecule) {
 }
 
 function spinusParser(result) {
-  var lines = result.split('\n');
-  var nspins = lines.length - 1;
-  var cs = new Array(nspins);
-  var integrals = new Array(nspins);
-  var ids = {};
-  var jc = new Array(nspins);
-  var i, j;
+  let lines = result.split('\n');
+  let nspins = lines.length - 1;
+  let cs = new Array(nspins);
+  let integrals = new Array(nspins);
+  let ids = {};
+  let jc = new Array(nspins);
+  let i, j;
 
   for (i = 0; i < nspins; i++) {
     jc[i] = newArray(nspins, 0);
     var tokens = lines[i].split('\t');
     cs[i] = +tokens[2];
     ids[tokens[0] - 1] = i;
-    integrals[i] = 1;// +tokens[5];//Is it always 1??
+    integrals[i] = 1; // +tokens[5];//Is it always 1??
   }
 
   for (i = 0; i < nspins; i++) {
     tokens = lines[i].split('\t');
-    var nCoup = (tokens.length - 4) / 3;
+    let nCoup = (tokens.length - 4) / 3;
     for (j = 0; j < nCoup; j++) {
-      var withID = tokens[4 + 3 * j] - 1;
-      var idx = ids[withID];
-      jc[i][idx] = (+tokens[6 + 3 * j]);
+      let withID = tokens[4 + 3 * j] - 1;
+      let idx = ids[withID];
+      jc[i][idx] = +tokens[6 + 3 * j];
     }
   }
 
@@ -123,6 +125,6 @@ function spinusParser(result) {
     chemicalShifts: cs,
     integrals,
     couplingConstants: jc,
-    multiplicity: newArray(nspins, 'd')
+    multiplicity: newArray(nspins, 'd'),
   };
 }

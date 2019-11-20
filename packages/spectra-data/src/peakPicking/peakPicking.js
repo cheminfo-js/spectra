@@ -28,24 +28,30 @@ const defaultOptions = {
   realTop: true,
   functionName: 'gaussian',
   broadWidth: 0.25,
-  sgOptions: { windowSize: 9, polynomial: 3 }
+  sgOptions: { windowSize: 9, polynomial: 3 },
 };
 
-
 export default function extractPeaks(spectrum, options = {}) {
-  options = Object.assign({}, defaultOptions, options, { optimize: false, broadWidth: false });
+  options = Object.assign({}, defaultOptions, options, {
+    optimize: false,
+    broadWidth: false,
+  });
 
   let {
     from,
     to,
     broadWidth,
     optimize,
-    noiseLevel = Math.abs(spectrum.getNoiseLevel(options)) * (options.thresholdFactor)
+    noiseLevel = Math.abs(spectrum.getNoiseLevel(options)) *
+      options.thresholdFactor,
   } = options;
 
-  var data = (from !== undefined && to !== undefined) ? spectrum.getVector({ from, to, outputX: true }) : spectrum.getSpectrumData();
+  let data =
+    from !== undefined && to !== undefined
+      ? spectrum.getVector({ from, to, outputX: true })
+      : spectrum.getSpectrumData();
 
-  var peakList = GSD.gsd(data.x, data.y, options);
+  let peakList = GSD.gsd(data.x, data.y, options);
 
   if (broadWidth) {
     peakList = GSD.post.joinBroadPeaks(peakList, { width: options.broadWidth });

@@ -9,14 +9,13 @@ import normalizeOptions from './normalizeOptions';
  * @return {Array<object>} paths - the path information of the bidimensional spectrum.
  */
 
-
 export default function twoD(dim1, dim2, molecule, options) {
   options = Object.assign({}, { keepMolecule: true }, options);
   [molecule, options] = normalizeOptions(molecule, options);
 
   let mol = molecule.molecule;
-  var fromAtomLabel = '';
-  var toAtomLabel = '';
+  let fromAtomLabel = '';
+  let toAtomLabel = '';
   if (dim1 && dim1.length > 0) {
     fromAtomLabel = dim1[0].atomLabel;
   }
@@ -24,13 +23,16 @@ export default function twoD(dim1, dim2, molecule, options) {
     toAtomLabel = dim2[0].atomLabel;
   }
 
-  options = Object.assign({ minLength: 1, maxLength: 3 }, options, { fromLabel: fromAtomLabel, toLabel: toAtomLabel });
+  options = Object.assign({ minLength: 1, maxLength: 3 }, options, {
+    fromLabel: fromAtomLabel,
+    toLabel: toAtomLabel,
+  });
   // console.log(mol)
-  var paths = mol.getAllPaths(options);
-  var inverseMap = {};
+  let paths = mol.getAllPaths(options);
+  let inverseMap = {};
   if (fromAtomLabel === 'C' || toAtomLabel === 'C') {
     mol.removeExplicitHydrogens();
-    var diaIDsC = mol.getGroupedDiastereotopicAtomIDs({ atomLabel: 'C' });
+    let diaIDsC = mol.getGroupedDiastereotopicAtomIDs({ atomLabel: 'C' });
     diaIDsC.forEach((diaID) => {
       inverseMap[diaID.atoms.join(',')] = diaID.oclID;
     });
@@ -45,12 +47,12 @@ export default function twoD(dim1, dim2, molecule, options) {
     }
   });
 
-  var idMap1 = {};
+  let idMap1 = {};
   dim1.forEach((prediction) => {
     idMap1[prediction.diaIDs[0]] = prediction;
   });
 
-  var idMap2 = {};
+  let idMap2 = {};
   // eslint-disable-next-line no-loop-func
   dim2.forEach((prediction) => {
     idMap2[prediction.diaIDs[0]] = prediction;
@@ -71,7 +73,7 @@ export default function twoD(dim1, dim2, molecule, options) {
 function getCouplingConstant(idMap, fromDiaID, toDiaID) {
   const j = idMap[fromDiaID].j;
   if (j) {
-    var index = j.length - 1;
+    let index = j.length - 1;
     while (index-- > 0) {
       if (j[index].diaID === toDiaID) {
         return j[index].coupling;

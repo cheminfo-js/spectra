@@ -1,14 +1,16 @@
-
 import FS from 'fs';
 
-import OCLE from 'openchemlib-extended'
+import OCLE from 'openchemlib-extended';
 
 const maxSphereSize = 6;
 
 const dataFolder = '/home/acastillo/Documents/kaggle/champs-scalar-coupling/';
 const structuremol = `${dataFolder}structuresmol/`;
 
-var train = fs.readFileSync(`${dataFolder}magnetic_shielding_tensors.csv`).toString().split('\n');
+let train = fs
+  .readFileSync(`${dataFolder}magnetic_shielding_tensors.csv`)
+  .toString()
+  .split('\n');
 
 /**
 molecule_name,atom_index,XX,YX,ZX,XY,YY,ZY,XZ,YZ,ZZ
@@ -36,14 +38,17 @@ for (let i = 0; i < max; i++) {
   let example = train[i].split(',');
   let moleculeName = example.splice(0, 1)[0];
   let atomIndex = Number(example.splice(0, 1)[0]);
-  let chemicalShift = (Number(example[0]) + Number(example[4]) + Number(example[8])) / 3;
+  let chemicalShift =
+    (Number(example[0]) + Number(example[4]) + Number(example[8])) / 3;
 
   // Change of molecule
   if (moleculeName !== molid) {
     storeData(oclIds, db);
     molid = moleculeName;
     // Open the molecule
-    let molObj = OCLE.Molecule.fromMolfileWithAtomMap(fs.readFileSync(`${structuremol + molid}.mol`).toString());
+    let molObj = OCLE.Molecule.fromMolfileWithAtomMap(
+      fs.readFileSync(`${structuremol + molid}.mol`).toString(),
+    );
     map = molObj.map;
     // molecule = molObj.molecule;
     oclIds = molObj.molecule.getGroupedDiastereotopicAtomIDs();
@@ -54,7 +59,10 @@ for (let i = 0; i < max; i++) {
       if (cache[oclId.oclID]) {
         hoseCodes = cache[oclId.oclID];
       } else {
-        hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(oclId.oclID, { maxSphereSize, type: 0 });
+        hoseCodes = OCLE.Util.getHoseCodesFromDiastereotopicID(oclId.oclID, {
+          maxSphereSize,
+          type: 0,
+        });
         hoseCodes = hoseCodes.slice();
         cache[oclId.oclID] = hoseCodes;
       }
@@ -63,9 +71,11 @@ for (let i = 0; i < max; i++) {
   }
 
   let group = oclIds.find((value) => {
-    return value.atoms.find((atom) => {
-      return map[atom] === atomIndex;
-    }) != null;
+    return (
+      value.atoms.find((atom) => {
+        return map[atom] === atomIndex;
+      }) != null
+    );
   });
 
   if (!group.cs) {
@@ -103,7 +113,6 @@ function storeData(oclIDs, result) {
 // let examples = train.split('\n');
 
 // console.log(examples.length);
-
 
 /* var molecule = OCLE.Molecule.fromSmiles('CCC');
 molecule.addImplicitHydrogens();
