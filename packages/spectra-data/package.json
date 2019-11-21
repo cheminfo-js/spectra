@@ -1,6 +1,6 @@
 {
   "name": "spectra-data",
-  "version": "3.4.8",
+  "version": "3.4.9",
   "description": "spectra-data project - manipulate spectra",
   "keywords": [
     "spectra-data",
@@ -27,10 +27,10 @@
     "testEnvironment": "node"
   },
   "devDependencies": {
-    "jsdoc": "^3.5.5",
-    "nmr-predictor": "^1.2.0",
     "jest": "^24.8.0",
-    "jest-matcher-deep-close-to": "^1.3.0"
+    "jest-matcher-deep-close-to": "^1.3.0",
+    "jsdoc": "^3.5.5",
+    "nmr-predictor": "^1.2.1"
   },
   "dependencies": {
     "brukerconverter": "^1.0.1",
@@ -46,8 +46,8 @@
     "ml-gsd": "^2.0.1",
     "ml-matrix-peaks-finder": "^0.2.1",
     "ml-simple-clustering": "^0.1.0",
-    "nmr-simulation": "^1.0.19",
-    "spectra-data-ranges": "^1.1.8",
-    "spectra-nmr-utilities": "^1.0.8"
+    "nmr-simulation": "^1.0.20-alpha.0",
+    "spectra-data-ranges": "^1.1.9",
+    "spectra-nmr-utilities": "^1.0.9"
   }
 }
