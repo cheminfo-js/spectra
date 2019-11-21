@@ -1,6 +1,6 @@
 {
   "name": "nmr-simulation",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Simulate NMR spectra from spin systems",
   "main": "lib/index.js",
   "module": "src/index.js",
@@ -32,13 +32,13 @@
     "ml-matrix": "^6.2.0",
     "ml-simple-clustering": "0.1.0",
     "ml-sparse-matrix": "^0.2.1",
+    "ml-stat": "^1.3.3",
     "new-array": "^1.0.0",
-    "num-sort": "^1.0.0",
-    "ml-stat": "^1.3.3"
+    "num-sort": "^1.0.0"
   },
   "devDependencies": {
-    "nmr-predictor": "^1.2.0",
     "jest": "^24.8.0",
-    "jest-matcher-deep-close-to": "^1.3.0"
+    "jest-matcher-deep-close-to": "^1.3.0",
+    "nmr-predictor": "^1.2.1"
   }
 }
