@@ -86,7 +86,7 @@ describe('Simulation from signals', function() {
     expect(simulation).toHaveProperty('x');
     expect(simulation).toHaveProperty('y');
     expect(simulation.x).toHaveLength(16384);
-    expect(simulation).to.toMatchSnapshot();
+    expect(simulation).toMatchSnapshot();
   });
 
   it('simulation 13C gives {x,y} data', function() {
@@ -96,6 +96,6 @@ describe('Simulation from signals', function() {
     expect(simulation).toHaveProperty('x');
     expect(simulation).toHaveProperty('y');
     expect(simulation.x).toHaveLength(16384);
-    expect(simulation).to.toMatchSnapshot();
+    expect(simulation).toMatchSnapshot();
   });
 });

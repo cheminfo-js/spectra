@@ -166,14 +166,13 @@ export default class SpinSystem {
     let list = [];
     this._splitCluster(cluster, list, options.maxClusterSize || 8, false);
     let clusters = this._mergeClusters(list);
-    this.nClusters = clusters.rows;
-
-    this.clusters = new Array(clusters.rows);
+    this.nClusters = clusters.length;
+    this.clusters = new Array(clusters.length);
 
     for (let j = 0; j < this.nClusters; j++) {
       this.clusters[j] = [];
       for (let i = 0; i < this.nSpins; i++) {
-        let element = clusters.get(j, i);
+        let element = clusters[j][i];
         if (element !== 0) {
           if (element < 0) {
             this.clusters[j].push(-(i + 1));
