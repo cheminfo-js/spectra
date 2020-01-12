@@ -1,4 +1,4 @@
-import Matrix from 'ml-matrix';
+import { Matrix, EVD } from 'ml-matrix';
 import SparseMatrix from 'ml-sparse-matrix';
 import binarySearch from 'binary-search';
 import { asc as sortAsc } from 'num-sort';
@@ -87,7 +87,7 @@ export default function simulate1d(spinSystem, options) {
       frequencies.push(-chemicalShifts[index]);
       for (i = 0; i < cluster.length; i++) {
         if (cluster[i] < 0) {
-          jc = spinSystem.couplingConstants[index][clusterFake[i]] / 2;
+          jc = spinSystem.couplingConstants.get(index, clusterFake[i]) / 2;
           currentSize = frequencies.length;
           for (j = 0; j < currentSize; j++) {
             frequencies.push(frequencies[j] + jc);
@@ -111,9 +111,8 @@ export default function simulate1d(spinSystem, options) {
         spinSystem.connectivity,
         clusterFake,
       );
-
       const hamSize = hamiltonian.rows;
-      const evd = new Matrix.DC.EVD(hamiltonian);
+      const evd = new EVD(hamiltonian);
       const V = evd.eigenvectorMatrix;
       const diagB = evd.realEigenvalues;
       const assignmentMatrix = new SparseMatrix(hamSize, hamSize);
@@ -145,11 +144,10 @@ export default function simulate1d(spinSystem, options) {
       let rhoip = Matrix.zeros(hamSize, hamSize);
       assignmentMatrix.forEachNonZero((i, j, v) => {
         if (v > 0) {
-          // const row = V[j];
-          for (let k = 0; k < row.length; k++) {
-            if (row[k] !== 0) {
-              // rhoip.set(i, k, rhoip.get(i, k) + row[k]);
-              rhoip.set(i, k, rhoip.get(i, k) + V.get(j, k));
+          for (let k = 0; k < V.columns; k++) {
+            let element = V.get(j, k);
+            if (element !== 0) {
+              rhoip.set(i, k, rhoip.get(i, k) + element);
             }
           }
         }
@@ -159,22 +157,26 @@ export default function simulate1d(spinSystem, options) {
       let rhoip2 = rhoip.clone();
       assignmentMatrix.forEachNonZero((i, j, v) => {
         if (v < 0) {
-          // const row = V[j];
-          for (let k = 0; k < row.length; k++) {
-            if (row[k] !== 0) {
-              rhoip2.set(i, k, rhoip2.get(i, k) + V.get(j, k));
+          for (let k = 0; k < V.columns; k++) {
+            let element = V.get(j, k);
+            if (element !== 0) {
+              rhoip2.set(i, k, rhoip2.get(i, k) + element);
             }
           }
         }
         return v;
       });
-
       const tV = V.transpose();
+
       rhoip = tV.mmul(rhoip);
-      rhoip = new SparseMatrix(rhoip, { threshold: smallValue });
+      rhoip = new SparseMatrix(rhoip.to2DArray(), { threshold: smallValue });
       triuTimesAbs(rhoip, smallValue);
       rhoip2 = tV.mmul(rhoip2);
-      rhoip2 = new SparseMatrix(rhoip2, { threshold: smallValue });
+
+      rhoip2 = new SparseMatrix(rhoip2.to2DArray(), { threshold: smallValue });
+      rhoip2.forEachNonZero((i, j, v) => {
+        return v;
+      });
       triuTimesAbs(rhoip2, smallValue);
       // eslint-disable-next-line no-loop-func
       rhoip2.forEachNonZero((i, j, v) => {
@@ -314,10 +316,9 @@ function getHamiltonian(
     const alpha = chemicalShifts[n];
     const kronProd = A1.kroneckerProduct(L.z).kroneckerProduct(B1);
     clusterHam.add(kronProd.mul(alpha));
-
     for (let pos2 = 0; pos2 < cluster.length; pos2++) {
       const k = cluster[pos2];
-      if (conMatrix[n][k] === 1) {
+      if (conMatrix.get(n, k) === 1) {
         const S = getPauli(multiplicity[k]);
 
         let A2, B2;
@@ -348,11 +349,10 @@ function getHamiltonian(
             .mmul(A2.kroneckerProduct(S.z).kroneckerProduct(B2)),
         );
 
-        clusterHam.add(kron1.mul(couplingConstants[n][k] / 2));
+        clusterHam.add(kron1.mul(couplingConstants.get(n, k) / 2));
       }
     }
   }
-
   return clusterHam;
 }
 
