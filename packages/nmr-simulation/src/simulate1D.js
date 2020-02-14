@@ -250,6 +250,7 @@ export default function simulate1d(spinSystem, options) {
  * @param {*} to - end point of the peak
  * @param {*} nbPoints - number of points to add
  * @param {*} gaussian - Shape to fill with
+ * @return {undefined}
  */
 function addPeak(result, freq, height, from, to, nbPoints, gaussian) {
   const center = ((nbPoints * (-freq - from)) / (to - from)) | 0;
