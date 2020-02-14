@@ -18,6 +18,7 @@ const smallValue = 1e-2;
  * @param {number} options.nbPoints - Number of points of the output spectrum. 1024 by default
  * @param {number} options.maxClusterSize - Maximum number of atoms on each cluster that can be considered to be simulated together. It affects the the quality and speed of the simulation. 10 by default
  * @param {number} options.output - ['y' or 'xy'] it specify the output format. if 'y' is specified, the output of the simulation will be a single vector containing the y data of the spectrum. if 'xy' is specified, the output of the simulation will be an object containing {x,[], y:[]}, the x, y of the spectrum. 'y' by default
+ * @param {number} options.lortogauRatio - How much of the shape is Lorentzian relative to Gaussian - default : 0.5
  * @return {object}
  */
 export default function simulate1d(spinSystem, options) {
@@ -29,6 +30,7 @@ export default function simulate1d(spinSystem, options) {
     output = 'y',
     frequency: frequencyMHz = 400,
     noiseFactor = 1,
+    lortogauRatio = 0.5
   } = options;
 
   nbPoints = Number(nbPoints);
@@ -42,8 +44,8 @@ export default function simulate1d(spinSystem, options) {
   }
 
   // Prepare pseudo voigt
-  let lineWidthPointsG = (nbPoints * lineWidth) / Math.abs(to - from) / 2.355;
-  let lineWidthPointsL = (nbPoints * lineWidth) / Math.abs(to - from) / 2;
+  let lineWidthPointsG = lortogauRatio * (nbPoints * lineWidth) / Math.abs(to - from) / 2.355;
+  let lineWidthPointsL = (1 - lortogauRatio) * (nbPoints * lineWidth) / Math.abs(to - from) / 2;
   let lnPoints = lineWidthPointsL * 40;
 
   const gaussianLength = lnPoints | 0;
