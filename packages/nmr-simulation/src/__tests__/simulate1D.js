@@ -1,4 +1,4 @@
-import * as nmr from '../src/index';
+import * as nmr from '../index';
 
 const prediction1h = [
   {

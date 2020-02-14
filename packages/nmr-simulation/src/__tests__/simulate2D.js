@@ -1,5 +1,5 @@
 // const simulation = require('..');
-import { simulate2D } from '../src/index';
+import { simulate2D } from '../index';
 
 /**
  * This example ilustrates the simulation of a sytste (B, AA, C ). Atoms of the group AA, resonating at 2ppm, are coupled with the atom B that resonates at 1ppm. The scalar coupling between them
