@@ -1,6 +1,6 @@
 {
   "name": "nmr-simulation",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "Simulate NMR spectra from spin systems",
   "main": "lib/index.js",
   "module": "src/index.js",
